@@ -1,1 +1,1 @@
-# AppSettingsManagerApi
+# AppSettingsManager
