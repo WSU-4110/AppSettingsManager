@@ -1,6 +1,6 @@
-#AppSettingsManager
+# AppSettingsManager
 
-##Context
+## Context
 This proposal is focused on making application management more efficient for both the software engineers
 managing applications directly and the companies that depend on those applications. Of course, large changes
 to an application's functionality should be rigorously reviewed and tested before being deployed and possibly
