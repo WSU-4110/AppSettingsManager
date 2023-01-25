@@ -1,4 +1,4 @@
-# AppSettingsManager
+# App Settings Manager
 
 ## Context
 This proposal is focused on making application management more efficient for both the software engineers
@@ -12,3 +12,14 @@ changes pass through; this means it might be delayed until more complicated chan
 and deployed.  This can cause headaches for your company's developers and significantly slow down your business.
 If these simple settings lived in some other place and were retrieved when needed, these changes could be
 implemented instantly.
+
+## Tech Stack
+This application can be deployed entirely within Amazon Web Services:
+- Database: RDS-Aurora-MySQL
+- API/BFF Hosting: ECS
+- User Interface: Cloudfront
+
+All of these services can accessed using the AWS free-tier which should be sufficient for the scope of this
+project. The API (and possibly BFF) can both be created using C#, .net6, and Entity Framework Core. Using
+Entity Framework core means the database can be managed without having to write almost any actual SQL code.
+A functional UI can be created using Angular, a Typescript framework.
