@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppSettingsManagerApi.Infrastructure.Migrations
 {
     [DbContext(typeof(SettingsContext))]
-    [Migration("20230206195623_InitialCreate")]
+    [Migration("20230206200423_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,9 +32,11 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("UserName");
 
                     b.ToTable("BaseUsers");
                 });

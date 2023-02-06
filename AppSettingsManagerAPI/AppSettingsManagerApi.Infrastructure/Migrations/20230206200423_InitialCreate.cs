@@ -17,7 +17,7 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                 {
                     UserId = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserName = table.Column<string>(type: "longtext", nullable: false)
+                    UserName = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Password = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
@@ -27,6 +27,11 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                     table.PrimaryKey("PK_BaseUsers", x => x.UserId);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BaseUsers_UserName",
+                table: "BaseUsers",
+                column: "UserName");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

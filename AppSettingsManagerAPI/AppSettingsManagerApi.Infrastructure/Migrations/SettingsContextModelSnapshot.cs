@@ -30,11 +30,13 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("UserId");
 
-                    b.ToTable("BaseUsers", (string)null);
+                    b.HasIndex("UserName");
+
+                    b.ToTable("BaseUsers");
                 });
 #pragma warning restore 612, 618
         }
