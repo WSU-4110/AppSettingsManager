@@ -34,7 +34,7 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("BaseUsers");
+                    b.ToTable("BaseUsers", (string)null);
                 });
 #pragma warning restore 612, 618
         }

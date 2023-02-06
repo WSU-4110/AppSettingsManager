@@ -11,5 +11,6 @@ public class SettingsContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BaseUser>().HasKey(u => u.UserId);
+        modelBuilder.Entity<BaseUser>().HasIndex(u => u.UserName);
     }
 }
