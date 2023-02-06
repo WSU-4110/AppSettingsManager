@@ -9,7 +9,8 @@ public class SettingsContext : DbContext
 
     public DbSet<BaseUser> BaseUsers => Set<BaseUser>();
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder){
-        modelBuilder.Entity<BaseUser>.HasKey(u => u.UserId);
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<BaseUser>().HasKey(u => u.UserId);
     }
 }
