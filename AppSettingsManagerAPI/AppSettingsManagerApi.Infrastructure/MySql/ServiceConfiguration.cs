@@ -7,8 +7,7 @@ public static class ServiceConfiguration
 {
     public static IServiceCollection AddMySqlSettingsStorage(
         this IServiceCollection services,
-        string connectionString,
-        IHealthChecksBuilder healthChecksBuilder
+        string connectionString
     )
     {
         services.AddDbContextPool<SettingsContext>(
@@ -19,8 +18,6 @@ public static class ServiceConfiguration
                     o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
                 )
         );
-
-        healthChecksBuilder.AddDbContextCheck<SettingsContext>();
 
         return services;
     }
