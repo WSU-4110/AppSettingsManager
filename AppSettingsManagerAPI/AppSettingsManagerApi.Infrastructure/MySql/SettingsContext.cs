@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameWorkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql;
