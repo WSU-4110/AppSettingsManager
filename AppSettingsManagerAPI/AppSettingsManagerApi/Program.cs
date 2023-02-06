@@ -1,4 +1,5 @@
 using AppSettingsManagerApi.Infrastructure.MySql;
+using AppSettingsManagerApi.Infrastructure.MySql.Converters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1"
     });
 });
+
+builder.Services.AddConverters();
 
 builder.Services.AddMySqlSettingsStorage(
     builder.Configuration.GetConnectionString("DefaultConnection"));

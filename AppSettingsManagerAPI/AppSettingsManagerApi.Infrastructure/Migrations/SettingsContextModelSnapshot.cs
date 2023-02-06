@@ -28,13 +28,7 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("UserId");
-
-                    b.HasIndex("UserName");
 
                     b.ToTable("BaseUsers");
                 });

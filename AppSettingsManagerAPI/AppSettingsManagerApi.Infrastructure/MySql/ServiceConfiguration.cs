@@ -1,3 +1,6 @@
+using AppSettingsManagerApi.Domain.Conversion;
+using AppSettingsManagerApi.Domain.MySql;
+using AppSettingsManagerApi.Infrastructure.MySql.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +21,8 @@ public static class ServiceConfiguration
                     o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
                 )
         );
+
+        services.AddSingleton<IBaseUserRepository, MySqlBaseUserRepository>();
 
         return services;
     }
