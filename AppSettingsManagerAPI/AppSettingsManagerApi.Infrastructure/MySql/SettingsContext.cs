@@ -4,7 +4,8 @@ namespace AppSettingsManagerApi.Infrastructure.MySql;
 
 public class SettingsContext : DbContext
 {
-    public SettingsContext(DbContextOptions<SettingsContext> options): base(options) { }
+    public SettingsContext(DbContextOptions<SettingsContext> options)
+        : base(options) { }
 
     public DbSet<BaseUser> BaseUsers => Set<BaseUser>();
 

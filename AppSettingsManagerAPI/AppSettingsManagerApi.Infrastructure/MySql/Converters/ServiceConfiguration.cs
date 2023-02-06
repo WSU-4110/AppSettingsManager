@@ -7,8 +7,11 @@ public static class ServiceConfiguration
 {
     public static IServiceCollection AddConverters(this IServiceCollection services)
     {
-        services.AddSingleton<IBidirectionalConverter<Model.BaseUser, BaseUser>, BaseUserConverter>();
-        
+        services.AddSingleton<
+            IBidirectionalConverter<Model.BaseUser, BaseUser>,
+            BaseUserConverter
+        >();
+
         return services;
     }
 }
