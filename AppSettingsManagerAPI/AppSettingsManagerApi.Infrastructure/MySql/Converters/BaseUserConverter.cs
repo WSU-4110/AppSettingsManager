@@ -1,5 +1,4 @@
 using AppSettingsManagerApi.Domain.Conversion;
-using Microsoft.EntityFrameworkCore;
 using MySqlBaseUser = AppSettingsManagerApi.Infrastructure.MySql.BaseUser;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql.Converters;

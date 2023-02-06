@@ -1,6 +1,5 @@
 using AppSettingsManagerApi.Domain.Conversion;
 using AppSettingsManagerApi.Domain.MySql;
-using Microsoft.EntityFrameworkCore;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql;
 
