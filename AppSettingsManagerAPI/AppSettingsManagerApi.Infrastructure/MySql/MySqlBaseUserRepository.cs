@@ -23,6 +23,8 @@ public class MySqlBaseUserRepository : IBaseUserRepository
 
         await _settingsContext.BaseUsers.AddAsync(newUser);
 
+        await _settingsContext.SaveChangesAsync();
+
         return _baseUserConverter.Convert(
             _settingsContext.BaseUsers.Single(u => u.UserId == userId)
         );
