@@ -1,5 +1,6 @@
 using AppSettingsManagerApi.Domain.Conversion;
 using AppSettingsManagerApi.Domain.MySql;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql;
 
@@ -15,6 +16,13 @@ public class MySqlBaseUserRepository : IBaseUserRepository
     {
         _settingsContext = settingsContext;
         _baseUserConverter = baseUserConverter;
+    }
+
+    public async Task<Model.BaseUser> GetUser(string userId)
+    {
+        return _baseUserConverter.Convert(
+            await _settingsContext.BaseUsers.SingleAsync(u => u.UserId == userId)
+        );
     }
 
     public async Task<Model.BaseUser> CreateUser(string userId, string password)

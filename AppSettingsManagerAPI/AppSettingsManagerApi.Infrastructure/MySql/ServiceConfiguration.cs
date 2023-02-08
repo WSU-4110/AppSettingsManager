@@ -20,7 +20,7 @@ public static class ServiceConfiguration
                 )
         );
 
-        services.AddSingleton<IBaseUserRepository, MySqlBaseUserRepository>();
+        services.AddScoped<IBaseUserRepository, MySqlBaseUserRepository>();
 
         return services;
     }
