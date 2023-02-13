@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\AppSettingsManagerBff.Model\AppSettingsManagerBff.Model.csproj" />
+    </ItemGroup>
+
 </Project>
