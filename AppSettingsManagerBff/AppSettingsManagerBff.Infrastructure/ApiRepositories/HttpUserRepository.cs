@@ -9,7 +9,7 @@ public class HttpUserRepository : IUserRepository
 
     public HttpUserRepository(HttpClient httpClient)
     {
-        
+        _httpClient = httpClient;
     }
     
     public ApiBaseUser GetUser(string userId)
