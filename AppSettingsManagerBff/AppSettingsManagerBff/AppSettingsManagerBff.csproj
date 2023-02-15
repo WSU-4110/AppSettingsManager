@@ -18,10 +18,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\AppSettingsManagerBff.Domain\AppSettingsManagerBff.Domain.csproj" />
       <ProjectReference Include="..\AppSettingsManagerBff.Infrastructure\AppSettingsManagerBff.Infrastructure.csproj" />
     </ItemGroup>

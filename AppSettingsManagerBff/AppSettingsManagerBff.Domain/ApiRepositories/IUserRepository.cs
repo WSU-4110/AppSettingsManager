@@ -4,6 +4,6 @@ namespace AppSettingsManagerBff.Domain.ApiRepositories;
 
 public interface IUserRepository
 {
-    ApiBaseUser GetUser(string userId);
-    ApiBaseUser CreateUser(string userId, string password);
+    Task<ApiBaseUser> GetUser(string userId);
+    Task<ApiBaseUser> CreateUser(string userId, string password);
 }
