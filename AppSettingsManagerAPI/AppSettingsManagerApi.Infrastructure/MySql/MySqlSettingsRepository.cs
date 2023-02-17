@@ -13,8 +13,10 @@ public class MySqlSettingsRepository : ISettingsRepository
     private readonly SettingsContext _settingsContext;
     private readonly IBidirectionalConverter<Model.Setting, Setting> _settingsConverter;
 
-    public MySqlSettingsRepository(SettingsContext settingsContext,
-        IBidirectionalConverter<Model.Setting, Setting> settingsConverter)
+    public MySqlSettingsRepository(
+        SettingsContext settingsContext,
+        IBidirectionalConverter<Model.Setting, Setting> settingsConverter
+    )
     {
         // Injects SettingsContext configured in ServiceConfiguration.cs into _settingsContext object
         _settingsContext = settingsContext;
@@ -22,12 +24,13 @@ public class MySqlSettingsRepository : ISettingsRepository
         _settingsConverter = settingsConverter;
     }
 
-    
     public async Task<Model.Setting> GetSetting(string settingId, int version)
     {
         // Call .Single() because there should only be one entry with this id/version
         // and .Single() will return a single object rather than a list
-        var setting = await _settingsContext.Settings.SingleAsync(s => s.Id == settingId && s.Version == version);
+        var setting = await _settingsContext.Settings.SingleAsync(
+            s => s.Id == settingId && s.Version == version
+        );
 
         return _settingsConverter.Convert(setting);
     }
@@ -35,9 +38,9 @@ public class MySqlSettingsRepository : ISettingsRepository
     public async Task<IEnumerable<Model.Setting>> GetAllSettingVersions(string settingId)
     {
         var settings = await GetAllUnconvertedSettingVersions(settingId);
-        
+
         // This could also be written as settings.Select(s => _settingsConverter.Convert(s))
-        
+
         // You're allowed to abbreviate the syntax like below when you're just calling a
         // function like that on every object in a list
         return settings.Select(_settingsConverter.Convert);
@@ -54,11 +57,11 @@ public class MySqlSettingsRepository : ISettingsRepository
             CreatedBy = request.CreatedBy,
             CreatedAt = DateTimeOffset.UtcNow
         };
-        
+
         // You can also use .AddAsync but awaiting both of these operations seems like overkill
         _settingsContext.Settings.Add(setting);
         await _settingsContext.SaveChangesAsync();
-        
+
         // Actually retrieves the new setting from the table to confirm it's there
         return await GetSetting(request.Id, 1);
     }
@@ -84,7 +87,7 @@ public class MySqlSettingsRepository : ISettingsRepository
 
         return await GetSetting(request.Id, newVersion);
     }
-    
+
     // Not even sure what the use-case is for this other than the user deciding not to use the service anymore
     // Still a good method to have available though, and good for demonstrating that we have full control of the data
     //
@@ -94,7 +97,7 @@ public class MySqlSettingsRepository : ISettingsRepository
         var settings = await GetAllUnconvertedSettingVersions(settingId);
         _settingsContext.Settings.RemoveRange(settings);
         await _settingsContext.SaveChangesAsync();
-        
+
         // Could probably make this void (or with async method just "Task") but would like to show user the
         // contents of what was just deleted
         return settings.Select(_settingsConverter.Convert);
@@ -104,7 +107,7 @@ public class MySqlSettingsRepository : ISettingsRepository
     {
         // Retrieve all settings with id
         var settings = await GetAllUnconvertedSettingVersions(settingId);
-        
+
         // Pull versions off of settings list
         var versions = settings.Select(s => s.Version);
         return versions.Max();

@@ -28,37 +28,47 @@ public class SettingsController : Controller
     // The parameter list includes the [FromRoute] annotations so that it knows to pull these params
     // from the request url
     [HttpGet("settingId/{settingId}/version/{version}")]
-    public async Task<Model.Setting> GetSetting([FromRoute] [Required] string settingId,
-        [FromRoute] [Required] int version)
+    public async Task<Model.Setting> GetSetting(
+        [FromRoute] [Required] string settingId,
+        [FromRoute] [Required] int version
+    )
     {
         return await _settingsRepository.GetSetting(settingId, version);
     }
 
     [HttpGet("settingId/{settingId}")]
-    public async Task<IEnumerable<Model.Setting>> GetAllSettingVersions([FromRoute] [Required] string settingId)
+    public async Task<IEnumerable<Model.Setting>> GetAllSettingVersions(
+        [FromRoute] [Required] string settingId
+    )
     {
         return await _settingsRepository.GetAllSettingVersions(settingId);
     }
-    
+
     // HttpPost for creating new items
     [HttpPost]
     // This method expects a request object provided in the body (see postman for better visual)
     // HttpClient requests would wrap a CreateSettingRequest object into an HttpContent object and send that
-    public async Task<Model.Setting> CreateSetting([FromBody] [Required] CreateSettingRequest request)
+    public async Task<Model.Setting> CreateSetting(
+        [FromBody] [Required] CreateSettingRequest request
+    )
     {
         return await _settingsRepository.CreateSetting(request);
     }
-    
+
     // Generally we'll use HttpPut for updates
     [HttpPut]
-    public async Task<Model.Setting> UpdateSetting([FromBody] [Required] UpdateSettingRequest request)
+    public async Task<Model.Setting> UpdateSetting(
+        [FromBody] [Required] UpdateSettingRequest request
+    )
     {
         return await _settingsRepository.UpdateSetting(request);
     }
-    
+
     // Adding /delete to route to make sure this isn't called accidentally
     [HttpDelete("delete/settingId/{settingId}")]
-    public async Task<IEnumerable<Model.Setting>> DeleteSettings([FromRoute] [Required] string settingId)
+    public async Task<IEnumerable<Model.Setting>> DeleteSettings(
+        [FromRoute] [Required] string settingId
+    )
     {
         return await _settingsRepository.DeleteSetting(settingId);
     }

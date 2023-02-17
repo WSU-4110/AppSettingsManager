@@ -17,7 +17,7 @@ public static class ServiceConfiguration
     /// <param name="services">
     /// This is the same IServiceCollection that is being used in
     /// the program.cs file before calling builder.build()
-    /// 
+    ///
     /// Using the "this" keyword in this parameter list means this method can be called
     /// simply like 'services.AddMySqlStorage(connectionString)'
     /// </param>

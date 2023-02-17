@@ -10,8 +10,9 @@ public class SettingsContext : DbContext
     public SettingsContext(DbContextOptions<SettingsContext> options)
         : base(options) { }
 
-    // This tells EF to create a table of BaseUsers 
+    // This tells EF to create a table of BaseUsers
     public DbSet<BaseUser> BaseUsers => Set<BaseUser>();
+
     // Create a table of Settings
     public DbSet<Setting> Settings => Set<Setting>();
 

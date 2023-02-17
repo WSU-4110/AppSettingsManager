@@ -10,6 +10,7 @@ public class Setting
 {
     [MaxLength(36)]
     public string Id { get; set; }
+
     // A JsonNode allows you to interact with a Json object with additional operations
     // One big advantage of JsonNode is the ability to reference values like a dictionary i.e. var x = JsonNode[key]
     public string Input { get; set; }

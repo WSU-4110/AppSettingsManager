@@ -19,7 +19,7 @@ public class BaseUserBiverter : IBidirectionalConverter<Model.BaseUser, MySqlBas
     {
         return new MySqlBaseUser
         {
-            UserId = source.UserId, 
+            UserId = source.UserId,
             Password = source.Password,
             Settings = source.Settings.Select(_settingConverter.Convert).ToList()
         };
@@ -29,7 +29,7 @@ public class BaseUserBiverter : IBidirectionalConverter<Model.BaseUser, MySqlBas
     {
         return new Model.BaseUser
         {
-            UserId = source.UserId, 
+            UserId = source.UserId,
             Password = source.Password,
             Settings = source.Settings.Select(_settingConverter.Convert).ToList()
         };

@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace AppSettingsManagerApi.Model;
+namespace AppSettingsManagerBff.Model.Api;
 
 public class CreateSettingRequest
 {

@@ -2,7 +2,7 @@ namespace AppSettingsManagerApi.Model;
 
 /// <summary>
 /// This is the BaseUser model that will actually get returned by the API
-/// 
+///
 /// There are limitations on what data types you can store in a database,
 /// so you'll need to convert things to more usable forms
 ///

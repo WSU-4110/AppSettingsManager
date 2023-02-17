@@ -9,7 +9,5 @@ public class Setting
     public int Version { get; set; }
     public bool IsCurrent { get; set; }
     public string CreatedBy { get; set; }
-    public DateTimeOffset LastUpdatedAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
-    public string UpdatedBy { get; set; }
 }
