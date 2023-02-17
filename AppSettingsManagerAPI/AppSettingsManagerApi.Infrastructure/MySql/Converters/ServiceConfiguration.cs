@@ -9,8 +9,10 @@ public static class ServiceConfiguration
     {
         services.AddSingleton<
             IBidirectionalConverter<Model.BaseUser, BaseUser>,
-            BaseUserConverter
+            BaseUserBiverter
         >();
+
+        services.AddSingleton<IBidirectionalConverter<Model.Setting, Setting>, SettingBiverter>();
 
         return services;
     }

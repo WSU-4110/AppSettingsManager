@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql;
 
+/// <summary>
+/// This is just something internal that allows us to create migrations, shouldn't need to change
+/// </summary>
 internal class SettingsContextFactory : IDesignTimeDbContextFactory<SettingsContext>
 {
     public SettingsContext CreateDbContext(string[] args)

@@ -1,4 +1,4 @@
-namespace AppSettingsManagerApi.Domain.Conversion;
+namespace AppSettingsManagerBff.Domain.Converters;
 
 public interface IBidirectionalConverter<TSource, TDestination>
 {
