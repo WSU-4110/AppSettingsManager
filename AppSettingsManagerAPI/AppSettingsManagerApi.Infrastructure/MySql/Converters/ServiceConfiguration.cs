@@ -8,8 +8,8 @@ public static class ServiceConfiguration
     public static IServiceCollection AddConverters(this IServiceCollection services)
     {
         services.AddSingleton<
-            IBidirectionalConverter<Model.BaseUser, BaseUser>,
-            BaseUserConverter
+            IBidirectionalConverter<Model.BaseUser, BaseUser>, 
+            BaseUserBiverter
         >();
 
         return services;

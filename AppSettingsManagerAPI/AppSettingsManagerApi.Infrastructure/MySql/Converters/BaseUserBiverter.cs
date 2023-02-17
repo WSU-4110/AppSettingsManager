@@ -3,7 +3,10 @@ using MySqlBaseUser = AppSettingsManagerApi.Infrastructure.MySql.BaseUser;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql.Converters;
 
-public class BaseUserConverter : IBidirectionalConverter<Model.BaseUser, MySqlBaseUser>
+/// <summary>
+/// It's useful to have some standardized converters for objects that you'll be switching between a lot
+/// </summary>
+public class BaseUserBiverter : IBidirectionalConverter<Model.BaseUser, MySqlBaseUser>
 {
     public MySqlBaseUser Convert(Model.BaseUser input)
     {
