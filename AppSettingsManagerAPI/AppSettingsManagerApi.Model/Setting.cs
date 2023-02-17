@@ -11,4 +11,5 @@ public class Setting
     public string CreatedBy { get; set; }
     public DateTimeOffset LastUpdatedAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+    public string UpdatedBy { get; set; }
 }

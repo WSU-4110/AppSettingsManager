@@ -11,6 +11,11 @@ public static class ServiceConfiguration
             IBidirectionalConverter<Model.BaseUser, BaseUser>, 
             BaseUserBiverter
         >();
+        
+        services.AddSingleton<
+            IBidirectionalConverter<Model.Setting, Setting>, 
+            SettingBiverter
+        >();
 
         return services;
     }

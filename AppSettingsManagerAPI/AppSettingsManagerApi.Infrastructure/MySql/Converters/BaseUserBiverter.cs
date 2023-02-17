@@ -8,13 +8,30 @@ namespace AppSettingsManagerApi.Infrastructure.MySql.Converters;
 /// </summary>
 public class BaseUserBiverter : IBidirectionalConverter<Model.BaseUser, MySqlBaseUser>
 {
-    public MySqlBaseUser Convert(Model.BaseUser input)
+    private readonly IBidirectionalConverter<Model.Setting, Setting> _settingConverter;
+
+    public BaseUserBiverter(IBidirectionalConverter<Model.Setting, Setting> settingConverter)
     {
-        return new MySqlBaseUser { UserId = input.UserId, Password = input.Password };
+        _settingConverter = settingConverter;
     }
 
-    public Model.BaseUser Convert(MySqlBaseUser input)
+    public MySqlBaseUser Convert(Model.BaseUser source)
     {
-        return new Model.BaseUser { UserId = input.UserId, Password = input.Password };
+        return new MySqlBaseUser
+        {
+            UserId = source.UserId, 
+            Password = source.Password,
+            Settings = source.Settings.Select(_settingConverter.Convert).ToList()
+        };
+    }
+
+    public Model.BaseUser Convert(MySqlBaseUser source)
+    {
+        return new Model.BaseUser
+        {
+            UserId = source.UserId, 
+            Password = source.Password,
+            Settings = source.Settings.Select(_settingConverter.Convert).ToList()
+        };
     }
 }
