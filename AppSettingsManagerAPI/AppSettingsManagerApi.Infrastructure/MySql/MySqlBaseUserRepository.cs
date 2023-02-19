@@ -51,7 +51,4 @@ public class MySqlBaseUserRepository : IBaseUserRepository
             return null;
         }
     }
-    public async Task<Model.BaseUser> UpdateSetting()
-    {
-    }
 }

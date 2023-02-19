@@ -10,9 +10,9 @@ services:
       MYSQL_ROOT_PASSWORD: 'password'
       MY_SQL_ROOT_HOST: '%'
     ports:
-      - '3310:3310'
+      - '3306:3306'
     expose:
-      - '3310'
+      - '3306'
     volumes:
       - my-db:/c/Temp
   admin:
