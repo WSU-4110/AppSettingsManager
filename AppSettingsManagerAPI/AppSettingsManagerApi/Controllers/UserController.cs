@@ -20,13 +20,14 @@ public class UserController
     {
         return await _userRepository.GetUser(userId);
     }
-    [HttpPost("userId/{userId}/password/{password}")]
+    [HttpPost("userId/{userId}/password/{password}/email/{email}")]
     public async Task<Model.BaseUser> CreateUser(
         [FromRoute] [Required] string userId,
-        [FromRoute] [Required] string password
+        [FromRoute] [Required] string password,
+        [FromRoute] [Required] string email
     )
     {
-        return await _userRepository.CreateUser(userId, password);
+        return await _userRepository.CreateUser(userId, password, email);
     }
     
     [HttpPut("userId/{userId}/password/{newPassword}")]

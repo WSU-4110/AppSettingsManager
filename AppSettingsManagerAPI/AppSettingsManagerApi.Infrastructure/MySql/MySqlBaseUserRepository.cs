@@ -25,9 +25,9 @@ public class MySqlBaseUserRepository : IBaseUserRepository
         );
     }
 
-    public async Task<Model.BaseUser> CreateUser(string userId, string password)
+    public async Task<Model.BaseUser> CreateUser(string userId, string password, string email)
     {
-        var newUser = new BaseUser { UserId = userId, Password = password };
+        var newUser = new BaseUser { UserId = userId, Password = password, Email = email };
 
         await _settingsContext.BaseUsers.AddAsync(newUser);
 
