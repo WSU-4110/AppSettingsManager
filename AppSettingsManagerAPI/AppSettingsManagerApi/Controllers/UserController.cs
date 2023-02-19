@@ -20,7 +20,6 @@ public class UserController
     {
         return await _userRepository.GetUser(userId);
     }
-
     [HttpPost("userId/{userId}/password/{password}")]
     public async Task<Model.BaseUser> CreateUser(
         [FromRoute] [Required] string userId,
@@ -29,4 +28,12 @@ public class UserController
     {
         return await _userRepository.CreateUser(userId, password);
     }
+
+    // Adding /delete to route to make sure this isn't called accidentally
+    [HttpDelete("delete/userId/{userId}")]
+    public async Task<Model.BaseUser> DeleteUser([FromRoute] [Required] string userId)
+    {
+        return await _userRepository.DeleteUser(userId);
+    }
+
 }

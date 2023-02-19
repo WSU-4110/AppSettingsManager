@@ -37,4 +37,21 @@ public class MySqlBaseUserRepository : IBaseUserRepository
             _settingsContext.BaseUsers.Single(u => u.UserId == userId)
         );
     }
+    public async Task<Model.BaseUser> DeleteUser(string userId)
+    {
+        var user = await _settingsContext.BaseUsers.SingleOrDefaultAsync(u => u.UserId == userId);
+
+        if (user != null)
+        {
+            _settingsContext.BaseUsers.Remove(user);
+            await _settingsContext.SaveChangesAsync();
+            return _baseUserConverter.Convert(user);
+        }
+        else{
+            return null;
+        }
+    }
+    public async Task<Model.BaseUser> UpdateSetting()
+    {
+    }
 }
