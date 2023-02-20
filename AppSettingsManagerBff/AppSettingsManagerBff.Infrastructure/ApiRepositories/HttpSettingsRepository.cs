@@ -48,4 +48,62 @@ public class HttpSettingsRepository : ISettingsRepository
         // "??" means "if null then"
         return setting ?? throw new HttpRequestException();
     }
+
+    public async Task<ApiSetting> GetSetting([FromRoute][Required] string settingId, [FromRoute][Required] int version)
+    {
+        // Send request
+        var response = await _httpClient.GetAsync($"{settingId}/{version}");
+        response.EnsureSuccessStatusCode();
+
+        // Extract response content as json string
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+
+        // Deserialize json string
+        var setting = JsonSerializer.Deserialize<ApiSetting>(jsonResponse, _jsonSerializerOptions);
+
+        // "??" means "if null then"
+        return setting ?? throw new HttpRequestException();
+    }
+
+    public async Task<ApiSetting> UpdateSetting([FromRoute][Required] UpdateSettingRequest request)
+    {
+        // Serialize request object to string
+        var serializedRequest = JsonSerializer.Serialize(request);
+
+        // Wrap request object in StringContent object
+        var content = new StringContent(
+            serializedRequest,
+            System.Text.Encoding.UTF8,
+            "application/json"
+        );
+
+        // Send request
+        var response = await _httpClient.PutAsync($"{request.SettingId}/{request.Version}", content);
+        response.EnsureSuccessStatusCode();
+
+        // Extract response content as json string
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+
+        // Deserialize json string
+        var setting = JsonSerializer.Deserialize<ApiSetting>(jsonResponse, _jsonSerializerOptions);
+
+        // "??" means "if null then"
+        return setting ?? throw new HttpRequestException();
+    }
+
+    public async Task<ApiSetting> DeleteSetting([FromRoute][Required] string settingId)
+    {
+        // Send request
+        var response = await _httpClient.DeleteAsync($"{settingId}");
+        response.EnsureSuccessStatusCode();
+
+        // Extract response content as json string
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+
+        // Deserialize json string
+        var setting = JsonSerializer.Deserialize<ApiSetting>(jsonResponse, _jsonSerializerOptions);
+
+        // "??" means "if null then"
+        return setting ?? throw new HttpRequestException();
+    }
 }
