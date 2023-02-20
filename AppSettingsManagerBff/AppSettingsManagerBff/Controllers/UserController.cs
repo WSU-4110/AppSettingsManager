@@ -13,7 +13,7 @@ public class UserController
 
     public UserController(IUserRepository userRepository)
     {
-        _userRepository = userRepository;
+        _userRepository = userRepository; 
     }
 
     [HttpGet("userId/{userId}")]
