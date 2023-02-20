@@ -78,7 +78,7 @@ public class HttpSettingsRepository : ISettingsRepository
         );
 
         // Send request
-        var response = await _httpClient.PutAsync($"{request.SettingId}/{request.Version}", content);
+        var response = await _httpClient.PutAsync(string.Empty(), content);      
         response.EnsureSuccessStatusCode();
 
         // Extract response content as json string
