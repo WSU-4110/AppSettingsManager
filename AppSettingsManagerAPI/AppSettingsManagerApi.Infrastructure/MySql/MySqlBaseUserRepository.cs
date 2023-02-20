@@ -41,15 +41,9 @@ public class MySqlBaseUserRepository : IBaseUserRepository
     {
         var user = await _settingsContext.BaseUsers.SingleAsync(u => u.UserId == userId);
 
-        if (user != null)
-        {
-            _settingsContext.BaseUsers.Remove(user);
-            await _settingsContext.SaveChangesAsync();
-            return _baseUserConverter.Convert(user);
-        }
-        else{
-            return null;
-        }
+    _settingsContext.BaseUsers.Remove(user);
+    await _settingsContext.SaveChangesAsync();
+    return _baseUserConverter.Convert(user);
     }
     public async Task<Model.BaseUser> UpdateUser(string userId, string newPassword)
     {
