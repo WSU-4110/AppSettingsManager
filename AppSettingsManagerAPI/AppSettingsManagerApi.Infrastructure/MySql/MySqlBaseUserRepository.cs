@@ -47,17 +47,10 @@ public class MySqlBaseUserRepository : IBaseUserRepository
     }
     public async Task<Model.BaseUser> UpdateUser(string userId, string newPassword)
     {
-        var user = await _settingsContext.BaseUsers.SingleOrDefaultAsync(u => u.UserId == userId);
+        var user = await _settingsContext.BaseUsers.SingleAsync(u => u.UserId == userId);
 
-        if (user != null)
-        {
-            user.Password = newPassword;
-            await _settingsContext.SaveChangesAsync();
-            return _baseUserConverter.Convert(user);
-        }
-        else
-        {
-            return null;
-        }
+        user.Password = newPassword;
+        await _settingsContext.SaveChangesAsync();
+        return _baseUserConverter.Convert(user);
     }
 }
