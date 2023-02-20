@@ -43,4 +43,45 @@ public class HttpUserRepository : IUserRepository
         // this is just a way to suppress errors from there being no return value on this method
         throw new NotImplementedException();
     }
+
+    public async Task<ApiBaseUser> UpdateUser([FromRoute][Required] UpdateUserRequest request)
+    {
+        //Serialize request object to string
+        var serializedRequest = JsonSerializer.Serialize(request);
+
+        //Wrap request object in StringContent object
+        var content = new StringContent(serializedRequest, System.Text.Encoding.UTF8, "application/json");
+
+        //Send Request
+        var response = await _httpClient.PutAsync($"{request.userId}/{request.password}", content);
+        response.EnsureSuccessStatusCode();
+
+
+        //Extract response content as a json string
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+
+
+        //Deserialize json string
+        var user = JsonSerializer.Deserialize<ApiBaseUser>(jsonResponse, _jsonSerializerOptions);
+
+
+        return user ?? throw new HttpRequestException();
+    }
+
+public async Task<ApiBaseUser> DeleteUser([FromRoute][Required] string userId)
+{
+
+    //Sending request
+    var response = await _httpClient.DeleteUser($"userId");
+    response.EnsureSuccessStatusCode();
+
+
+    //Extract response content as json string
+    var jsonResponse = await response.Content.ReadAsStringAsync();
+
+
+    //Deserialize json string
+    var user = JsonSerializer.Deserialize<ApiBaseUser>(jsonResponse, _jsonSerializerOptions);
+
+    return user ?? throw new HttpRequestException();
 }
