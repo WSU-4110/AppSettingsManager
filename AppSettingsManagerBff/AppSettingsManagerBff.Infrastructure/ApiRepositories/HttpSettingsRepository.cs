@@ -52,7 +52,7 @@ public class HttpSettingsRepository : ISettingsRepository
     public async Task<ApiSetting> GetSetting([FromRoute][Required] string settingId, [FromRoute][Required] int version)
     {
         // Send request
-        var response = await _httpClient.GetAsync($"{settingId}/{version}");
+        var response = await _httpClient.GetAsync($"settingId/{settingId}/version/{version}");
         response.EnsureSuccessStatusCode();
 
         // Extract response content as json string
