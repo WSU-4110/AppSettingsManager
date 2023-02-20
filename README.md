@@ -1,27 +1,25 @@
-# AppSettingsManagerUi
+# App Settings Manager
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.1.4.
+## Context
+This proposal is focused on making application management more efficient for both the software engineers
+managing applications directly and the companies that depend on those applications. Of course, large changes
+to an application's functionality should be rigorously reviewed and tested before being deployed and possibly
+causing issues in your business's day-to-day operations. However, there are also important but less complicated
+changes to applications that could be as simple as adding a new employee's name to an access list or changing
+how frequently the application refreshes its data. The catch is that, if that setting variable is held in the
+application's main code base, then that change will have to flow through the same pipeline that the complicated
+changes pass through; this means it might be delayed until more complicated changes are tested, approved,
+and deployed.  This can cause headaches for your company's developers and significantly slow down your business.
+If these simple settings lived in some other place and were retrieved when needed, these changes could be
+implemented instantly.
 
-## Development server
+## Tech Stack
+This application can be deployed entirely within Amazon Web Services:
+- Database: RDS-Aurora-MySQL
+- API/BFF Hosting: ECS
+- User Interface: Cloudfront
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+All of these services can accessed using the AWS free-tier which should be sufficient for the scope of this
+project. The API (and possibly BFF) can both be created using C#, .net6, and Entity Framework Core. Using
+Entity Framework core means the database can be managed without having to write almost any actual SQL code.
+A functional UI can be created using Angular, a Typescript framework.
