@@ -35,7 +35,7 @@ public class SettingsController : Controller
     }
 
     [HttpDelete("delete/settingId/{settingId}")]
-    public async Task<IEnumberable<ApiSetting>> DeleteSetting([FromRoute][Required] string settingId)
+    public async Task<IEnumerable<ApiSetting>> DeleteSetting([FromRoute][Required] string settingId)
     {
         return await _settingsRepository.DeleteSetting(settingId);
     }
