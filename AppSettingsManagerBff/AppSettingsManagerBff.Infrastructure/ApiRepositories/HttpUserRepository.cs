@@ -53,7 +53,7 @@ public class HttpUserRepository : IUserRepository
         var content = new StringContent(serializedRequest, System.Text.Encoding.UTF8, "application/json");
 
         //Send Request
-        var response = await _httpClient.PutAsync($"{request.userId}/{request.password}", content);
+        var response = await _httpClient.PutAsync($"userId/{request.userId}/password{request.password}");
         response.EnsureSuccessStatusCode();
 
 
@@ -84,4 +84,5 @@ public async Task<ApiBaseUser> DeleteUser([FromRoute][Required] string userId)
     var user = JsonSerializer.Deserialize<ApiBaseUser>(jsonResponse, _jsonSerializerOptions);
 
     return user ?? throw new HttpRequestException();
+}
 }
