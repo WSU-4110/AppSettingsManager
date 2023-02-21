@@ -49,7 +49,7 @@ public class HttpSettingsRepository : ISettingsRepository
         return setting ?? throw new HttpRequestException();
     }
 
-    public async Task<ApiSetting> GetSetting([FromRoute][Required] string settingId, [FromRoute][Required] int version)
+    public async Task<ApiSetting> GetSetting(string settingId, int version)
     {
         // Send request
         var response = await _httpClient.GetAsync($"settingId/{settingId}/version/{version}");
@@ -65,7 +65,7 @@ public class HttpSettingsRepository : ISettingsRepository
         return setting ?? throw new HttpRequestException();
     }
 
-    public async Task<ApiSetting> UpdateSetting([FromRoute][Required] UpdateSettingRequest request)
+    public async Task<ApiSetting> UpdateSetting(UpdateSettingRequest request)
     {
         // Serialize request object to string
         var serializedRequest = JsonSerializer.Serialize(request);
@@ -78,7 +78,7 @@ public class HttpSettingsRepository : ISettingsRepository
         );
 
         // Send request
-        var response = await _httpClient.PutAsync(string.Empty(), content);      
+        var response = await _httpClient.PutAsync("", content);      
         response.EnsureSuccessStatusCode();
 
         // Extract response content as json string
@@ -91,7 +91,7 @@ public class HttpSettingsRepository : ISettingsRepository
         return setting ?? throw new HttpRequestException();
     }
 
-    public async Task<IEnumberable<ApiSetting>> DeleteSetting([FromRoute][Required] string settingId)
+    public async Task<IEnumerable<ApiSetting>> DeleteSetting(string settingId)
     {
         // Send request
         var response = await _httpClient.DeleteAsync($"settingId/{settingId}");
