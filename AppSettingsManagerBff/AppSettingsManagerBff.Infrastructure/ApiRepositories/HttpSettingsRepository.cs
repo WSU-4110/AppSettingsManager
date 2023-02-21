@@ -94,7 +94,7 @@ public class HttpSettingsRepository : ISettingsRepository
     public async Task<IEnumerable<ApiSetting>> DeleteSetting(string settingId)
     {
         // Send request
-        var response = await _httpClient.DeleteAsync($"settingId/{settingId}");
+        var response = await _httpClient.DeleteAsync($"delete/settingId/{settingId}");
         response.EnsureSuccessStatusCode();
 
         // Extract response content as json string

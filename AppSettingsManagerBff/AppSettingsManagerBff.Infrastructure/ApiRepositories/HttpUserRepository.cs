@@ -75,7 +75,7 @@ public class HttpUserRepository : IUserRepository
     public async Task<ApiBaseUser> DeleteUser(string userId)
     {
         //Sending request
-        var response = await _httpClient.DeleteAsync($"userId/{userId}");
+        var response = await _httpClient.DeleteAsync($"delete/userId/{userId}");
         response.EnsureSuccessStatusCode();
 
         //Extract response content as json string
