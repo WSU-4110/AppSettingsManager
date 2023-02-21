@@ -30,10 +30,6 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
                     b.HasKey("UserId");
 
                     b.ToTable("BaseUsers");

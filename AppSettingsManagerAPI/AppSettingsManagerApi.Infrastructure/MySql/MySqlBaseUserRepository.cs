@@ -27,7 +27,12 @@ public class MySqlBaseUserRepository : IBaseUserRepository
 
     public async Task<Model.BaseUser> CreateUser(string userId, string password, string email)
     {
-        var newUser = new BaseUser { UserId = userId, Password = password, Email = email };
+        var newUser = new BaseUser
+        {
+            UserId = userId,
+            Password = password,
+            Email = email
+        };
 
         await _settingsContext.BaseUsers.AddAsync(newUser);
 
@@ -37,6 +42,7 @@ public class MySqlBaseUserRepository : IBaseUserRepository
             _settingsContext.BaseUsers.Single(u => u.UserId == userId)
         );
     }
+
     public async Task<Model.BaseUser> DeleteUser(string userId)
     {
         var user = await _settingsContext.BaseUsers.SingleAsync(u => u.UserId == userId);
@@ -45,6 +51,7 @@ public class MySqlBaseUserRepository : IBaseUserRepository
         await _settingsContext.SaveChangesAsync();
         return _baseUserConverter.Convert(user);
     }
+
     public async Task<Model.BaseUser> UpdateUser(string userId, string newPassword)
     {
         var user = await _settingsContext.BaseUsers.SingleAsync(u => u.UserId == userId);

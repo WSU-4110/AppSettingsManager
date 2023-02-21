@@ -23,20 +23,28 @@ public class UserController : Controller
         return user;
     }
 
-    [HttpGet("userId/{userId}/password/{password}")]
-    public async Task<ApiBaseUser> CreateUser([FromRoute][Required] string userId, [FromRoute][Required] string password)
+    [HttpPost("userId/{userId}/password/{password}/email/{email}")]
+    public async Task<ApiBaseUser> CreateUser(
+        [FromRoute] [Required] string userId,
+        [FromRoute] [Required] string password,
+        [FromRoute] [Required] string email
+    )
     {
-        return await _userRepository.CreateUser(userId, password);
+        var response = await _userRepository.CreateUser(userId, password, email);
+        return response;
     }
 
-    [HttpPut]
-    public async Task<ApiBaseUser> UpdateUser([FromRoute][Required] UpdateUserRequest request)
+    [HttpPut("userId/{userId}/password/{newPassword}")]
+    public async Task<ApiBaseUser> UpdateUser(
+        [FromRoute] [Required] string userId,
+        [FromRoute] [Required] string newPassword
+    )
     {
-        return await _userRepository.UpdateUser(request);
+        return await _userRepository.UpdateUser(userId, newPassword);
     }
 
     [HttpDelete("delete/userId/{userId}")]
-    public async Task<ApiBaseUser> DeleteUser([FromRoute][Required] string userId)
+    public async Task<ApiBaseUser> DeleteUser([FromRoute] [Required] string userId)
     {
         return await _userRepository.DeleteUser(userId);
     }

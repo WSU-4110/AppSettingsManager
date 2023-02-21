@@ -20,6 +20,7 @@ public class UserController
     {
         return await _userRepository.GetUser(userId);
     }
+
     [HttpPost("userId/{userId}/password/{password}/email/{email}")]
     public async Task<Model.BaseUser> CreateUser(
         [FromRoute] [Required] string userId,
@@ -29,7 +30,7 @@ public class UserController
     {
         return await _userRepository.CreateUser(userId, password, email);
     }
-    
+
     [HttpPut("userId/{userId}/password/{newPassword}")]
     public async Task<Model.BaseUser> UpdateUser(
         [FromRoute] [Required] string userId,
@@ -44,5 +45,4 @@ public class UserController
     {
         return await _userRepository.DeleteUser(userId);
     }
-
 }
