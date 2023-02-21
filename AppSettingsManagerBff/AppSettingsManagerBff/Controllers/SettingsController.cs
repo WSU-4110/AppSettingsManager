@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using AppSettingsManagerBff.Domain.ApiRepositories;
 using AppSettingsManagerBff.Model.Api;
 using Microsoft.AspNetCore.Mvc;
