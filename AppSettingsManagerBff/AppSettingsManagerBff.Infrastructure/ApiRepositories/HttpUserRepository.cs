@@ -38,51 +38,52 @@ public class HttpUserRepository : IUserRepository
         return user ?? throw new HttpRequestException();
     }
 
-    public async Task<ApiBaseUser> CreateUser(string userId, string password)
+    public async Task<ApiBaseUser> CreateUser(string userId, string password, string email)
     {
         // this is just a way to suppress errors from there being no return value on this method
-        throw new NotImplementedException();
-    }
-
-    public async Task<ApiBaseUser> UpdateUser([FromRoute][Required] UpdateUserRequest request)
-    {
-        //Serialize request object to string
-        var serializedRequest = JsonSerializer.Serialize(request);
-
-        //Wrap request object in StringContent object
-        var content = new StringContent(serializedRequest, System.Text.Encoding.UTF8, "application/json");
-
-        //Send Request
-        var response = await _httpClient.PutAsync($"userId/{request.userId}/password{request.password}");
+        var response = await _httpClient.PostAsync(
+            $"userId/{userId}/password/{password}/email/{email}",
+            new StringContent(string.Empty)
+        );
         response.EnsureSuccessStatusCode();
 
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        var user = JsonSerializer.Deserialize<ApiBaseUser>(jsonResponse, _jsonSerializerOptions);
+
+        return user ?? throw new HttpRequestException();
+    }
+
+    public async Task<ApiBaseUser> UpdateUser(string userId, string newPassword)
+    {
+        //Send Request
+        var response = await _httpClient.PutAsync(
+            $"userId/{userId}/password/{newPassword}",
+            new StringContent(string.Empty)
+        );
+
+        response.EnsureSuccessStatusCode();
 
         //Extract response content as a json string
         var jsonResponse = await response.Content.ReadAsStringAsync();
 
-
         //Deserialize json string
         var user = JsonSerializer.Deserialize<ApiBaseUser>(jsonResponse, _jsonSerializerOptions);
- 
- 
+
         return user ?? throw new HttpRequestException();
     }
 
-public async Task<ApiBaseUser> DeleteUser([FromRoute][Required] string userId)
-{
+    public async Task<ApiBaseUser> DeleteUser(string userId)
+    {
+        //Sending request
+        var response = await _httpClient.DeleteAsync($"delete/userId/{userId}");
+        response.EnsureSuccessStatusCode();
 
-    //Sending request
-    var response = await _httpClient.DeleteUser($"userId/{userId}");
-    response.EnsureSuccessStatusCode();
+        //Extract response content as json string
+        var jsonResponse = await response.Content.ReadAsStringAsync();
 
+        //Deserialize json string
+        var user = JsonSerializer.Deserialize<ApiBaseUser>(jsonResponse, _jsonSerializerOptions);
 
-    //Extract response content as json string
-    var jsonResponse = await response.Content.ReadAsStringAsync();
-
-
-    //Deserialize json string
-    var user = JsonSerializer.Deserialize<ApiBaseUser>(jsonResponse, _jsonSerializerOptions);
-
-    return user ?? throw new HttpRequestException();
-}
+        return user ?? throw new HttpRequestException();
+    }
 }

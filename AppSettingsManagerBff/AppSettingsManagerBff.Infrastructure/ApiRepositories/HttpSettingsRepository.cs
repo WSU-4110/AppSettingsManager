@@ -48,4 +48,65 @@ public class HttpSettingsRepository : ISettingsRepository
         // "??" means "if null then"
         return setting ?? throw new HttpRequestException();
     }
+
+    public async Task<ApiSetting> GetSetting(string settingId, int version)
+    {
+        // Send request
+        var response = await _httpClient.GetAsync($"settingId/{settingId}/version/{version}");
+        response.EnsureSuccessStatusCode();
+
+        // Extract response content as json string
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+
+        // Deserialize json string
+        var setting = JsonSerializer.Deserialize<ApiSetting>(jsonResponse, _jsonSerializerOptions);
+
+        // "??" means "if null then"
+        return setting ?? throw new HttpRequestException();
+    }
+
+    public async Task<ApiSetting> UpdateSetting(UpdateSettingRequest request)
+    {
+        // Serialize request object to string
+        var serializedRequest = JsonSerializer.Serialize(request);
+
+        // Wrap request object in StringContent object
+        var content = new StringContent(
+            serializedRequest,
+            System.Text.Encoding.UTF8,
+            "application/json"
+        );
+
+        // Send request
+        var response = await _httpClient.PutAsync("", content);
+        response.EnsureSuccessStatusCode();
+
+        // Extract response content as json string
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+
+        // Deserialize json string
+        var setting = JsonSerializer.Deserialize<ApiSetting>(jsonResponse, _jsonSerializerOptions);
+
+        // "??" means "if null then"
+        return setting ?? throw new HttpRequestException();
+    }
+
+    public async Task<IEnumerable<ApiSetting>> DeleteSetting(string settingId)
+    {
+        // Send request
+        var response = await _httpClient.DeleteAsync($"delete/settingId/{settingId}");
+        response.EnsureSuccessStatusCode();
+
+        // Extract response content as json string
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+
+        // Deserialize json string
+        var setting = JsonSerializer.Deserialize<IEnumerable<ApiSetting>>(
+            jsonResponse,
+            _jsonSerializerOptions
+        );
+
+        // "??" means "if null then"
+        return setting ?? throw new HttpRequestException();
+    }
 }
