@@ -44,16 +44,10 @@ public class HttpUserRepository : IUserRepository
         throw new NotImplementedException();
     }
 
-    public async Task<ApiBaseUser> UpdateUser([FromRoute][Required] UpdateUserRequest request)
+    public async Task<ApiBaseUser> UpdateUser(string userId, string newPassword)
     {
-        //Serialize request object to string
-        var serializedRequest = JsonSerializer.Serialize(request);
-
-        //Wrap request object in StringContent object
-        var content = new StringContent(serializedRequest, System.Text.Encoding.UTF8, "application/json");
-
         //Send Request
-        var response = await _httpClient.PutAsync($"userId/{request.userId}/password{request.password}");
+        var response = await _httpClient.PutAsync($"userId/{userId}/password/{newPassword}", new StringContent(string.Empty));
         response.EnsureSuccessStatusCode();
 
 
@@ -68,11 +62,11 @@ public class HttpUserRepository : IUserRepository
         return user ?? throw new HttpRequestException();
     }
 
-public async Task<ApiBaseUser> DeleteUser([FromRoute][Required] string userId)
+public async Task<ApiBaseUser> DeleteUser(string userId)
 {
 
     //Sending request
-    var response = await _httpClient.DeleteUser($"userId/{userId}");
+    var response = await _httpClient.DeleteAsync($"userId/{userId}");
     response.EnsureSuccessStatusCode();
 
 

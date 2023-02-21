@@ -22,4 +22,8 @@ public class UserController
         var user = await _userRepository.GetUser(userId);
         return user;
     }
+    
+    [HttpPost("userId/{userId}/password/{password}/email/{email}")]
+    public async Task<ApiBaseUser> CreateUser([FromRoute] [Required] string)
+    
 }
