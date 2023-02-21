@@ -52,7 +52,7 @@ public class HttpSettingsRepository : ISettingsRepository
     public async Task<ApiSetting> GetSetting([FromRoute][Required] string settingId, [FromRoute][Required] int version)
     {
         // Send request
-        var response = await _httpClient.GetAsync($"{settingId}/{version}");
+        var response = await _httpClient.GetAsync($"settingId/{settingId}/version/{version}");
         response.EnsureSuccessStatusCode();
 
         // Extract response content as json string
@@ -78,7 +78,7 @@ public class HttpSettingsRepository : ISettingsRepository
         );
 
         // Send request
-        var response = await _httpClient.PutAsync($"{request.SettingId}/{request.Version}", content);
+        var response = await _httpClient.PutAsync(string.Empty(), content);      
         response.EnsureSuccessStatusCode();
 
         // Extract response content as json string
@@ -91,10 +91,10 @@ public class HttpSettingsRepository : ISettingsRepository
         return setting ?? throw new HttpRequestException();
     }
 
-    public async Task<ApiSetting> DeleteSetting([FromRoute][Required] string settingId)
+    public async Task<IEnumberable<ApiSetting>> DeleteSetting([FromRoute][Required] string settingId)
     {
         // Send request
-        var response = await _httpClient.DeleteAsync($"{settingId}");
+        var response = await _httpClient.DeleteAsync($"settingId/{settingId}");
         response.EnsureSuccessStatusCode();
 
         // Extract response content as json string
