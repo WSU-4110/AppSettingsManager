@@ -32,7 +32,7 @@ public class SettingsController : Controller
     }
 
     [HttpPut]
-    public async Task<ApiSetting> UpdateSetting([FromRoute] [Required] UpdateSettingRequest request)
+    public async Task<ApiSetting> UpdateSetting([FromBody] [Required] UpdateSettingRequest request)
     {
         return await _settingsRepository.UpdateSetting(request);
     }
