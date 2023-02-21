@@ -78,6 +78,7 @@ public class HttpSettingsRepository : ISettingsRepository
         );
 
         // Send request
+
         var response = await _httpClient.PutAsync("", content);
         response.EnsureSuccessStatusCode();
 
