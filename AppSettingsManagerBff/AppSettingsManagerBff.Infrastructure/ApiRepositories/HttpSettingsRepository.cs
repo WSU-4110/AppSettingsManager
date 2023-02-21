@@ -91,7 +91,7 @@ public class HttpSettingsRepository : ISettingsRepository
         return setting ?? throw new HttpRequestException();
     }
 
-    public async Task<ApiSetting> DeleteSetting([FromRoute][Required] string settingId)
+    public async Task<IEnumberable<ApiSetting>> DeleteSetting([FromRoute][Required] string settingId)
     {
         // Send request
         var response = await _httpClient.DeleteAsync($"settingId/{settingId}");
