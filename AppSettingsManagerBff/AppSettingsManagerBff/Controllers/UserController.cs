@@ -7,7 +7,7 @@ namespace AppSettingsManagerBff.Controllers;
 
 [ApiController]
 [Route("users")]
-public class UserController
+public class UserController : Controller
 {
     private readonly IUserRepository _userRepository;
 
@@ -22,8 +22,19 @@ public class UserController
         var user = await _userRepository.GetUser(userId);
         return user;
     }
-    
+
     [HttpPost("userId/{userId}/password/{password}/email/{email}")]
     public async Task<ApiBaseUser> CreateUser([FromRoute] [Required] string)
-    
+
+    [HttpPut]
+    public async Task<ApiBaseUser> UpdateUser([FromRoute][Required] UpdateUserRequest request)
+    {
+        return await _userRepository.UpdateUser(request);
+    }
+
+    [HttpDelete("delete/userId/{userId}")]
+    public async Task<ApiBaseUser> DeleteUser([FromRoute][Required] string userId)
+    {
+        return await _userRepository.DeleteUser(userId);
+    }
 }
