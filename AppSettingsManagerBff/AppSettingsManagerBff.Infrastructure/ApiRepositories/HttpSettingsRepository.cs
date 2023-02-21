@@ -101,7 +101,7 @@ public class HttpSettingsRepository : ISettingsRepository
         var jsonResponse = await response.Content.ReadAsStringAsync();
 
         // Deserialize json string
-        var setting = JsonSerializer.Deserialize<ApiSetting>(jsonResponse, _jsonSerializerOptions);
+        var setting = JsonSerializer.Deserialize<IEnumerable<ApiSetting>>(jsonResponse, _jsonSerializerOptions);
 
         // "??" means "if null then"
         return setting ?? throw new HttpRequestException();
