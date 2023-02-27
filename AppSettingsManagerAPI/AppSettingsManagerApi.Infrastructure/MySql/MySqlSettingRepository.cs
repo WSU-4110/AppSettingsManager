@@ -10,10 +10,7 @@ public class MySqlSettingRepository : ISettingRepository
 {
     // Creates SettingsContext object
     private readonly SettingsContext _settingsContext;
-    private readonly IBidirectionalConverter<
-        Model.Setting,
-        Setting
-    > _settingsConverter;
+    private readonly IBidirectionalConverter<Model.Setting, Setting> _settingsConverter;
 
     public MySqlSettingRepository(
         SettingsContext settingsContext,

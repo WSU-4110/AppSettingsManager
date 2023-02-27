@@ -26,9 +26,8 @@ public class SettingsContext : DbContext
     {
         // Declare keys and relationships here
         modelBuilder.Entity<User>().HasKey(u => u.UserId);
-        modelBuilder.Entity<User>().HasMany(u => u.Settings);
 
-        modelBuilder.Entity<SettingGroup>().HasKey(s => s.SettingId);
+        modelBuilder.Entity<SettingGroup>().HasKey(s => s.SettingGroupId);
 
         modelBuilder.Entity<Setting>().HasKey(s => new { Id = s.SettingGroupId, s.Version });
         modelBuilder.Entity<Setting>().HasIndex(s => s.SettingGroupId);
@@ -39,7 +38,10 @@ public class SettingsContext : DbContext
             .WithMany(sg => sg.Settings);
 
         modelBuilder.Entity<Permission>().HasKey(p => new { p.UserId, p.SettingGroupId });
-        modelBuilder.Entity<Permission>().HasOne<User>(p => p.User);
-        modelBuilder.Entity<Permission>().HasOne<SettingGroup>(p => p.SettingGroup);
+        modelBuilder.Entity<Permission>().HasOne<User>(p => p.User).WithMany(u => u.Permissions);
+        modelBuilder
+            .Entity<Permission>()
+            .HasOne<SettingGroup>(p => p.SettingGroup)
+            .WithMany(sg => sg.Permissions);
     }
 }

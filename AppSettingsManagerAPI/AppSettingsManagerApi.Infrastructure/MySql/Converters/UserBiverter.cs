@@ -7,16 +7,11 @@ namespace AppSettingsManagerApi.Infrastructure.MySql.Converters;
 /// </summary>
 public class UserBiverter : IBidirectionalConverter<Model.User, User>
 {
-    private readonly IBidirectionalConverter<
-        Model.Setting,
-        Setting
-    > _settingConverter;
+    private readonly IBidirectionalConverter<Model.Permission, Permission> _permissionsBiverter;
 
-    public UserBiverter(
-        IBidirectionalConverter<Model.Setting, Setting> settingConverter
-    )
+    public UserBiverter(IBidirectionalConverter<Model.Permission, Permission> permissionsBiverter)
     {
-        _settingConverter = settingConverter;
+        _permissionsBiverter = permissionsBiverter;
     }
 
     public User Convert(Model.User source)
@@ -26,9 +21,9 @@ public class UserBiverter : IBidirectionalConverter<Model.User, User>
             UserId = source.UserId,
             Password = source.Password,
             Email = source.Email,
-            Settings =
-                source.Settings?.Select(_settingConverter.Convert).ToList()
-                ?? new List<Setting>()
+            Permissions =
+                source.Permissions?.Select(_permissionsBiverter.Convert).ToList()
+                ?? new List<Permission>()
         };
     }
 
@@ -39,9 +34,9 @@ public class UserBiverter : IBidirectionalConverter<Model.User, User>
             UserId = source.UserId,
             Password = source.Password,
             Email = source.Email,
-            Settings =
-                source.Settings?.Select(_settingConverter.Convert).ToList()
-                ?? new List<Model.Setting>()
+            Permissions =
+                source.Permissions?.Select(_permissionsBiverter.Convert).ToList()
+                ?? new List<Model.Permission>()
         };
     }
 }

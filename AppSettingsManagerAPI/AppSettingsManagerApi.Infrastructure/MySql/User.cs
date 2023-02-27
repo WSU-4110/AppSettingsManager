@@ -16,5 +16,5 @@ public class User
     public string Email { get; set; }
 
     // The User has many Permissions relationship is defined in the SettingsContext.cs file
-    public List<Setting> Settings { get; set; }
+    public List<Permission> Permissions { get; set; }
 }

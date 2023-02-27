@@ -76,30 +76,30 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(36)");
-
                     b.HasKey("SettingGroupId", "Version");
 
                     b.HasIndex("IsCurrent");
 
                     b.HasIndex("SettingGroupId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Settings");
                 });
 
             modelBuilder.Entity("AppSettingsManagerApi.Infrastructure.MySql.SettingGroup", b =>
                 {
-                    b.Property<string>("SettingId")
+                    b.Property<string>("SettingGroupId")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("SettingId");
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
+
+                    b.HasKey("SettingGroupId");
 
                     b.ToTable("SettingGroups");
                 });
@@ -128,13 +128,13 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
             modelBuilder.Entity("AppSettingsManagerApi.Infrastructure.MySql.Permission", b =>
                 {
                     b.HasOne("AppSettingsManagerApi.Infrastructure.MySql.SettingGroup", "SettingGroup")
-                        .WithMany()
+                        .WithMany("Permissions")
                         .HasForeignKey("SettingGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AppSettingsManagerApi.Infrastructure.MySql.User", "User")
-                        .WithMany()
+                        .WithMany("Permissions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -152,21 +152,19 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AppSettingsManagerApi.Infrastructure.MySql.User", null)
-                        .WithMany("Settings")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("SettingGroup");
                 });
 
             modelBuilder.Entity("AppSettingsManagerApi.Infrastructure.MySql.SettingGroup", b =>
                 {
+                    b.Navigation("Permissions");
+
                     b.Navigation("Settings");
                 });
 
             modelBuilder.Entity("AppSettingsManagerApi.Infrastructure.MySql.User", b =>
                 {
-                    b.Navigation("Settings");
+                    b.Navigation("Permissions");
                 });
 #pragma warning restore 612, 618
         }
