@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 
 namespace AppSettingsManagerApi.Model;
 
-public class Setting
+public class SettingVersion
 {
     public string Id { get; set; }
     public JsonNode Input { get; set; }

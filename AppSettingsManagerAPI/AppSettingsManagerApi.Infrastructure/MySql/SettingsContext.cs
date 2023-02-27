@@ -10,20 +10,36 @@ public class SettingsContext : DbContext
     public SettingsContext(DbContextOptions<SettingsContext> options)
         : base(options) { }
 
-    // This tells EF to create a table of BaseUsers
-    public DbSet<BaseUser> BaseUsers => Set<BaseUser>();
+    // This tells EF to create a table of Users
+    public DbSet<User> Users => Set<User>();
 
-    // Create a table of Settings
-    public DbSet<Setting> Settings => Set<Setting>();
+    // Create overarching SettingGroup table
+    public DbSet<SettingGroup> SettingGroups => Set<SettingGroup>();
+
+    // Create a table of Settings Versions
+    public DbSet<SettingVersion> Settings => Set<SettingVersion>();
+
+    // Permissions table
+    public DbSet<Permission> Permissions => Set<Permission>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Declare keys and relationships here
-        modelBuilder.Entity<BaseUser>().HasKey(u => u.UserId);
-        modelBuilder.Entity<BaseUser>().HasMany(u => u.Settings);
+        modelBuilder.Entity<User>().HasKey(u => u.UserId);
+        modelBuilder.Entity<User>().HasMany(u => u.Settings);
 
-        modelBuilder.Entity<Setting>().HasKey(s => new { s.Id, s.Version });
-        modelBuilder.Entity<Setting>().HasIndex(s => s.Id);
-        modelBuilder.Entity<Setting>().HasIndex(s => s.IsCurrent);
+        modelBuilder.Entity<SettingGroup>().HasKey(s => s.SettingId);
+
+        modelBuilder.Entity<SettingVersion>().HasKey(s => new { Id = s.SettingGroupId, s.Version });
+        modelBuilder.Entity<SettingVersion>().HasIndex(s => s.SettingGroupId);
+        modelBuilder.Entity<SettingVersion>().HasIndex(s => s.IsCurrent);
+        modelBuilder
+            .Entity<SettingVersion>()
+            .HasOne<SettingGroup>(sv => sv.SettingGroup)
+            .WithMany(sg => sg.SettingVersions);
+
+        modelBuilder.Entity<Permission>().HasKey(p => new { p.UserId, p.SettingGroupId });
+        modelBuilder.Entity<Permission>().HasOne<User>(p => p.User);
+        modelBuilder.Entity<Permission>().HasOne<SettingGroup>(p => p.SettingGroup);
     }
 }

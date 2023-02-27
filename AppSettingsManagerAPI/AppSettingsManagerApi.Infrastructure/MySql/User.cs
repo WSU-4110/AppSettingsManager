@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql;
 
-public class BaseUser
+public class User
 {
     // These labels are optional but recommended
     // Make sure the limits you set make sense based on the field being affected
@@ -15,6 +15,6 @@ public class BaseUser
     [MaxLength(50)]
     public string Email { get; set; }
 
-    // The BaseUser has many Settings relationship is defined in the SettingsContext.cs file
-    public List<Setting> Settings { get; set; }
+    // The User has many Permissions relationship is defined in the SettingsContext.cs file
+    public List<SettingVersion> Settings { get; set; }
 }

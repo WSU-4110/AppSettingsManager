@@ -1,15 +1,17 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Nodes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql;
 
 /// <summary>
 /// This class contains the settings/variables stored in the database and relevant metadata
 /// </summary>
-public class Setting
+public class SettingVersion
 {
     [MaxLength(36)]
-    public string Id { get; set; }
+    [ForeignKey("SettingGroup")]
+    public string SettingGroupId { get; set; }
+    public SettingGroup SettingGroup { get; set; }
 
     // A JsonNode allows you to interact with a Json object with additional operations
     // One big advantage of JsonNode is the ability to reference values like a dictionary i.e. var x = JsonNode[key]

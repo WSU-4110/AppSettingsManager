@@ -1,21 +1,23 @@
-using System.Collections;
 using System.Text.Json;
 using AppSettingsManagerApi.Domain.Conversion;
 using AppSettingsManagerApi.Domain.MySql;
-using AppSettingsManagerApi.Model;
+using AppSettingsManagerApi.Model.Requests;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql;
 
-public class MySqlSettingsRepository : ISettingsRepository
+public class MySqlSettingRepository : ISettingRepository
 {
     // Creates SettingsContext object
     private readonly SettingsContext _settingsContext;
-    private readonly IBidirectionalConverter<Model.Setting, Setting> _settingsConverter;
+    private readonly IBidirectionalConverter<
+        Model.SettingVersion,
+        SettingVersion
+    > _settingsConverter;
 
-    public MySqlSettingsRepository(
+    public MySqlSettingRepository(
         SettingsContext settingsContext,
-        IBidirectionalConverter<Model.Setting, Setting> settingsConverter
+        IBidirectionalConverter<Model.SettingVersion, SettingVersion> settingsConverter
     )
     {
         // Injects SettingsContext configured in ServiceConfiguration.cs into _settingsContext object
@@ -24,18 +26,18 @@ public class MySqlSettingsRepository : ISettingsRepository
         _settingsConverter = settingsConverter;
     }
 
-    public async Task<Model.Setting> GetSetting(string settingId, int version)
+    public async Task<Model.SettingVersion> GetSetting(string settingId, int version)
     {
         // Call .Single() because there should only be one entry with this id/version
         // and .Single() will return a single object rather than a list
         var setting = await _settingsContext.Settings.SingleAsync(
-            s => s.Id == settingId && s.Version == version
+            s => s.SettingGroupId == settingId && s.Version == version
         );
 
         return _settingsConverter.Convert(setting);
     }
 
-    public async Task<IEnumerable<Model.Setting>> GetAllSettingVersions(string settingId)
+    public async Task<IEnumerable<Model.SettingVersion>> GetAllSettingVersions(string settingId)
     {
         var settings = await GetAllUnconvertedSettingVersions(settingId);
 
@@ -46,11 +48,11 @@ public class MySqlSettingsRepository : ISettingsRepository
         return settings.Select(_settingsConverter.Convert);
     }
 
-    public async Task<Model.Setting> CreateSetting(CreateSettingRequest request)
+    public async Task<Model.SettingVersion> CreateSetting(CreateSettingRequest request)
     {
-        var setting = new Setting
+        var setting = new SettingVersion
         {
-            Id = request.Id,
+            SettingGroupId = request.Id,
             Version = 1,
             Input = JsonSerializer.Serialize(request.Input),
             IsCurrent = false,
@@ -69,12 +71,12 @@ public class MySqlSettingsRepository : ISettingsRepository
     // This method will eventually be more complex. Right now we're not implementing approval process/permissions
     // so this is very similar to just creating a setting. Eventually you'll be able to do an update which creates
     // a new version OR an update which changes an existing version that hasn't been approved/used yet
-    public async Task<Model.Setting> UpdateSetting(UpdateSettingRequest request)
+    public async Task<Model.SettingVersion> UpdateSetting(UpdateSettingRequest request)
     {
         var newVersion = (await GetLatestVersionNumber(request.Id)) + 1;
-        var newSetting = new Setting
+        var newSetting = new SettingVersion
         {
-            Id = request.Id,
+            SettingGroupId = request.Id,
             Version = newVersion,
             Input = JsonSerializer.Serialize(request.Input),
             IsCurrent = false,
@@ -92,7 +94,7 @@ public class MySqlSettingsRepository : ISettingsRepository
     // Still a good method to have available though, and good for demonstrating that we have full control of the data
     //
     // Also assuming for now that we'd only want to delete the full group of settings (all versions)
-    public async Task<IEnumerable<Model.Setting>> DeleteSetting(string settingId)
+    public async Task<IEnumerable<Model.SettingVersion>> DeleteSetting(string settingId)
     {
         var settings = await GetAllUnconvertedSettingVersions(settingId);
         _settingsContext.Settings.RemoveRange(settings);
@@ -115,8 +117,10 @@ public class MySqlSettingsRepository : ISettingsRepository
 
     // Not the biggest deal in this case, but breaking into its own method since this query is repeated more than once
     // Important to take any logic that is repeated more than once and break into its own method
-    private async Task<List<Setting>> GetAllUnconvertedSettingVersions(string settingId)
+    private async Task<List<SettingVersion>> GetAllUnconvertedSettingVersions(string settingId)
     {
-        return await _settingsContext.Settings.Where(s => s.Id == settingId).ToListAsync();
+        return await _settingsContext.Settings
+            .Where(s => s.SettingGroupId == settingId)
+            .ToListAsync();
     }
 }
