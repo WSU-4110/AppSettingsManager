@@ -28,7 +28,7 @@ public class SettingsController : Controller
     // The parameter list includes the [FromRoute] annotations so that it knows to pull these params
     // from the request url
     [HttpGet("settingId/{settingId}/version/{version}")]
-    public async Task<Model.SettingVersion> GetSetting(
+    public async Task<Model.Setting> GetSetting(
         [FromRoute] [Required] string settingId,
         [FromRoute] [Required] int version
     )
@@ -37,7 +37,7 @@ public class SettingsController : Controller
     }
 
     [HttpGet("settingId/{settingId}")]
-    public async Task<IEnumerable<Model.SettingVersion>> GetAllSettingVersions(
+    public async Task<IEnumerable<Model.Setting>> GetAllSettingVersions(
         [FromRoute] [Required] string settingId
     )
     {
@@ -48,7 +48,7 @@ public class SettingsController : Controller
     [HttpPost]
     // This method expects a request object provided in the body (see postman for better visual)
     // HttpClient requests would wrap a CreateSettingRequest object into an HttpContent object and send that
-    public async Task<Model.SettingVersion> CreateSetting(
+    public async Task<Model.Setting> CreateSetting(
         [FromBody] [Required] CreateSettingRequest request
     )
     {
@@ -57,7 +57,7 @@ public class SettingsController : Controller
 
     // Generally we'll use HttpPut for updates
     [HttpPut]
-    public async Task<Model.SettingVersion> UpdateSetting(
+    public async Task<Model.Setting> UpdateSetting(
         [FromBody] [Required] UpdateSettingRequest request
     )
     {
@@ -66,7 +66,7 @@ public class SettingsController : Controller
 
     // Adding /delete to route to make sure this isn't called accidentally
     [HttpDelete("delete/settingId/{settingId}")]
-    public async Task<IEnumerable<Model.SettingVersion>> DeleteSettings(
+    public async Task<IEnumerable<Model.Setting>> DeleteSettings(
         [FromRoute] [Required] string settingId
     )
     {

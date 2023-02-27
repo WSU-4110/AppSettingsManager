@@ -4,5 +4,5 @@ public class SettingGroup
 {
     public string SettingId { get; set; }
     public string CreatedBy { get; set; }
-    public List<SettingVersion> SettingVersions { get; set; }
+    public List<Setting> Settings { get; set; }
 }

@@ -17,7 +17,7 @@ public class SettingsContext : DbContext
     public DbSet<SettingGroup> SettingGroups => Set<SettingGroup>();
 
     // Create a table of Settings Versions
-    public DbSet<SettingVersion> Settings => Set<SettingVersion>();
+    public DbSet<Setting> Settings => Set<Setting>();
 
     // Permissions table
     public DbSet<Permission> Permissions => Set<Permission>();
@@ -30,13 +30,13 @@ public class SettingsContext : DbContext
 
         modelBuilder.Entity<SettingGroup>().HasKey(s => s.SettingId);
 
-        modelBuilder.Entity<SettingVersion>().HasKey(s => new { Id = s.SettingGroupId, s.Version });
-        modelBuilder.Entity<SettingVersion>().HasIndex(s => s.SettingGroupId);
-        modelBuilder.Entity<SettingVersion>().HasIndex(s => s.IsCurrent);
+        modelBuilder.Entity<Setting>().HasKey(s => new { Id = s.SettingGroupId, s.Version });
+        modelBuilder.Entity<Setting>().HasIndex(s => s.SettingGroupId);
+        modelBuilder.Entity<Setting>().HasIndex(s => s.IsCurrent);
         modelBuilder
-            .Entity<SettingVersion>()
+            .Entity<Setting>()
             .HasOne<SettingGroup>(sv => sv.SettingGroup)
-            .WithMany(sg => sg.SettingVersions);
+            .WithMany(sg => sg.Settings);
 
         modelBuilder.Entity<Permission>().HasKey(p => new { p.UserId, p.SettingGroupId });
         modelBuilder.Entity<Permission>().HasOne<User>(p => p.User);

@@ -8,12 +8,12 @@ namespace AppSettingsManagerApi.Infrastructure.MySql.Converters;
 public class UserBiverter : IBidirectionalConverter<Model.User, User>
 {
     private readonly IBidirectionalConverter<
-        Model.SettingVersion,
-        SettingVersion
+        Model.Setting,
+        Setting
     > _settingConverter;
 
     public UserBiverter(
-        IBidirectionalConverter<Model.SettingVersion, SettingVersion> settingConverter
+        IBidirectionalConverter<Model.Setting, Setting> settingConverter
     )
     {
         _settingConverter = settingConverter;
@@ -28,7 +28,7 @@ public class UserBiverter : IBidirectionalConverter<Model.User, User>
             Email = source.Email,
             Settings =
                 source.Settings?.Select(_settingConverter.Convert).ToList()
-                ?? new List<SettingVersion>()
+                ?? new List<Setting>()
         };
     }
 
@@ -41,7 +41,7 @@ public class UserBiverter : IBidirectionalConverter<Model.User, User>
             Email = source.Email,
             Settings =
                 source.Settings?.Select(_settingConverter.Convert).ToList()
-                ?? new List<Model.SettingVersion>()
+                ?? new List<Model.Setting>()
         };
     }
 }

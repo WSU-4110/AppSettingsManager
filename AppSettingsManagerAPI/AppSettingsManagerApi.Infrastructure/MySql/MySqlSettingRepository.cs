@@ -11,13 +11,13 @@ public class MySqlSettingRepository : ISettingRepository
     // Creates SettingsContext object
     private readonly SettingsContext _settingsContext;
     private readonly IBidirectionalConverter<
-        Model.SettingVersion,
-        SettingVersion
+        Model.Setting,
+        Setting
     > _settingsConverter;
 
     public MySqlSettingRepository(
         SettingsContext settingsContext,
-        IBidirectionalConverter<Model.SettingVersion, SettingVersion> settingsConverter
+        IBidirectionalConverter<Model.Setting, Setting> settingsConverter
     )
     {
         // Injects SettingsContext configured in ServiceConfiguration.cs into _settingsContext object
@@ -26,7 +26,7 @@ public class MySqlSettingRepository : ISettingRepository
         _settingsConverter = settingsConverter;
     }
 
-    public async Task<Model.SettingVersion> GetSetting(string settingId, int version)
+    public async Task<Model.Setting> GetSetting(string settingId, int version)
     {
         // Call .Single() because there should only be one entry with this id/version
         // and .Single() will return a single object rather than a list
@@ -37,7 +37,7 @@ public class MySqlSettingRepository : ISettingRepository
         return _settingsConverter.Convert(setting);
     }
 
-    public async Task<IEnumerable<Model.SettingVersion>> GetAllSettingVersions(string settingId)
+    public async Task<IEnumerable<Model.Setting>> GetAllSettingVersions(string settingId)
     {
         var settings = await GetAllUnconvertedSettingVersions(settingId);
 
@@ -48,9 +48,9 @@ public class MySqlSettingRepository : ISettingRepository
         return settings.Select(_settingsConverter.Convert);
     }
 
-    public async Task<Model.SettingVersion> CreateSetting(CreateSettingRequest request)
+    public async Task<Model.Setting> CreateSetting(CreateSettingRequest request)
     {
-        var setting = new SettingVersion
+        var setting = new Setting
         {
             SettingGroupId = request.Id,
             Version = 1,
@@ -71,10 +71,10 @@ public class MySqlSettingRepository : ISettingRepository
     // This method will eventually be more complex. Right now we're not implementing approval process/permissions
     // so this is very similar to just creating a setting. Eventually you'll be able to do an update which creates
     // a new version OR an update which changes an existing version that hasn't been approved/used yet
-    public async Task<Model.SettingVersion> UpdateSetting(UpdateSettingRequest request)
+    public async Task<Model.Setting> UpdateSetting(UpdateSettingRequest request)
     {
         var newVersion = (await GetLatestVersionNumber(request.Id)) + 1;
-        var newSetting = new SettingVersion
+        var newSetting = new Setting
         {
             SettingGroupId = request.Id,
             Version = newVersion,
@@ -94,7 +94,7 @@ public class MySqlSettingRepository : ISettingRepository
     // Still a good method to have available though, and good for demonstrating that we have full control of the data
     //
     // Also assuming for now that we'd only want to delete the full group of settings (all versions)
-    public async Task<IEnumerable<Model.SettingVersion>> DeleteSetting(string settingId)
+    public async Task<IEnumerable<Model.Setting>> DeleteSetting(string settingId)
     {
         var settings = await GetAllUnconvertedSettingVersions(settingId);
         _settingsContext.Settings.RemoveRange(settings);
@@ -117,7 +117,7 @@ public class MySqlSettingRepository : ISettingRepository
 
     // Not the biggest deal in this case, but breaking into its own method since this query is repeated more than once
     // Important to take any logic that is repeated more than once and break into its own method
-    private async Task<List<SettingVersion>> GetAllUnconvertedSettingVersions(string settingId)
+    private async Task<List<Setting>> GetAllUnconvertedSettingVersions(string settingId)
     {
         return await _settingsContext.Settings
             .Where(s => s.SettingGroupId == settingId)

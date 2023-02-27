@@ -4,11 +4,11 @@ using AppSettingsManagerApi.Domain.Conversion;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql.Converters;
 
-public class SettingVersionBiverter : IBidirectionalConverter<Model.SettingVersion, SettingVersion>
+public class SettingBiverter : IBidirectionalConverter<Model.Setting, Setting>
 {
-    public SettingVersion Convert(Model.SettingVersion source)
+    public Setting Convert(Model.Setting source)
     {
-        return new SettingVersion
+        return new Setting
         {
             SettingGroupId = source.Id,
             Input = JsonSerializer.Serialize(source.Input.ToJsonString()),
@@ -19,9 +19,9 @@ public class SettingVersionBiverter : IBidirectionalConverter<Model.SettingVersi
         };
     }
 
-    public Model.SettingVersion Convert(SettingVersion source)
+    public Model.Setting Convert(Setting source)
     {
-        return new Model.SettingVersion
+        return new Model.Setting
         {
             Id = source.SettingGroupId,
             // Can deserialize a string to Json object like this

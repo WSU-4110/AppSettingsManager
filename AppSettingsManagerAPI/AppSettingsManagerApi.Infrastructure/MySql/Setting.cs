@@ -6,7 +6,7 @@ namespace AppSettingsManagerApi.Infrastructure.MySql;
 /// <summary>
 /// This class contains the settings/variables stored in the database and relevant metadata
 /// </summary>
-public class SettingVersion
+public class Setting
 {
     [MaxLength(36)]
     [ForeignKey("SettingGroup")]

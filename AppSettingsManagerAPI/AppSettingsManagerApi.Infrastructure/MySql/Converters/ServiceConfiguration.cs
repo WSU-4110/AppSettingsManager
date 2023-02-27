@@ -13,8 +13,8 @@ public static class ServiceConfiguration
         >();
 
         services.AddSingleton<
-            IBidirectionalConverter<Model.SettingVersion, SettingVersion>,
-            SettingVersionBiverter
+            IBidirectionalConverter<Model.Setting, Setting>,
+            SettingBiverter
         >();
 
         services.AddSingleton<

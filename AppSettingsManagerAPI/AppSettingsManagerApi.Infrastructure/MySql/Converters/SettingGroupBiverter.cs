@@ -5,12 +5,12 @@ namespace AppSettingsManagerApi.Infrastructure.MySql.Converters;
 public class SettingGroupBiverter : IBidirectionalConverter<Model.SettingGroup, SettingGroup>
 {
     private readonly IBidirectionalConverter<
-        Model.SettingVersion,
-        SettingVersion
+        Model.Setting,
+        Setting
     > _settingVersionBiverter;
 
     public SettingGroupBiverter(
-        IBidirectionalConverter<Model.SettingVersion, SettingVersion> settingVersionBiverter
+        IBidirectionalConverter<Model.Setting, Setting> settingVersionBiverter
     )
     {
         _settingVersionBiverter = settingVersionBiverter;
@@ -22,7 +22,7 @@ public class SettingGroupBiverter : IBidirectionalConverter<Model.SettingGroup, 
         {
             SettingId = source.SettingId,
             CreatedBy = source.CreatedBy,
-            SettingVersions = source.SettingVersions
+            Settings = source.Settings
                 .Select(_settingVersionBiverter.Convert)
                 .ToList()
         };
@@ -34,7 +34,7 @@ public class SettingGroupBiverter : IBidirectionalConverter<Model.SettingGroup, 
         {
             SettingId = source.SettingId,
             CreatedBy = source.CreatedBy,
-            SettingVersions = source.SettingVersions.Select(_settingVersionBiverter.Convert)
+            Settings = source.Settings.Select(_settingVersionBiverter.Convert)
         };
     }
 }
