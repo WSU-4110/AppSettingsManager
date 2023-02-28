@@ -29,7 +29,7 @@ public class SettingsContext : DbContext
 
         modelBuilder.Entity<SettingGroup>().HasKey(s => s.SettingGroupId);
 
-        modelBuilder.Entity<Setting>().HasKey(s => new { Id = s.SettingGroupId, s.Version });
+        modelBuilder.Entity<Setting>().HasKey(s => new { s.SettingGroupId, s.Version });
         modelBuilder.Entity<Setting>().HasIndex(s => s.SettingGroupId);
         modelBuilder.Entity<Setting>().HasIndex(s => s.IsCurrent);
         modelBuilder
