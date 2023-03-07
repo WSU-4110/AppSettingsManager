@@ -358,3 +358,8 @@ MigrationBackup/
 *terraform*
 
 *.ds_store*
+
+*.angular*
+
+*AppSettingsManagerUi/dist/*
+

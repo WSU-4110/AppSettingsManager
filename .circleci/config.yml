@@ -10,7 +10,7 @@ jobs:
       - image: microsoft/dotnet:2.2-sdk
     steps:
       - checkout
-      - workdir: /AppSettingsManagerUI
+      - workdir: /AppSettingsManagerApi
       - run:
           name: Restore packages
           command: dotnet restore
@@ -29,6 +29,7 @@ jobs:
       - image: microsoft/dotnet:2.2-sdk
     steps:
       - checkout
+      - workdir: /AppSettingsManagerBff
       - run:
           name: Restore packages
           command: dotnet restore
@@ -47,6 +48,7 @@ jobs:
       - image: node:10.15
     steps:
       - checkout
+      - workdir: /AppSettingsManagerUI
       - run:
           name: Install dependencies
           command: npm install
@@ -70,7 +72,7 @@ jobs:
             $(aws ecr get-login --no-include-email --region $AWS_REGION)
       - run:
           name: Build Docker image
-          command: docker build -t my-dotnet-app-1:$CIRCLE_SHA1 .
+          command: docker build -t my-dotnet-app-1:$CIRCLE_SHA1 ./AppSettingsManagerApi/AppSettingsManagerApi
       - run:
           name: Tag Docker image
           command: docker tag my-dotnet-app-1:$CIRCLE_SHA1 $AWS_ECR_REGISTRY/my-dotnet-app-1:$CIRCLE_SHA1
@@ -89,7 +91,7 @@ jobs:
             $(aws ecr get-login --no-include-email --region $AWS_REGION)
       - run:
           name: Build Docker image
-          command: docker build -t my-dotnet-app-2:$CIRCLE_SHA1 .
+          command: docker build -t my-dotnet-app-2:$CIRCLE_SHA1 ./AppSettingsManagerBff/AppSettingsManagerBff
       - run:
           name: Tag Docker image
           command: docker tag my-dotnet-app-2:$CIRCLE_SHA1 $AWS_ECR_REGISTRY/my-dotnet-app-2:$CIRCLE_SHA1
