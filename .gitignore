@@ -356,3 +356,5 @@ MigrationBackup/
 *.vscode*
 
 *terraform*
+
+*.ds_store*
