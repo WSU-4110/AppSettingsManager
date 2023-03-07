@@ -1,0 +1,137 @@
+version: 2.1
+
+orbs:
+  aws-ecr: circleci/aws-ecr@6.0.0
+  aws-cli: circleci/aws-cli@1.4.1
+
+jobs:
+  build-dotnet-1:
+    docker:
+      - image: microsoft/dotnet:2.2-sdk
+    steps:
+      - checkout
+      - workdir: /AppSettingsManagerApi
+      - run:
+          name: Restore packages
+          command: dotnet restore
+      - run:
+          name: Build application
+          command: dotnet build --configuration Release
+      - run:
+          name: Publish application
+          command: dotnet publish --configuration Release -o ./publish
+      - persist_to_workspace:
+          root: .
+          paths:
+            - publish
+  build-dotnet-2:
+    docker:
+      - image: microsoft/dotnet:2.2-sdk
+    steps:
+      - checkout
+      - workdir: /AppSettingsManagerBff
+      - run:
+          name: Restore packages
+          command: dotnet restore
+      - run:
+          name: Build application
+          command: dotnet build --configuration Release
+      - run:
+          name: Publish application
+          command: dotnet publish --configuration Release -o ./publish
+      - persist_to_workspace:
+          root: .
+          paths:
+            - publish
+  build-angular:
+    docker:
+      - image: node:10.15
+    steps:
+      - checkout
+      - workdir: /AppSettingsManagerUI
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Build application
+          command: npm run build -- --prod
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
+
+  deploy-dotnet-1:
+    docker:
+      - image: circleci/aws-cli:1.4.1
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Login to ECR
+          command: |
+            $(aws ecr get-login --no-include-email --region $AWS_REGION)
+      - run:
+          name: Build Docker image
+          command: docker build -t my-dotnet-app-1:$CIRCLE_SHA1 ./AppSettingsManagerApi/AppSettingsManagerApi
+      - run:
+          name: Tag Docker image
+          command: docker tag my-dotnet-app-1:$CIRCLE_SHA1 $AWS_ECR_REGISTRY/my-dotnet-app-1:$CIRCLE_SHA1
+      - run:
+          name: Push Docker image to ECR
+          command: docker push $AWS_ECR_REGISTRY/my-dotnet-app-1:$CIRCLE_SHA1
+  deploy-dotnet-2:
+    docker:
+      - image: circleci/aws-cli:1.4.1
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Login to ECR
+          command: |
+            $(aws ecr get-login --no-include-email --region $AWS_REGION)
+      - run:
+          name: Build Docker image
+          command: docker build -t my-dotnet-app-2:$CIRCLE_SHA1 ./AppSettingsManagerBff/AppSettingsManagerBff
+      - run:
+          name: Tag Docker image
+          command: docker tag my-dotnet-app-2:$CIRCLE_SHA1 $AWS_ECR_REGISTRY/my-dotnet-app-2:$CIRCLE_SHA1
+      - run:
+          name: Push Docker image to ECR
+          command: docker push $AWS_ECR_REGISTRY/my-dotnet-app-2:$CIRCLE_SHA1
+  deploy-angular:
+    docker:
+      - image: circleci/aws-cli:1.4.1
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Create CloudFront invalidation
+          command: |
+          aws configure set preview.cloudfront true
+          aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build-dotnet-1
+      - build-dotnet-2
+      - build-angular
+      - deploy-dotnet-1:
+          requires:
+            - build-dotnet-1
+          filters:
+            branches:
+              only: master
+      - deploy-dotnet-2:
+          requires:
+            - build-dotnet-2
+          filters:
+            branches:
+              only: master
+      - deploy-angular:
+          requires:
+            - build-angular
+          filters:
+            branches:
+              only: master
