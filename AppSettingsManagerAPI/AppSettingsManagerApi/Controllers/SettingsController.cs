@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using AppSettingsManagerApi.Domain.MySql;
-using AppSettingsManagerApi.Model;
+using AppSettingsManagerApi.Model.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppSettingsManagerApi.Controllers;
@@ -15,11 +15,11 @@ namespace AppSettingsManagerApi.Controllers;
 [Route("settings")]
 public class SettingsController : Controller
 {
-    private readonly ISettingsRepository _settingsRepository;
+    private readonly ISettingRepository _settingRepository;
 
-    public SettingsController(ISettingsRepository settingsRepository)
+    public SettingsController(ISettingRepository settingRepository)
     {
-        _settingsRepository = settingsRepository;
+        _settingRepository = settingRepository;
     }
 
     // The user is expected to include the parameters for this method in the request url
@@ -33,7 +33,7 @@ public class SettingsController : Controller
         [FromRoute] [Required] int version
     )
     {
-        return await _settingsRepository.GetSetting(settingId, version);
+        return await _settingRepository.GetSetting(settingId, version);
     }
 
     [HttpGet("settingId/{settingId}")]
@@ -41,7 +41,7 @@ public class SettingsController : Controller
         [FromRoute] [Required] string settingId
     )
     {
-        return await _settingsRepository.GetAllSettingVersions(settingId);
+        return await _settingRepository.GetAllSettingVersions(settingId);
     }
 
     // HttpPost for creating new items
@@ -52,7 +52,7 @@ public class SettingsController : Controller
         [FromBody] [Required] CreateSettingRequest request
     )
     {
-        return await _settingsRepository.CreateSetting(request);
+        return await _settingRepository.CreateSetting(request);
     }
 
     // Generally we'll use HttpPut for updates
@@ -61,7 +61,7 @@ public class SettingsController : Controller
         [FromBody] [Required] UpdateSettingRequest request
     )
     {
-        return await _settingsRepository.UpdateSetting(request);
+        return await _settingRepository.UpdateSetting(request);
     }
 
     // Adding /delete to route to make sure this isn't called accidentally
@@ -70,6 +70,6 @@ public class SettingsController : Controller
         [FromRoute] [Required] string settingId
     )
     {
-        return await _settingsRepository.DeleteSetting(settingId);
+        return await _settingRepository.DeleteSetting(settingId);
     }
 }

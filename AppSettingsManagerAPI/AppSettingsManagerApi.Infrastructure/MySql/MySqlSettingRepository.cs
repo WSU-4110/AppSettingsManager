@@ -1,19 +1,18 @@
-using System.Collections;
 using System.Text.Json;
 using AppSettingsManagerApi.Domain.Conversion;
 using AppSettingsManagerApi.Domain.MySql;
-using AppSettingsManagerApi.Model;
+using AppSettingsManagerApi.Model.Requests;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql;
 
-public class MySqlSettingsRepository : ISettingsRepository
+public class MySqlSettingRepository : ISettingRepository
 {
     // Creates SettingsContext object
     private readonly SettingsContext _settingsContext;
     private readonly IBidirectionalConverter<Model.Setting, Setting> _settingsConverter;
 
-    public MySqlSettingsRepository(
+    public MySqlSettingRepository(
         SettingsContext settingsContext,
         IBidirectionalConverter<Model.Setting, Setting> settingsConverter
     )
@@ -29,7 +28,7 @@ public class MySqlSettingsRepository : ISettingsRepository
         // Call .Single() because there should only be one entry with this id/version
         // and .Single() will return a single object rather than a list
         var setting = await _settingsContext.Settings.SingleAsync(
-            s => s.Id == settingId && s.Version == version
+            s => s.SettingGroupId == settingId && s.Version == version
         );
 
         return _settingsConverter.Convert(setting);
@@ -50,7 +49,7 @@ public class MySqlSettingsRepository : ISettingsRepository
     {
         var setting = new Setting
         {
-            Id = request.Id,
+            SettingGroupId = request.Id,
             Version = 1,
             Input = JsonSerializer.Serialize(request.Input),
             IsCurrent = false,
@@ -74,7 +73,7 @@ public class MySqlSettingsRepository : ISettingsRepository
         var newVersion = (await GetLatestVersionNumber(request.Id)) + 1;
         var newSetting = new Setting
         {
-            Id = request.Id,
+            SettingGroupId = request.Id,
             Version = newVersion,
             Input = JsonSerializer.Serialize(request.Input),
             IsCurrent = false,
@@ -117,6 +116,8 @@ public class MySqlSettingsRepository : ISettingsRepository
     // Important to take any logic that is repeated more than once and break into its own method
     private async Task<List<Setting>> GetAllUnconvertedSettingVersions(string settingId)
     {
-        return await _settingsContext.Settings.Where(s => s.Id == settingId).ToListAsync();
+        return await _settingsContext.Settings
+            .Where(s => s.SettingGroupId == settingId)
+            .ToListAsync();
     }
 }

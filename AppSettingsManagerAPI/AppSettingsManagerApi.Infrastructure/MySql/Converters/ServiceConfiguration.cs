@@ -7,12 +7,19 @@ public static class ServiceConfiguration
 {
     public static IServiceCollection AddConverters(this IServiceCollection services)
     {
-        services.AddSingleton<
-            IBidirectionalConverter<Model.BaseUser, BaseUser>,
-            BaseUserBiverter
-        >();
+        services.AddSingleton<IBidirectionalConverter<Model.User, User>, UserBiverter>();
 
         services.AddSingleton<IBidirectionalConverter<Model.Setting, Setting>, SettingBiverter>();
+
+        services.AddSingleton<
+            IBidirectionalConverter<Model.SettingGroup, SettingGroup>,
+            SettingGroupBiverter
+        >();
+
+        services.AddSingleton<
+            IBidirectionalConverter<Model.Permission, Permission>,
+            PermissionBiverter
+        >();
 
         return services;
     }

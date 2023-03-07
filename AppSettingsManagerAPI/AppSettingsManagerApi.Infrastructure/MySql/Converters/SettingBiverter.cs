@@ -10,7 +10,7 @@ public class SettingBiverter : IBidirectionalConverter<Model.Setting, Setting>
     {
         return new Setting
         {
-            Id = source.Id,
+            SettingGroupId = source.Id,
             Input = JsonSerializer.Serialize(source.Input.ToJsonString()),
             Version = source.Version,
             IsCurrent = source.IsCurrent,
@@ -23,7 +23,7 @@ public class SettingBiverter : IBidirectionalConverter<Model.Setting, Setting>
     {
         return new Model.Setting
         {
-            Id = source.Id,
+            Id = source.SettingGroupId,
             // Can deserialize a string to Json object like this
             // The '!' tells .net to trust that this won't be null, be careful using this
             Input = JsonSerializer.Deserialize<JsonNode>(source.Input)!,

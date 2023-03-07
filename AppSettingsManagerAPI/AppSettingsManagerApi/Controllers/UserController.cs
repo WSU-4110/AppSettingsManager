@@ -8,21 +8,21 @@ namespace AppSettingsManagerApi.Controllers;
 [Route("users")]
 public class UserController
 {
-    private readonly IBaseUserRepository _userRepository;
+    private readonly IUserRepository _userRepository;
 
-    public UserController(IBaseUserRepository userRepository)
+    public UserController(IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }
 
     [HttpGet("userId/{userId}")]
-    public async Task<Model.BaseUser> GetUser([FromRoute] [Required] string userId)
+    public async Task<Model.User> GetUser([FromRoute] [Required] string userId)
     {
         return await _userRepository.GetUser(userId);
     }
 
     [HttpPost("userId/{userId}/password/{password}/email/{email}")]
-    public async Task<Model.BaseUser> CreateUser(
+    public async Task<Model.User> CreateUser(
         [FromRoute] [Required] string userId,
         [FromRoute] [Required] string password,
         [FromRoute] [Required] string email
@@ -32,7 +32,7 @@ public class UserController
     }
 
     [HttpPut("userId/{userId}/password/{newPassword}")]
-    public async Task<Model.BaseUser> UpdateUser(
+    public async Task<Model.User> UpdateUser(
         [FromRoute] [Required] string userId,
         [FromRoute] [Required] string newPassword
     )
@@ -41,7 +41,7 @@ public class UserController
     }
 
     [HttpDelete("delete/userId/{userId}")]
-    public async Task<Model.BaseUser> DeleteUser([FromRoute] [Required] string userId)
+    public async Task<Model.User> DeleteUser([FromRoute] [Required] string userId)
     {
         return await _userRepository.DeleteUser(userId);
     }

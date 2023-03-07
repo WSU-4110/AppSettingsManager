@@ -10,12 +10,8 @@ ALTER DATABASE CHARACTER SET utf8mb4;
 
 CREATE TABLE `BaseUsers` (
                              `UserId` varchar(36) CHARACTER SET utf8mb4 NOT NULL,
-<<<<<<< HEAD
                              `Password` longtext CHARACTER SET utf8mb4 NOT NULL
-=======
-                             `Password` longtext CHARACTER SET utf8mb4 NOT NULL,
-                             `Email` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
->>>>>>> main
+        
                              CONSTRAINT `PK_BaseUsers` PRIMARY KEY (`UserId`)
 ) CHARACTER SET=utf8mb4;
 

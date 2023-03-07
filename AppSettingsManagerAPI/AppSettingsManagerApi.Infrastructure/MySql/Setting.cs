@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Nodes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql;
 
@@ -9,10 +9,9 @@ namespace AppSettingsManagerApi.Infrastructure.MySql;
 public class Setting
 {
     [MaxLength(36)]
-    public string Id { get; set; }
-
-    // A JsonNode allows you to interact with a Json object with additional operations
-    // One big advantage of JsonNode is the ability to reference values like a dictionary i.e. var x = JsonNode[key]
+    [ForeignKey("SettingGroup")]
+    public string SettingGroupId { get; set; }
+    public SettingGroup SettingGroup { get; set; }
     public string Input { get; set; }
     public int Version { get; set; }
 
