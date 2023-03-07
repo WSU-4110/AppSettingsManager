@@ -354,3 +354,5 @@ MigrationBackup/
 *.dockerignore
 
 *.vscode*
+
+*.ds_store*

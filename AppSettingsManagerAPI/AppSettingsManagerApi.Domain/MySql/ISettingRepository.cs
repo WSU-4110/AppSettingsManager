@@ -1,9 +1,8 @@
-using System.Collections;
-using AppSettingsManagerApi.Model;
+using AppSettingsManagerApi.Model.Requests;
 
 namespace AppSettingsManagerApi.Domain.MySql;
 
-public interface ISettingsRepository
+public interface ISettingRepository
 {
     Task<Model.Setting> GetSetting(string settingId, int version);
     Task<IEnumerable<Model.Setting>> GetAllSettingVersions(string settingId);
