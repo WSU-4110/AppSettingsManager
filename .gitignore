@@ -356,3 +356,7 @@ MigrationBackup/
 *.vscode*
 
 *.ds_store*
+
+*.angular*
+
+*dist/
