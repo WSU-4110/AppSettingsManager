@@ -1,137 +1,245 @@
 version: 2.1
 
-orbs:
-  aws-ecr: circleci/aws-ecr@6.0.0
-  aws-cli: circleci/aws-cli@1.4.1
-
 jobs:
-  build-dotnet-1:
+  build-api:
     docker:
-      - image: microsoft/dotnet:2.2-sdk
+      - image: mcr.microsoft.com/dotnet/sdk:6.0
+    working_directory: ./AppSettingsManagerApi
     steps:
-      - checkout
-      - workdir: /AppSettingsManagerApi
+      - checkout:
+          path: ..
+      - setup_remote_docker:
+          version: 20.10.7
+          docker_layer_caching: true
       - run:
-          name: Restore packages
+          name: Restore NuGet packages
           command: dotnet restore
       - run:
-          name: Build application
+          name: Build
           command: dotnet build --configuration Release
       - run:
-          name: Publish application
-          command: dotnet publish --configuration Release -o ./publish
+          name: Test
+          command: dotnet test --configuration Release
+      - run:
+          name: Publish
+          command: dotnet publish --configuration Release --output ./publish
       - persist_to_workspace:
           root: .
           paths:
             - publish
-  build-dotnet-2:
+  
+  build-bff:
     docker:
-      - image: microsoft/dotnet:2.2-sdk
+      - image: mcr.microsoft.com/dotnet/sdk:6.0
+    working_directory: ./AppSettingsManagerBff
     steps:
-      - checkout
-      - workdir: /AppSettingsManagerBff
+      - checkout:
+          path: ..
+      - setup_remote_docker:
+          version: 20.10.7
+          docker_layer_caching: true
       - run:
-          name: Restore packages
+          name: Restore NuGet packages
           command: dotnet restore
       - run:
-          name: Build application
+          name: Build
           command: dotnet build --configuration Release
       - run:
-          name: Publish application
-          command: dotnet publish --configuration Release -o ./publish
+          name: Test
+          command: dotnet test --configuration Release
+      - run:
+          name: Publish
+          command: dotnet publish --configuration Release --output ./publish
       - persist_to_workspace:
           root: .
           paths:
             - publish
-  build-angular:
-    docker:
-      - image: node:10.15
-    steps:
-      - checkout
-      - workdir: /AppSettingsManagerUI
-      - run:
-          name: Install dependencies
-          command: npm install
-      - run:
-          name: Build application
-          command: npm run build -- --prod
-      - persist_to_workspace:
-          root: .
-          paths:
-            - dist
 
-  deploy-dotnet-1:
+  push-and-deploy-api-test:
     docker:
-      - image: circleci/aws-cli:1.4.1
+      - image: mcr.microsoft.com/dotnet/sdk:6.0
+    environment:
+      AWS_CLI_VERSION: 1.20.0
+    working_directory: ./AppSettingsManagerApi
     steps:
+      - checkout:
+          path: ..
+      - setup_remote_docker:
+          version: 20.10.7
+          docker_layer_caching: true
       - attach_workspace:
           at: .
       - run:
-          name: Login to ECR
+          name: Install AWS CLI
           command: |
-            $(aws ecr get-login --no-include-email --region $AWS_REGION)
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
-          name: Build Docker image
-          command: docker build -t my-dotnet-app-1:$CIRCLE_SHA1 ./AppSettingsManagerApi/AppSettingsManagerApi
+          name: Configure AWS CLI
+          command: |
+            echo $AWS_ACCESS_KEY_ID | aws configure set aws_access_key_id
+            echo $AWS_SECRET_ACCESS_KEY | aws configure set aws_secret_access_key
+            echo $AWS_DEFAULT_REGION | aws configure set default.region
       - run:
-          name: Tag Docker image
-          command: docker tag my-dotnet-app-1:$CIRCLE_SHA1 $AWS_ECR_REGISTRY/my-dotnet-app-1:$CIRCLE_SHA1
+          name: Build and push Docker image
+          command: |
+            export IMAGE_NAME=$AWS_ECR_URL_TEST_API/my-net-app:latest
+            docker build -t $IMAGE_NAME ./publish
+            $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+            docker push $IMAGE_NAME
       - run:
-          name: Push Docker image to ECR
-          command: docker push $AWS_ECR_REGISTRY/my-dotnet-app-1:$CIRCLE_SHA1
-  deploy-dotnet-2:
+          name: Deploy to ECS
+          command: |
+            export TASK_DEF=$(aws ecs describe-task-definition --task-definition my-net-app --query taskDefinition.taskDefinitionArn)
+            aws ecs update-service --cluster my-ecs-cluster --service my-net-app-service --task-definition $TASK_DEF --force-new-deployment
+            
+  push-and-deploy-api-prod:
     docker:
-      - image: circleci/aws-cli:1.4.1
+      - image: mcr.microsoft.com/dotnet/sdk:6.0
+    environment:
+      AWS_CLI_VERSION: 1.20.0
+    working_directory: ./AppSettingsManagerApi
     steps:
+      - checkout:
+          path: ..
+      - setup_remote_docker:
+          version: 20.10.7
+          docker_layer_caching: true
       - attach_workspace:
           at: .
       - run:
-          name: Login to ECR
+          name: Install AWS CLI
           command: |
-            $(aws ecr get-login --no-include-email --region $AWS_REGION)
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
-          name: Build Docker image
-          command: docker build -t my-dotnet-app-2:$CIRCLE_SHA1 ./AppSettingsManagerBff/AppSettingsManagerBff
+          name: Configure AWS CLI
+          command: |
+            echo $AWS_ACCESS_KEY_ID | aws configure set aws_access_key_id
+            echo $AWS_SECRET_ACCESS_KEY | aws configure set aws_secret_access_key
+            echo $AWS_DEFAULT_REGION | aws configure set default.region
       - run:
-          name: Tag Docker image
-          command: docker tag my-dotnet-app-2:$CIRCLE_SHA1 $AWS_ECR_REGISTRY/my-dotnet-app-2:$CIRCLE_SHA1
+          name: Build and push Docker image
+          command: |
+            export IMAGE_NAME=$AWS_ECR_URL_PROD_API/my-net-app:latest
+            docker build -t $IMAGE_NAME ./publish
+            $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+            docker push $IMAGE_NAME
       - run:
-          name: Push Docker image to ECR
-          command: docker push $AWS_ECR_REGISTRY/my-dotnet-app-2:$CIRCLE_SHA1
-  deploy-angular:
+          name: Deploy to ECS
+          command: |
+            export TASK_DEF=$(aws ecs describe-task-definition --task-definition my-net-app --query taskDefinition.taskDefinitionArn)
+            aws ecs update-service --cluster my-ecs-cluster --service my-net-app-service --task-definition $TASK_DEF --force-new-deployment
+
+  push-and-deploy-bff-test:
     docker:
-      - image: circleci/aws-cli:1.4.1
+      - image: mcr.microsoft.com/dotnet/sdk:6.0
+    environment:
+      AWS_CLI_VERSION: 1.20.0
+    working_directory: ./AppSettingsManagerBff
     steps:
+      - checkout:
+          path: ..
+      - setup_remote_docker:
+          version: 20.10.7
+          docker_layer_caching: true
       - attach_workspace:
           at: .
       - run:
-          name: Create CloudFront invalidation
+          name: Install AWS CLI
           command: |
-          aws configure set preview.cloudfront true
-          aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Configure AWS CLI
+          command: |
+            echo $AWS_ACCESS_KEY_ID | aws configure set aws_access_key_id
+            echo $AWS_SECRET_ACCESS_KEY | aws configure set aws_secret_access_key
+            echo $AWS_DEFAULT_REGION | aws configure set default.region
+      - run:
+          name: Build and push Docker image
+          command: |
+            export IMAGE_NAME=$AWS_ECR_URL_TEST_BFF/my-net-app:latest
+            docker build -t $IMAGE_NAME ./publish
+            $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+            docker push $IMAGE_NAME
+      - run:
+          name: Deploy to ECS
+          command: |
+            export TASK_DEF=$(aws ecs describe-task-definition --task-definition my-net-app --query taskDefinition.taskDefinitionArn)
+            aws ecs update-service --cluster my-ecs-cluster --service my-net-app-service --task-definition $TASK_DEF --force-new-deployment
+            
+  push-and-deploy-bff-prod:
+    docker:
+      - image: mcr.microsoft.com/dotnet/sdk:6.0
+    environment:
+      AWS_CLI_VERSION: 1.20.0
+    working_directory: ./AppSettingsManagerBff
+    steps:
+      - checkout:
+          path: ..
+      - setup_remote_docker:
+          version: 20.10.7
+          docker_layer_caching: true
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install AWS CLI
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Configure AWS CLI
+          command: |
+            echo $AWS_ACCESS_KEY_ID | aws configure set aws_access_key_id
+            echo $AWS_SECRET_ACCESS_KEY | aws configure set aws_secret_access_key
+            echo $AWS_DEFAULT_REGION | aws configure set default.region
+      - run:
+          name: Build and push Docker image
+          command: |
+            export IMAGE_NAME=$AWS_ECR_URL_PROD_BFF/my-net-app:latest
+            docker build -t $IMAGE_NAME ./publish
+            $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+            docker push $IMAGE_NAME
+      - run:
+          name: Deploy to ECS
+          command: |
+            export TASK_DEF=$(aws ecs describe-task-definition --task-definition my-net-app --query taskDefinition.taskDefinitionArn)
+            aws ecs update-service --cluster my-ecs-cluster --service my-net-app-service --task-definition $TASK_DEF --force-new-deployment
 
 workflows:
   version: 2
-  build-and-deploy:
+  build-deploy:
     jobs:
-      - build-dotnet-1
-      - build-dotnet-2
-      - build-angular
-      - deploy-dotnet-1:
-          requires:
-            - build-dotnet-1
+      - build-api
+      - approval-for-test:
+          requires: [ build-api ]
+          type: approval
+      - push-and-deploy-api-test:
+          requires: [ approval-for-test ]
+      - approval-for-prod:
+          requires: [ push-and-deploy-api-test ]
+          type: approval
           filters:
             branches:
-              only: master
-      - deploy-dotnet-2:
-          requires:
-            - build-dotnet-2
+              only: main
+      - push-and-deploy-api-prod:
+          requires: [ approval_for_prod ]
+      - build-bff
+      - approval-for-test:
+          requires: [ build-bff ]
+          type: approval
+      - push-and-deploy-bff-test:
+          requires: [ approval-for-test ]
+      - approval-for-prod:
+          requires: [ push-and-deploy-bff-test ]
+          type: approval
           filters:
             branches:
-              only: master
-      - deploy-angular:
-          requires:
-            - build-angular
-          filters:
-            branches:
-              only: master
+              only: main
+      - push-and-deploy-bff-prod:
+          requires: [ approval-for-prod ]
