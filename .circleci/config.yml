@@ -6,7 +6,7 @@ jobs:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
     steps:
       - checkout:
-          path: ..
+          path: ./AppSettingsManagerAPi
       - setup_remote_docker:
           version: 20.10.7
           docker_layer_caching: true
