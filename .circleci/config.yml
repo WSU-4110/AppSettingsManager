@@ -216,30 +216,30 @@ workflows:
   build-deploy:
     jobs:
       - build-api
-      - approval-for-test:
+      - approval-for-test-api:
           requires: [ build-api ]
           type: approval
       - push-and-deploy-api-test:
-          requires: [ approval-for-test ]
-      - approval-for-prod:
+          requires: [ approval-for-test-api ]
+      - approval-for-prod-api:
           requires: [ push-and-deploy-api-test ]
           type: approval
           filters:
             branches:
               only: main
       - push-and-deploy-api-prod:
-          requires: [ approval_for_prod ]
+          requires: [ approval-for-prod-api ]
       - build-bff
-      - approval-for-test:
+      - approval-for-test-bff:
           requires: [ build-bff ]
           type: approval
       - push-and-deploy-bff-test:
-          requires: [ approval-for-test ]
-      - approval-for-prod:
+          requires: [ approval-for-test-bff ]
+      - approval-for-prod-bff:
           requires: [ push-and-deploy-bff-test ]
           type: approval
           filters:
             branches:
               only: main
       - push-and-deploy-bff-prod:
-          requires: [ approval-for-prod ]
+          requires: [ approval-for-prod-bff ]
