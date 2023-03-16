@@ -4,7 +4,7 @@ jobs:
   build-api:
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
-    working_directory: ./AppSettingsManagerApi
+    working_directory: ./AppSettingsManagerApi/AppSettingsManagerApi.sln
     steps:
       - checkout:
           path: ./
