@@ -60,10 +60,10 @@ workflows:
   version: 2
   build-deploy-api:
     jobs:
-      - build-api
-      - approval-for-test-api:
-          requires: [ build-api ]
-          type: approval
+#      - build-api
+#      - approval-for-test-api:
+#          requires: [ build-api ]
+#          type: approval
       - aws-ecr/build-and-push-image:
           requires: [ approval-for-test-api ]
           context: appsettingsmanager-api-test
