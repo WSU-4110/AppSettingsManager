@@ -78,7 +78,7 @@ workflows:
           family: appsettingsmanager-test-api_task_family
           cluster: appsettingsmanager-test-ecs_cluster
           service-name: appsettingsmanager-test-api
-          container-image-name-updates: "container=appsettingsmanager-test-api,tag=latest"
+          container-image-name-updates: "container=appsettingsmanager-test-api-container,tag=latest"
       - approval-for-prod-api:
           requires: [ aws-ecs/deploy-service-update ]
           type: approval
