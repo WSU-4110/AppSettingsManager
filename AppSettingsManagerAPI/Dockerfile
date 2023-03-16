@@ -1,10 +1,10 @@
 # Set the base image for the build stage
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src/AppSettingsManagerApi
+WORKDIR /src
 
 # Copy the .csproj file and restore NuGet packages
-COPY *.csproj ./
-RUN dotnet restore
+COPY *.csproj .
+RUN dotnet restore AppSettingsManagerApi
 
 # Copy the rest of the application source code and build the project
 COPY . ./
