@@ -6,7 +6,14 @@ jobs:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
     working_directory: ~/AppSettingsManagerApi
     steps:
-      - checkout
+      - run:
+          name: Check Directory
+          command: ls
+      - checkout:
+          path: ..
+      - run:
+          name: Directory after checkout
+          command: ls
       - setup_remote_docker:
           version: 20.10.17
           docker_layer_caching: true
