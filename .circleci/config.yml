@@ -10,7 +10,7 @@ jobs:
           name: Check Directory
           command: ls
       - checkout:
-          path: ..
+          path: ~/AppSettingsManagerApi
       - run:
           name: Directory after checkout
           command: ls
