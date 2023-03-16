@@ -24,7 +24,9 @@ variable "desired_tasks" {
 }
 
 resource "aws_vpc" "vpc" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 }
 
 resource "aws_subnet" "subnet" {
@@ -46,9 +48,16 @@ resource "aws_security_group" "ecs_sg" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
-    from_port = 0
-    to_port   = 65535
-    protocol  = "tcp"
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/8"]
+  }
+  egress {
+    from_port   = 0
+    protocol    = "-1"
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -63,6 +72,70 @@ resource "aws_security_group" "rds_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.ecs_sg.id]
   }
+  egress {
+    from_port   = 0
+    protocol    = "-1"
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_route_table" "route_table" {
+  vpc_id = aws_vpc.vpc.id
+}
+
+resource "aws_route_table_association" "table1" {
+  subnet_id      = aws_subnet.subnet.id
+  route_table_id = aws_route_table.route_table.id
+}
+
+resource "aws_route_table_association" "table2" {
+  subnet_id      = aws_subnet.subnet2.id
+  route_table_id = aws_route_table.route_table.id
+}
+
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id            = aws_vpc.vpc.id
+  service_name      = "com.amazonaws.us-east-2.ecr.dkr"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [aws_security_group.ecs_sg.id]
+  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id            = aws_vpc.vpc.id
+  service_name      = "com.amazonaws.us-east-2.ecr.api"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [aws_security_group.ecs_sg.id]
+  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "logs" {
+  vpc_id            = aws_vpc.vpc.id
+  service_name      = "com.amazonaws.us-east-2.logs"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [aws_security_group.ecs_sg.id]
+  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "ssm" {
+  vpc_id            = aws_vpc.vpc.id
+  service_name      = "com.amazonaws.us-east-2.ssm"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [aws_security_group.ecs_sg.id]
+  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+
+  private_dns_enabled = true
 }
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
