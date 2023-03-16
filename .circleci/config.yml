@@ -59,14 +59,14 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.7
+          version: 20.10.17
           docker_layer_caching: true
       - attach_workspace:
           at: .
       - run:
           name: Install AWS CLI
           command: |
-            sudo apt-get update && sudo apt-get install -y unzip
+            apt-get update && sudo apt-get install -y unzip
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
