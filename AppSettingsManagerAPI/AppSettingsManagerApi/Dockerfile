@@ -6,7 +6,7 @@ WORKDIR /src
 RUN ls -la
 COPY ./AppSettingsManagerAPI ./
 RUN ls -la
-RUN dotnet restore AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj
+RUN dotnet restore AppSettingsManagerApi/AppSettingsManagerApi.csproj
 
 # Copy the rest of the application source code and build the project
 RUN ls -la
