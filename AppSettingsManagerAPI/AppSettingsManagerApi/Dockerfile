@@ -1,21 +1,28 @@
-# Start with the .NET 6 SDK image
+# Set the base image for the build stage
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
 
-# Set the working directory to /app
-WORKDIR /app
-
-# Copy the project file and restore dependencies
-COPY *.csproj .
+# Copy the .csproj file and restore NuGet packages
+COPY *.csproj ./
 RUN dotnet restore
 
-# Copy the rest of the application code and build the application
-COPY . .
-RUN dotnet publish -c Release -o out
+# Copy the rest of the application source code and build the project
+COPY . ./
+RUN dotnet build --configuration Release --no-restore -o /app/build
 
-# Start with a clean image and copy only the published application files
+# Publish the application
+FROM build AS publish
+RUN dotnet publish --configuration Release --no-build -o /app/publish
+
+# Set the base image for the final runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
 WORKDIR /app
-COPY --from=build /app/out .
 
-# Start the application
-ENTRYPOINT ["dotnet", "MyApplication.dll"]
+# Copy the published files from the publish stage
+COPY --from=publish /app/publish .
+
+# Expose the application port
+EXPOSE 80
+
+# Set the entry point for the container
+ENTRYPOINT ["dotnet", "AppSettingsManagerApi.dll"]

@@ -1,5 +1,9 @@
 version: 2.1
 
+orbs:
+  aws-ecr: circleci/aws-ecr@8.2.1
+  aws-ecs: circleci/aws-ecs@3.2.0
+
 jobs:
   build-api:
     docker:
@@ -50,162 +54,46 @@ jobs:
           root: .
           paths:
             - publish
+              
+  build-and-push-image:
+    aws-ecr/build-and-push-image:
+      context: $CONTEXT
+      repo: $ECR_NAME
+      tag: latest
+      path: $PUBLISH_PATH
+      
+  build-and-push-api-test:
+    environment:
+      CONTEXT: appsettingsmanager-api-test
+      ECR_NAME: 'appsettingsmanager-test-api'
+      PUBLISH_PATH: AppSettingsManagerApi/AppSettingsManagerApi/publish
+    steps:
+      - build-and-push-image
 
-  push-and-deploy-api-test:
-    docker:
-      - image: mcr.microsoft.com/dotnet/sdk:6.0
+  build-and-push-api-prod:
     environment:
-      AWS_CLI_VERSION: 1.20.0
+      CONTEXT: appsettingsmanager-api-prod
+      ECR_NAME: 'appsettingsmanager-prod-api'
+      PUBLISH_PATH: AppSettingsManagerApi/AppSettingsManagerApi/publish
     steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.17
-          docker_layer_caching: true
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install AWS CLI
-          command: |
-            apt-get update && apt-get install -y unzip
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Configure AWS CLI
-          command: |
-            echo $AWS_ACCESS_KEY_ID | aws configure set aws_access_key_id
-            echo $AWS_SECRET_ACCESS_KEY | aws configure set aws_secret_access_key
-            echo $AWS_DEFAULT_REGION | aws configure set default.region
-      - run:
-          name: Build and push Docker image
-          command: |
-            export IMAGE_NAME=$AWS_ECR_URL_TEST_API/my-net-app:latest
-            docker build -t $IMAGE_NAME ./publish
-            $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-            docker push $IMAGE_NAME
-      - run:
-          name: Deploy to ECS
-          command: |
-            export TASK_DEF=$(aws ecs describe-task-definition --task-definition my-net-app --query taskDefinition.taskDefinitionArn)
-            aws ecs update-service --cluster my-ecs-cluster --service my-net-app-service --task-definition $TASK_DEF --force-new-deployment
-            
-  push-and-deploy-api-prod:
-    docker:
-      - image: mcr.microsoft.com/dotnet/sdk:6.0
+      - build-and-push-image
+  
+  build-and-push-bff-test:
     environment:
-      AWS_CLI_VERSION: 1.20.0
-    working_directory: ./AppSettingsManagerApi
+      CONTEXT: appsettingsmanager-bff-test
+      ECR_NAME: 'appsettingsmanager-test-bff'
+      PUBLISH_PATH: AppSettingsManagerBff/AppSettingsManagerBff/publish
     steps:
-      - checkout:
-          path: ..
-      - setup_remote_docker:
-          version: 20.10.7
-          docker_layer_caching: true
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install AWS CLI
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Configure AWS CLI
-          command: |
-            echo $AWS_ACCESS_KEY_ID | aws configure set aws_access_key_id
-            echo $AWS_SECRET_ACCESS_KEY | aws configure set aws_secret_access_key
-            echo $AWS_DEFAULT_REGION | aws configure set default.region
-      - run:
-          name: Build and push Docker image
-          command: |
-            export IMAGE_NAME=$AWS_ECR_URL_PROD_API/my-net-app:latest
-            docker build -t $IMAGE_NAME ./publish
-            $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-            docker push $IMAGE_NAME
-      - run:
-          name: Deploy to ECS
-          command: |
-            export TASK_DEF=$(aws ecs describe-task-definition --task-definition my-net-app --query taskDefinition.taskDefinitionArn)
-            aws ecs update-service --cluster my-ecs-cluster --service my-net-app-service --task-definition $TASK_DEF --force-new-deployment
+      - build-and-push-image
 
-  push-and-deploy-bff-test:
-    docker:
-      - image: mcr.microsoft.com/dotnet/sdk:6.0
+  build-and-push-bff-prod:
     environment:
-      AWS_CLI_VERSION: 1.20.0
-    working_directory: ./AppSettingsManagerBff
+      CONTEXT: appsettingsmanager-bff-prod
+      ECR_NAME: 'appsettingsmanager-prod-bff'
+      PUBLISH_PATH: AppSettingsManagerBff/AppSettingsManagerBff/publish
     steps:
-      - checkout:
-          path: ..
-      - setup_remote_docker:
-          version: 20.10.7
-          docker_layer_caching: true
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install AWS CLI
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Configure AWS CLI
-          command: |
-            echo $AWS_ACCESS_KEY_ID | aws configure set aws_access_key_id
-            echo $AWS_SECRET_ACCESS_KEY | aws configure set aws_secret_access_key
-            echo $AWS_DEFAULT_REGION | aws configure set default.region
-      - run:
-          name: Build and push Docker image
-          command: |
-            export IMAGE_NAME=$AWS_ECR_URL_TEST_BFF/my-net-app:latest
-            docker build -t $IMAGE_NAME ./publish
-            $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-            docker push $IMAGE_NAME
-      - run:
-          name: Deploy to ECS
-          command: |
-            export TASK_DEF=$(aws ecs describe-task-definition --task-definition my-net-app --query taskDefinition.taskDefinitionArn)
-            aws ecs update-service --cluster my-ecs-cluster --service my-net-app-service --task-definition $TASK_DEF --force-new-deployment
-            
-  push-and-deploy-bff-prod:
-    docker:
-      - image: mcr.microsoft.com/dotnet/sdk:6.0
-    environment:
-      AWS_CLI_VERSION: 1.20.0
-    working_directory: ./AppSettingsManagerBff
-    steps:
-      - checkout:
-          path: ..
-      - setup_remote_docker:
-          version: 20.10.7
-          docker_layer_caching: true
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install AWS CLI
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-$AWS_CLI_VERSION.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Configure AWS CLI
-          command: |
-            echo $AWS_ACCESS_KEY_ID | aws configure set aws_access_key_id
-            echo $AWS_SECRET_ACCESS_KEY | aws configure set aws_secret_access_key
-            echo $AWS_DEFAULT_REGION | aws configure set default.region
-      - run:
-          name: Build and push Docker image
-          command: |
-            export IMAGE_NAME=$AWS_ECR_URL_PROD_BFF/my-net-app:latest
-            docker build -t $IMAGE_NAME ./publish
-            $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-            docker push $IMAGE_NAME
-      - run:
-          name: Deploy to ECS
-          command: |
-            export TASK_DEF=$(aws ecs describe-task-definition --task-definition my-net-app --query taskDefinition.taskDefinitionArn)
-            aws ecs update-service --cluster my-ecs-cluster --service my-net-app-service --task-definition $TASK_DEF --force-new-deployment
-
+      - build-and-push-image
+  
 workflows:
   version: 2
   build-deploy-api:
@@ -214,8 +102,15 @@ workflows:
       - approval-for-test-api:
           requires: [ build-api ]
           type: approval
-      - push-and-deploy-api-test:
+      - aws-ecr/build-and-push-image:
           requires: [ approval-for-test-api ]
+          context: asm-aws-context-api-test
+          repo: my-net-app
+          tag: latest
+          path: AppSettingsManagerApi/publish
+          filters:
+            branches:
+              only: main
       - approval-for-prod-api:
           requires: [ push-and-deploy-api-test ]
           type: approval
