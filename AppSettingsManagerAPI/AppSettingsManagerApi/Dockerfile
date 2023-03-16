@@ -7,7 +7,9 @@ WORKDIR /src
 #RUN dotnet restore
 
 # Copy the rest of the application source code and build the project
+RUN ls -ls
 COPY . .
+RUN ls -la
 RUN dotnet build --configuration Release --no-restore -o /app/build
 
 # Publish the application
