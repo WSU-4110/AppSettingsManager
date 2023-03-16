@@ -55,44 +55,6 @@ jobs:
           paths:
             - publish
               
-  build-and-push-image:
-    aws-ecr/build-and-push-image:
-      context: $CONTEXT
-      repo: $ECR_NAME
-      tag: latest
-      path: $PUBLISH_PATH
-      
-  build-and-push-api-test:
-    environment:
-      CONTEXT: appsettingsmanager-api-test
-      ECR_NAME: 'appsettingsmanager-test-api'
-      PUBLISH_PATH: AppSettingsManagerApi/AppSettingsManagerApi/publish
-    steps:
-      - build-and-push-image
-
-  build-and-push-api-prod:
-    environment:
-      CONTEXT: appsettingsmanager-api-prod
-      ECR_NAME: 'appsettingsmanager-prod-api'
-      PUBLISH_PATH: AppSettingsManagerApi/AppSettingsManagerApi/publish
-    steps:
-      - build-and-push-image
-  
-  build-and-push-bff-test:
-    environment:
-      CONTEXT: appsettingsmanager-bff-test
-      ECR_NAME: 'appsettingsmanager-test-bff'
-      PUBLISH_PATH: AppSettingsManagerBff/AppSettingsManagerBff/publish
-    steps:
-      - build-and-push-image
-
-  build-and-push-bff-prod:
-    environment:
-      CONTEXT: appsettingsmanager-bff-prod
-      ECR_NAME: 'appsettingsmanager-prod-bff'
-      PUBLISH_PATH: AppSettingsManagerBff/AppSettingsManagerBff/publish
-    steps:
-      - build-and-push-image
   
 workflows:
   version: 2
@@ -102,8 +64,13 @@ workflows:
       - approval-for-test-api:
           requires: [ build-api ]
           type: approval
-      - build-and-push-api-test:
-          requires: [ approval-for-test-api ]
+      - aws-ecr/build-and-push-image-api-test:
+          requires:
+            - build
+          context: appsettingsmanager-api-test
+          repo: appsettingsmanager-test-api
+          tag: latest
+          path: AppSettingsManagerAPI/AppSettingsManagerApi/publish
       - approval-for-prod-api:
           requires: [ build-and-push-api-test ]
           type: approval
@@ -113,19 +80,3 @@ workflows:
       - build-and-push-api-prod:
           requires: [ approval-for-prod-api ]
           
-  build-deploy-bff:
-    jobs:
-      - build-bff
-      - approval-for-test-bff:
-          requires: [ build-bff ]
-          type: approval
-      - build-and-push-bff-test:
-          requires: [ approval-for-test-bff ]
-      - approval-for-prod-bff:
-          requires: [ build-and-push-bff-test ]
-          type: approval
-          filters:
-            branches:
-              only: main
-      - build-and-push-bff-prod:
-          requires: [ approval-for-prod-bff ]
