@@ -6,9 +6,6 @@ jobs:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
     steps:
       - checkout
-      - run:
-          name: Directory after checkout
-          command: ls
       - setup_remote_docker:
           version: 20.10.17
           docker_layer_caching: true
@@ -32,25 +29,23 @@ jobs:
   build-bff:
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
-    working_directory: ./AppSettingsManagerBff
     steps:
-      - checkout:
-          path: ..
+      - checkout
       - setup_remote_docker:
           version: 20.10.17
           docker_layer_caching: true
       - run:
           name: Restore NuGet packages
-          command: dotnet restore
+          command: dotnet restore AppSettingsManagerBff/AppSettingsManagerBff/AppSettingsManagerBff.csproj
       - run:
           name: Build
-          command: dotnet build --configuration Release
+          command: dotnet build --configuration Release AppSettingsManagerBff/AppSettingsManagerBff/AppSettingsManagerBff.csproj
       - run:
           name: Test
-          command: dotnet test --configuration Release
+          command: dotnet test --configuration Release AppSettingsManagerBff/AppSettingsManagerBff/AppSettingsManagerBff.csproj
       - run:
           name: Publish
-          command: dotnet publish --configuration Release --output ./publish
+          command: dotnet publish --configuration Release --output ./publish AppSettingsManagerBff/AppSettingsManagerBff/AppSettingsManagerBff.csproj
       - persist_to_workspace:
           root: .
           paths:
@@ -61,7 +56,6 @@ jobs:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
     environment:
       AWS_CLI_VERSION: 1.20.0
-    working_directory: ./AppSettingsManagerApi
     steps:
       - checkout:
           path: ..
@@ -214,7 +208,7 @@ jobs:
 
 workflows:
   version: 2
-  build-deploy:
+  build-deploy-api:
     jobs:
       - build-api
       - approval-for-test-api:
@@ -230,6 +224,9 @@ workflows:
               only: main
       - push-and-deploy-api-prod:
           requires: [ approval-for-prod-api ]
+          
+  build-deploy-bff:
+    jobs:
       - build-bff
       - approval-for-test-bff:
           requires: [ build-bff ]
