@@ -17,13 +17,13 @@ jobs:
           command: dotnet restore AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj
       - run:
           name: Build
-          command: dotnet build --configuration Release
+          command: dotnet build --configuration Release AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj
       - run:
           name: Test
-          command: dotnet test --configuration Release
+          command: dotnet test --configuration Release AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj
       - run:
           name: Publish
-          command: dotnet publish --configuration Release --output ./publish
+          command: dotnet publish --configuration Release --output ./publish AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj 
       - persist_to_workspace:
           root: .
           paths:
