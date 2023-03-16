@@ -64,19 +64,19 @@ workflows:
       - approval-for-test-api:
           requires: [ build-api ]
           type: approval
-      - aws-ecr/build-and-push-image-api-test:
+      - aws-ecr/build-and-push-image:
           requires:
             - build
           context: appsettingsmanager-api-test
           repo: appsettingsmanager-test-api
           tag: latest
           path: AppSettingsManagerAPI/AppSettingsManagerApi/publish
-      - approval-for-prod-api:
-          requires: [ build-and-push-api-test ]
-          type: approval
-          filters:
-            branches:
-              only: main
-      - build-and-push-api-prod:
-          requires: [ approval-for-prod-api ]
+#      - approval-for-prod-api:
+#          requires: [ build-and-push-api-test ]
+#          type: approval
+#          filters:
+#            branches:
+#              only: main
+#      - build-and-push-api-prod:
+#          requires: [ approval-for-prod-api ]
           
