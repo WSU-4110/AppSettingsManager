@@ -10,7 +10,7 @@ jobs:
           path: AppSettingsManagerApi
       - run:
           name: Directory after checkout
-          command: ls AppSettingsManagerApi
+          command: ls AppSettingsManagerAPI
       - setup_remote_docker:
           version: 20.10.17
           docker_layer_caching: true
