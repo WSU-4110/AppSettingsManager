@@ -10,11 +10,8 @@ RUN dotnet restore AppSettingsManagerApi/AppSettingsManagerApi.csproj
 
 # Copy the rest of the application source code and build the project
 RUN ls -la
-COPY . .
-RUN ls -la
-RUN ls AppSettingsManagerAPI -la
-RUN ls AppSettingsManagerAPI/AppSettingsManagerApi.Infrastructure -la
-RUN dotnet build ./AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj --configuration Release --no-restore -o /app/build
+RUN ls AppSettingsManagerApi.Infrastructure -la
+RUN dotnet build ./AppSettingsManagerApi/AppSettingsManagerApi.csproj --configuration Release --no-restore -o /app/build
 
 # Publish the application
 FROM build AS publish
