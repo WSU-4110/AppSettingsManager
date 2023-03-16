@@ -1,13 +1,13 @@
 # Set the base image for the build stage
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
 # Copy the .csproj file and restore NuGet packages
-COPY *.csproj .
+COPY src/*.csproj .
 RUN dotnet restore
 
 # Copy the rest of the application source code and build the project
-COPY . ./
+COPY src .
 RUN dotnet build --configuration Release --no-restore -o /app/build
 
 # Publish the application
