@@ -15,14 +15,14 @@ resource "aws_vpc" "vpc" {
 }
 
 resource "aws_subnet" "subnet" {
-  cidr_block = "10.0.1.0/24"
-  vpc_id     = aws_vpc.vpc.id
+  cidr_block        = "10.0.1.0/24"
+  vpc_id            = aws_vpc.vpc.id
   availability_zone = "us-east-2a"
 }
 
 resource "aws_subnet" "subnet2" {
-  cidr_block = "10.0.2.0/24"
-  vpc_id     = aws_vpc.vpc.id
+  cidr_block        = "10.0.2.0/24"
+  vpc_id            = aws_vpc.vpc.id
   availability_zone = "us-east-2b" # Make sure to use a different AZ than the first subnet
 }
 
@@ -117,21 +117,28 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_policy_attachment" {
   role       = aws_iam_role.ecs_execution_role.name
 }
 
-resource "aws_iam_role" "ecs_task_role" {
+resource "aws_iam_policy" "ecs_task_policy" {
   name = "${local.application_name}-ecs_task_role"
 
-  assume_role_policy = jsonencode({
+  policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
+        Action   = ["ecr:GetAuthorizationToken", "ecr:BatchCheckLayerAvailability", "ecr:GetDownloadUrlForLayer", "ecr:BatchGetImage"]
+        Effect   = "Allow"
+        Resource = "*"
       }
     ]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_policy_attachment" {
+  policy_arn = aws_iam_policy.ecs_task_policy.arn
+  role       = aws_iam_role.ecs_execution_role.name
+}
+
+resource "aws_cloudwatch_log_group" "api" {
+  name = "/ecs/${local.api_name}"
 }
 
 resource "aws_ecs_task_definition" "api_task" {
@@ -141,7 +148,6 @@ resource "aws_ecs_task_definition" "api_task" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
-  task_role_arn            = aws_iam_role.ecs_task_role.arn
 
   container_definitions = jsonencode([
     {
@@ -153,8 +159,21 @@ resource "aws_ecs_task_definition" "api_task" {
           hostPort      = 80
         }
       ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.api.name
+          "awslogs-region"        = "us-east-2"
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
     }
   ])
+}
+
+resource "aws_cloudwatch_log_group" "bff" {
+  name = "/ecs/${local.bff_name}"
 }
 
 resource "aws_ecs_task_definition" "bff_task" {
@@ -164,7 +183,6 @@ resource "aws_ecs_task_definition" "bff_task" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
-  task_role_arn            = aws_iam_role.ecs_task_role.arn
 
   container_definitions = jsonencode([
     {
@@ -176,6 +194,15 @@ resource "aws_ecs_task_definition" "bff_task" {
           hostPort      = 80
         }
       ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.bff.name
+          "awslogs-region"        = "us-east-2"
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
     }
   ])
 }
@@ -194,6 +221,29 @@ resource "aws_ecs_service" "api" {
   }
 }
 
+resource "aws_appautoscaling_target" "api" {
+  max_capacity       = 1
+  min_capacity       = 1
+  resource_id        = "service/${aws_ecs_cluster.cluster.name}/${aws_ecs_service.api.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
+
+resource "aws_appautoscaling_policy" "api" {
+  name               = local.api_name
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.api.resource_id
+  scalable_dimension = aws_appautoscaling_target.api.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.api.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    target_value = 50.0
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+  }
+}
+
 resource "aws_ecs_service" "bff" {
   name            = local.bff_name
   cluster         = aws_ecs_cluster.cluster.id
@@ -205,6 +255,29 @@ resource "aws_ecs_service" "bff" {
     subnets          = [aws_subnet.subnet.id]
     security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = true
+  }
+}
+
+resource "aws_appautoscaling_target" "bff" {
+  max_capacity       = 1
+  min_capacity       = 1
+  resource_id        = "service/${aws_ecs_cluster.cluster.name}/${aws_ecs_service.bff.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
+
+resource "aws_appautoscaling_policy" "bff" {
+  name               = local.bff_name
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.bff.resource_id
+  scalable_dimension = aws_appautoscaling_target.bff.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.bff.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    target_value = 50.0
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
   }
 }
 
