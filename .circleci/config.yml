@@ -8,9 +8,9 @@ jobs:
     steps:
       - run:
           name: Check Directory
-          command: ls
+          command: ls AppSettingsManagerApi
       - checkout:
-          path: ~/AppSettingsManagerApi
+          path: AppSettingsManagerApi
       - run:
           name: Directory after checkout
           command: ls
