@@ -13,6 +13,7 @@ RUN ls -la
 COPY . .
 RUN ls -la
 RUN ls AppSettingsManagerAPI -la
+RUN ls AppSettingsManagerAPI/AppSettingManagerApi.Infrastructure -la
 RUN dotnet build ./AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj --configuration Release --no-restore -o /app/build
 
 # Publish the application
