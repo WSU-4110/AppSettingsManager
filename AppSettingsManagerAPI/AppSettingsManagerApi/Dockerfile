@@ -4,9 +4,9 @@ WORKDIR /src
 
 ## Copy the .csproj file and restore NuGet packages
 RUN ls -la
-COPY ./AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj ./
+COPY ./AppSettingsManagerAPI ./
 RUN ls -la
-RUN dotnet restore
+RUN dotnet restore AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj
 
 # Copy the rest of the application source code and build the project
 RUN ls -la
