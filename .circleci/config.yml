@@ -102,22 +102,15 @@ workflows:
       - approval-for-test-api:
           requires: [ build-api ]
           type: approval
-      - aws-ecr/build-and-push-image:
+      - build-and-push-api-test:
           requires: [ approval-for-test-api ]
-          context: asm-aws-context-api-test
-          repo: my-net-app
-          tag: latest
-          path: AppSettingsManagerApi/publish
-          filters:
-            branches:
-              only: main
       - approval-for-prod-api:
-          requires: [ push-and-deploy-api-test ]
+          requires: [ build-and-push-api-test ]
           type: approval
           filters:
             branches:
               only: main
-      - push-and-deploy-api-prod:
+      - build-and-push-api-prod:
           requires: [ approval-for-prod-api ]
           
   build-deploy-bff:
@@ -126,13 +119,13 @@ workflows:
       - approval-for-test-bff:
           requires: [ build-bff ]
           type: approval
-      - push-and-deploy-bff-test:
+      - build-and-push-bff-test:
           requires: [ approval-for-test-bff ]
       - approval-for-prod-bff:
-          requires: [ push-and-deploy-bff-test ]
+          requires: [ build-and-push-bff-test ]
           type: approval
           filters:
             branches:
               only: main
-      - push-and-deploy-bff-prod:
+      - build-and-push-bff-prod:
           requires: [ approval-for-prod-bff ]
