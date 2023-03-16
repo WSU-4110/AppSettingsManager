@@ -71,7 +71,7 @@ workflows:
           registry-id: AWS_ECR_REGISTRY_ID
           repo: appsettingsmanager-test-api
           tag: latest
-          path: AppSettingsManagerAPI/AppSettingsManagerApi/publish
+          path: AppSettingsManagerApi/AppSettingsManagerApi/publish
 #      - approval-for-prod-api:
 #          requires: [ build-and-push-api-test ]
 #          type: approval
