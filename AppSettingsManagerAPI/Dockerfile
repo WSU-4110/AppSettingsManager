@@ -1,5 +1,5 @@
 # Set the base image for the build stage
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /src
 
 # Copy the .csproj file and restore NuGet packages
