@@ -3,11 +3,13 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
 ## Copy the .csproj file and restore NuGet packages
-#COPY ./AppSettingsManagerApi.csproj ./
-#RUN dotnet restore
+RUN ls -la
+COPY ./AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj ./
+RUN ls -la
+RUN dotnet restore
 
 # Copy the rest of the application source code and build the project
-RUN ls -ls
+RUN ls -la
 COPY . .
 RUN ls -la
 RUN dotnet build --configuration Release --no-restore -o /app/build
