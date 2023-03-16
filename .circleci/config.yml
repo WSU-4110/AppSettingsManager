@@ -67,6 +67,8 @@ workflows:
       - aws-ecr/build-and-push-image:
           requires: [ approval-for-test-api ]
           context: appsettingsmanager-api-test
+          region: ${AWS_DEFAULT_REGION}
+          account-url: ${AWS_ECR_ACCOUNT_URL}
           repo: appsettingsmanager-test-api
           tag: latest
           path: AppSettingsManagerAPI/AppSettingsManagerApi/publish
