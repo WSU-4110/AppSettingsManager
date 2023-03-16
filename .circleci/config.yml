@@ -76,7 +76,7 @@ workflows:
           requires: [ aws-ecr/build-and-push-image ]
           context: appsettingsmanager-api-test
           family: appsettingsmanager-test-api_task_family
-          cluster-name: appsettingsmanager-test-ecs_cluster
+          cluster: appsettingsmanager-test-ecs_cluster
           service-name: appsettingsmanager-test-api
           container-image-name-updates: "container=appsettingsmanager-test-api,tag=latest"
       - approval-for-prod-api:
