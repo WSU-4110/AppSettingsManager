@@ -4,12 +4,12 @@ jobs:
   build-api:
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
-    working_directory: ./AppSettingsManagerApi/AppSettingsManagerApi.sln
+    working_directory: ./AppSettingsManagerApi.csproj
     steps:
       - checkout:
           path: ./
       - setup_remote_docker:
-          version: 20.10.7
+          version: 20.10.17
           docker_layer_caching: true
       - run:
           name: Restore NuGet packages
@@ -36,7 +36,7 @@ jobs:
       - checkout:
           path: ..
       - setup_remote_docker:
-          version: 20.10.7
+          version: 20.10.17
           docker_layer_caching: true
       - run:
           name: Restore NuGet packages
