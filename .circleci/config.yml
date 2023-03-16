@@ -5,7 +5,7 @@ orbs:
   aws-ecs: circleci/aws-ecs@3.2.0
 
 jobs:
-  build-api:
+  build:
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
     steps:
@@ -60,7 +60,7 @@ workflows:
   version: 2
   build-deploy-api:
     jobs:
-      - build-api
+      - build
       - approval-for-test-api:
           requires: [ build-api ]
           type: approval
