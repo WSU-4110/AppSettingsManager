@@ -15,7 +15,7 @@ RUN dotnet build ./AppSettingsManagerApi/AppSettingsManagerApi.csproj --configur
 
 # Publish the application
 FROM build AS publish
-RUN dotnet publish ./AppSettingsManagerApi/AppSettingsManagerApi.csproj --configuration Release --no-build -o /app/publish
+RUN dotnet publish ./AppSettingsManagerApi/AppSettingsManagerApi.csproj --configuration Release -o /app/publish
 
 # Set the base image for the final runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
