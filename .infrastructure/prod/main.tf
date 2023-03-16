@@ -8,6 +8,7 @@ locals {
   api_name         = "${local.application_name}-api"
   bff_name         = "${local.application_name}-bff"
   db_name          = "appsettingsmanager${local.environment}"
+  ecr_secret_arn   = "arn:aws:secretsmanager:us-east-2:860701506846:secret:test/appsettingsmanager-test/ecr-SY1nQh"
 }
 
 resource "aws_vpc" "vpc" {
@@ -95,46 +96,53 @@ resource "aws_ecr_repository" "bff" {
   name = local.bff_name
 }
 
+data "aws_iam_policy_document" "assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      identifiers = ["ecs-tasks.amazonaws.com"]
+      type        = "Service"
+    }
+  }
+}
+
+resource "aws_iam_role" "ecs_task_role" {
+  name               = "${local.application_name}-ecs-task-role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+
+  force_detach_policies = true
+}
+
 resource "aws_iam_role" "ecs_execution_role" {
-  name = "${local.application_name}-ecs_execution_role"
+  name               = "${local.application_name}-ecs-execution-role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
-      }
-    ]
-  })
+  force_detach_policies = true
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_execution_policy_attachment" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-  role       = aws_iam_role.ecs_execution_role.name
-}
-
-resource "aws_iam_policy" "ecs_task_policy" {
-  name = "${local.application_name}-ecs_task_role"
-
+resource "aws_iam_role_policy" "ecs_execution_role_inline_policy" {
+  name = "${local.application_name}-ecs-execution-role"
+  role = aws_iam_role.ecs_execution_role.name
   policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action   = ["ecr:GetAuthorizationToken", "ecr:BatchCheckLayerAvailability", "ecr:GetDownloadUrlForLayer", "ecr:BatchGetImage"]
-        Effect   = "Allow"
-        Resource = "*"
-      }
+    "Version" : "2012-10-17",
+    "Statement" : [{
+      "Effect" : "Allow",
+      "Action" : [
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetAuthorizationToken",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "ssm:GetParameters",
+        "secretsmanager:GetSecretValue",
+        "kms:Decrypt"
+      ],
+      "Resource" : "*"
+    }
     ]
   })
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_policy_attachment" {
-  policy_arn = aws_iam_policy.ecs_task_policy.arn
-  role       = aws_iam_role.ecs_execution_role.name
 }
 
 resource "aws_cloudwatch_log_group" "api" {
@@ -148,6 +156,7 @@ resource "aws_ecs_task_definition" "api_task" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
 
   container_definitions = jsonencode([
     {
@@ -183,6 +192,7 @@ resource "aws_ecs_task_definition" "bff_task" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
 
   container_definitions = jsonencode([
     {
@@ -211,7 +221,7 @@ resource "aws_ecs_service" "api" {
   name            = local.api_name
   cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.api_task.arn
-  desired_count   = 1
+  desired_count   = 2
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -222,8 +232,8 @@ resource "aws_ecs_service" "api" {
 }
 
 resource "aws_appautoscaling_target" "api" {
-  max_capacity       = 1
-  min_capacity       = 1
+  max_capacity       = 2
+  min_capacity       = 2
   resource_id        = "service/${aws_ecs_cluster.cluster.name}/${aws_ecs_service.api.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
@@ -248,7 +258,7 @@ resource "aws_ecs_service" "bff" {
   name            = local.bff_name
   cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.bff_task.arn
-  desired_count   = 1
+  desired_count   = 2
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -259,8 +269,8 @@ resource "aws_ecs_service" "bff" {
 }
 
 resource "aws_appautoscaling_target" "bff" {
-  max_capacity       = 1
-  min_capacity       = 1
+  max_capacity       = 2
+  min_capacity       = 2
   resource_id        = "service/${aws_ecs_cluster.cluster.name}/${aws_ecs_service.bff.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
@@ -359,4 +369,8 @@ output "bff_service_url" {
 
 output "cloudfront_distribution_url" {
   value = aws_cloudfront_distribution.s3_distribution.domain_name
+}
+
+output "ecr_api_url" {
+  value = aws_ecr_repository.api.repository_url
 }
