@@ -7,7 +7,7 @@ COPY src/*.csproj .
 RUN dotnet restore
 
 # Copy the rest of the application source code and build the project
-COPY src .
+COPY . .
 RUN dotnet build --configuration Release --no-restore -o /app/build
 
 # Publish the application
