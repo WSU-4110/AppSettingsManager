@@ -11,6 +11,18 @@ locals {
   ecr_secret_arn   = "arn:aws:secretsmanager:us-east-2:860701506846:secret:test/appsettingsmanager-test/ecr-SY1nQh"
 }
 
+variable "max_tasks" {
+  default = 2
+}
+
+variable "min_tasks" {
+  default = 1
+}
+
+variable "desired_tasks" {
+  default = 1
+}
+
 resource "aws_vpc" "vpc" {
   cidr_block = "10.0.0.0/16"
 }
@@ -112,24 +124,6 @@ resource "aws_iam_role" "ecs_task_role" {
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 
   force_detach_policies = true
-}
-
-resource "aws_iam_role_policy" "ecs_task_role_inline_policy" {
-  role   = aws_iam_role.ecs_task_role.name
-  policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [{
-      "Effect": "Allow",
-      "Action": [
-        "ssm:GetParameter",
-        "kms:Decrypt",
-        "kms:ListKeys",
-        "kms:DescribeCustomKeyStores"
-      ]
-      "Resource": "*",
-      "Sid": ""
-    }]
-  })
 }
 
 resource "aws_iam_role" "ecs_execution_role" {
@@ -239,7 +233,7 @@ resource "aws_ecs_service" "api" {
   name            = local.api_name
   cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.api_task.arn
-  desired_count   = 2
+  desired_count   = var.desired_tasks
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -250,8 +244,8 @@ resource "aws_ecs_service" "api" {
 }
 
 resource "aws_appautoscaling_target" "api" {
-  max_capacity       = 2
-  min_capacity       = 2
+  max_capacity       = var.max_tasks
+  min_capacity       = var.min_tasks
   resource_id        = "service/${aws_ecs_cluster.cluster.name}/${aws_ecs_service.api.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
@@ -276,7 +270,7 @@ resource "aws_ecs_service" "bff" {
   name            = local.bff_name
   cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.bff_task.arn
-  desired_count   = 2
+  desired_count   = var.desired_tasks
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -287,8 +281,8 @@ resource "aws_ecs_service" "bff" {
 }
 
 resource "aws_appautoscaling_target" "bff" {
-  max_capacity       = 2
-  min_capacity       = 2
+  max_capacity       = var.max_tasks
+  min_capacity       = var.min_tasks
   resource_id        = "service/${aws_ecs_cluster.cluster.name}/${aws_ecs_service.bff.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
