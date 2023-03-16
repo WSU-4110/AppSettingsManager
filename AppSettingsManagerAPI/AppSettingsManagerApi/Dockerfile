@@ -2,15 +2,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
-## Copy the .csproj file and restore NuGet packages
-RUN ls -la
 COPY ./AppSettingsManagerAPI ./
-RUN ls -la
 RUN dotnet restore AppSettingsManagerApi/AppSettingsManagerApi.csproj
 
-# Copy the rest of the application source code and build the project
-RUN ls -la
-RUN ls AppSettingsManagerApi.Infrastructure -la
 RUN dotnet build ./AppSettingsManagerApi/AppSettingsManagerApi.csproj --configuration Release --no-restore -o /app/build
 
 # Publish the application

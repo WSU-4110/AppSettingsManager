@@ -60,24 +60,31 @@ workflows:
   version: 2
   build-deploy-api:
     jobs:
-#      - build-api
-#      - approval-for-test-api:
-#          requires: [ build-api ]
-#          type: approval
+      - build-api
+      - approval-for-test-api:
+          requires: [ build-api ]
+          type: approval
       - aws-ecr/build-and-push-image:
-#          requires: [ approval-for-test-api ]
+          requires: [ approval-for-test-api ]
           context: appsettingsmanager-api-test
           region: us-east-2
           registry-id: AWS_ECR_REGISTRY_ID
           repo: appsettingsmanager-test-api
           tag: latest
           path: ./AppSettingsManagerAPI/AppSettingsManagerApi
-#      - approval-for-prod-api:
-#          requires: [ build-and-push-api-test ]
-#          type: approval
-#          filters:
-#            branches:
-#              only: main
+      - aws-ecs/deploy-service-update:
+          requires: [ aws-ecr/build-and-push-image ]
+          context: appsettingsmanager-api-test
+          family: appsettingsmanager-test-api_task_family
+          cluster-name: appsettingsmanager-test-ecs_cluster
+          service-name: appsettingsmanager-test-api
+          container-image-name-updates: "container=appsettingsmanager-test-api,tag=latest"
+      - approval-for-prod-api:
+          requires: [ aws-ecs/deploy-service-update ]
+          type: approval
+          filters:
+            branches:
+              only: main
 #      
 #  - build-and-push-api-prod:
 #          requires: [ approval-for-prod-api ]
