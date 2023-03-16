@@ -12,7 +12,8 @@ RUN dotnet restore
 RUN ls -la
 COPY . .
 RUN ls -la
-RUN dotnet build --configuration Release --no-restore -o /app/build
+RUN ls AppSettingsManagerAPI -la
+RUN dotnet build ./AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj --configuration Release --no-restore -o /app/build
 
 # Publish the application
 FROM build AS publish
