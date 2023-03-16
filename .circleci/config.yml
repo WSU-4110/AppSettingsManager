@@ -5,7 +5,7 @@ orbs:
   aws-ecs: circleci/aws-ecs@3.2.0
 
 jobs:
-  build:
+  build-api:
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
     steps:
@@ -60,13 +60,12 @@ workflows:
   version: 2
   build-deploy-api:
     jobs:
-      - build
+      - build-api
       - approval-for-test-api:
           requires: [ build-api ]
           type: approval
       - aws-ecr/build-and-push-image:
-          requires:
-            - build
+          requires: [ approval-for-test-api ]
           context: appsettingsmanager-api-test
           repo: appsettingsmanager-test-api
           tag: latest
