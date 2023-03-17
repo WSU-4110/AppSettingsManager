@@ -23,21 +23,19 @@ variable "desired_tasks" {
   default = 1
 }
 
-resource "aws_vpc" "vpc" {
-  cidr_block           = "10.0.0.0/16"
-  enable_dns_hostnames = true
-  enable_dns_support   = true
+data "aws_vpc" "vpc"{
+  default = true
 }
 
 resource "aws_subnet" "subnet" {
   cidr_block        = "10.0.1.0/24"
-  vpc_id            = aws_vpc.vpc.id
+  vpc_id            = data.aws_vpc.vpc.id
   availability_zone = "us-east-2a"
 }
 
 resource "aws_subnet" "subnet2" {
   cidr_block        = "10.0.2.0/24"
-  vpc_id            = aws_vpc.vpc.id
+  vpc_id            = data.aws_vpc.vpc.id
   availability_zone = "us-east-2b" # Make sure to use a different AZ than the first subnet
 }
 
@@ -45,7 +43,7 @@ resource "aws_subnet" "subnet2" {
 resource "aws_security_group" "ecs_sg" {
   name        = "${local.application_name}-ecs_sg"
   description = "ECS security group"
-  vpc_id      = aws_vpc.vpc.id
+  vpc_id      = data.aws_vpc.vpc.id
 
   ingress {
     from_port   = 0
@@ -64,7 +62,7 @@ resource "aws_security_group" "ecs_sg" {
 resource "aws_security_group" "rds_sg" {
   name        = "${local.application_name}-rds_sg"
   description = "RDS security group"
-  vpc_id      = aws_vpc.vpc.id
+  vpc_id      = data.aws_vpc.vpc.id
 
   ingress {
     from_port       = 3306
@@ -81,7 +79,7 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_route_table" "route_table" {
-  vpc_id = aws_vpc.vpc.id
+  vpc_id = data.aws_vpc.vpc.id
 }
 
 resource "aws_route_table_association" "table1" {
@@ -94,59 +92,161 @@ resource "aws_route_table_association" "table2" {
   route_table_id = aws_route_table.route_table.id
 }
 
-resource "aws_vpc_endpoint" "s3" {
-  vpc_id            = aws_vpc.vpc.id
-  service_name      = "com.amazonaws.us-east-2.s3"
-  vpc_endpoint_type = "Interface"
+#resource "aws_vpc_endpoint" "s3" {
+#  vpc_id            = data.aws_vpc.vpc.id
+#  service_name      = "com.amazonaws.us-east-2.s3"
+#  vpc_endpoint_type = "Interface"
+#
+#  security_group_ids = [aws_security_group.ecs_sg.id]
+#  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+#  
+#  private_dns_enabled = true
+#}
+#
+#resource "aws_vpc_endpoint" "ecr_dkr" {
+#  vpc_id            = data.aws_vpc.vpc.id
+#  service_name      = "com.amazonaws.us-east-2.ecr.dkr"
+#  vpc_endpoint_type = "Interface"
+#
+#  security_group_ids = [aws_security_group.ecs_sg.id]
+#  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+#
+#  private_dns_enabled = true
+#}
+#
+#resource "aws_vpc_endpoint" "ecr_api" {
+#  vpc_id            = data.aws_vpc.vpc.id
+#  service_name      = "com.amazonaws.us-east-2.ecr.api"
+#  vpc_endpoint_type = "Interface"
+#
+#  security_group_ids = [aws_security_group.ecs_sg.id]
+#  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+#
+#  private_dns_enabled = true
+#}
+#
+#resource "aws_vpc_endpoint" "logs" {
+#  vpc_id            = data.aws_vpc.vpc.id
+#  service_name      = "com.amazonaws.us-east-2.logs"
+#  vpc_endpoint_type = "Interface"
+#
+#  security_group_ids = [aws_security_group.ecs_sg.id]
+#  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+#
+#  private_dns_enabled = true
+#}
+#
+#resource "aws_vpc_endpoint" "ssm" {
+#  vpc_id            = data.aws_vpc.vpc.id
+#  service_name      = "com.amazonaws.us-east-2.ssm"
+#  vpc_endpoint_type = "Interface"
+#
+#  security_group_ids = [aws_security_group.ecs_sg.id]
+#  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+#
+#  private_dns_enabled = true
+#}
 
-  security_group_ids = [aws_security_group.ecs_sg.id]
-  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+resource "aws_security_group" "alb_api" {
+  name        = "${local.api_name}-alb"
+  description = "Allow inbound traffic to ALB"
+  vpc_id      = data.aws_vpc.vpc.id
 
-  private_dns_enabled = true
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
-resource "aws_vpc_endpoint" "ecr_dkr" {
-  vpc_id            = aws_vpc.vpc.id
-  service_name      = "com.amazonaws.us-east-2.ecr.dkr"
-  vpc_endpoint_type = "Interface"
-
-  security_group_ids = [aws_security_group.ecs_sg.id]
-  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
-
-  private_dns_enabled = true
+resource "aws_lb" "lb_api" {
+  name               = "${local.api_name}-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb_api.id]
+  subnets            = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
 }
 
-resource "aws_vpc_endpoint" "ecr_api" {
-  vpc_id            = aws_vpc.vpc.id
-  service_name      = "com.amazonaws.us-east-2.ecr.api"
-  vpc_endpoint_type = "Interface"
+resource "aws_lb_target_group" "tg_api" {
+  name        = "${local.api_name}-tg"
+  port        = 80
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = data.aws_vpc.vpc.id
 
-  security_group_ids = [aws_security_group.ecs_sg.id]
-  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
-
-  private_dns_enabled = true
+  health_check {
+    enabled             = true
+    healthy_threshold   = 3
+    interval            = 30
+    matcher             = "200"
+    path                = "/"
+    protocol            = "HTTP"
+    timeout             = 5
+    unhealthy_threshold = 3
+  }
 }
 
-resource "aws_vpc_endpoint" "logs" {
-  vpc_id            = aws_vpc.vpc.id
-  service_name      = "com.amazonaws.us-east-2.logs"
-  vpc_endpoint_type = "Interface"
+resource "aws_lb_listener" "listener_api" {
+  load_balancer_arn = aws_lb.lb_api.arn
+  port              = 80
+  protocol          = "HTTP"
 
-  security_group_ids = [aws_security_group.ecs_sg.id]
-  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
-
-  private_dns_enabled = true
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tg_api.arn
+  }
 }
 
-resource "aws_vpc_endpoint" "ssm" {
-  vpc_id            = aws_vpc.vpc.id
-  service_name      = "com.amazonaws.us-east-2.ssm"
-  vpc_endpoint_type = "Interface"
+resource "aws_security_group" "alb_bff" {
+  name        = "${local.bff_name}-alb"
+  description = "Allow inbound traffic to ALB"
+  vpc_id      = data.aws_vpc.vpc.id
 
-  security_group_ids = [aws_security_group.ecs_sg.id]
-  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
-  private_dns_enabled = true
+resource "aws_lb" "lb_bff" {
+  name               = "${local.bff_name}-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb_bff.id]
+  subnets            = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+}
+
+resource "aws_lb_target_group" "tg_bff" {
+  name        = "${local.bff_name}-tg"
+  port        = 80
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = data.aws_vpc.vpc.id
+
+  health_check {
+    enabled             = true
+    healthy_threshold   = 3
+    interval            = 30
+    matcher             = "200"
+    path                = "/"
+    protocol            = "HTTP"
+    timeout             = 5
+    unhealthy_threshold = 3
+  }
+}
+
+resource "aws_lb_listener" "listener_bff" {
+  load_balancer_arn = aws_lb.lb_bff.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tg_bff.arn
+  }
 }
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
@@ -320,6 +420,12 @@ resource "aws_ecs_service" "api" {
   desired_count   = var.desired_tasks
   launch_type     = "FARGATE"
 
+  load_balancer {
+    target_group_arn = aws_lb_target_group.tg_api.arn
+    container_name   = "${local.api_name}-container"
+    container_port   = 80
+  }
+
   network_configuration {
     subnets          = [aws_subnet.subnet.id]
     security_groups  = [aws_security_group.ecs_sg.id]
@@ -356,6 +462,12 @@ resource "aws_ecs_service" "bff" {
   task_definition = aws_ecs_task_definition.bff_task.arn
   desired_count   = var.desired_tasks
   launch_type     = "FARGATE"
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.tg_bff.arn
+    container_name   = "${local.bff_name}-container"
+    container_port   = 80
+  }
 
   network_configuration {
     subnets          = [aws_subnet.subnet.id]
@@ -450,6 +562,55 @@ resource "aws_security_group_rule" "cloudfront_to_bff_ipv6" {
   ipv6_cidr_blocks = ["::/0"]
 }
 
+resource "aws_api_gateway_rest_api" "api" {
+  name = local.api_name
+}
+
+resource "aws_api_gateway_integration" "api" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_rest_api.api.root_resource_id
+  http_method = "ANY"
+
+  type                    = "HTTP_PROXY"
+  integration_http_method = "ANY"
+  uri                     = aws_lb.lb_api.dns_name
+}
+
+resource "aws_api_gateway_deployment" "api" {
+  depends_on = [aws_api_gateway_integration.api]
+
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  stage_name  = "v1"
+}
+
+resource "aws_api_gateway_rest_api" "bff" {
+  name = local.bff_name
+}
+
+resource "aws_api_gateway_integration" "bff" {
+  rest_api_id = aws_api_gateway_rest_api.bff.id
+  resource_id = aws_api_gateway_rest_api.bff.root_resource_id
+  http_method = "ANY"
+
+  type                    = "HTTP_PROXY"
+  integration_http_method = "ANY"
+  uri                     = aws_lb.lb_bff.dns_name
+}
+
+resource "aws_api_gateway_deployment" "bff" {
+  depends_on = [aws_api_gateway_integration.bff]
+
+  rest_api_id = aws_api_gateway_rest_api.bff.id
+  stage_name  = "v1"
+}
+
+output "api_gateway_url" {
+  value = "https://${aws_api_gateway_rest_api.api.id}.execute-api.us-east-2.amazonaws.com/v1"
+}
+
+output "bff_gateway_url" {
+  value = "https://${aws_api_gateway_rest_api.bff.id}.execute-api.us-east-2.amazonaws.com/v1"
+}
 
 output "rds_endpoint" {
   value = aws_db_instance.rds.endpoint
