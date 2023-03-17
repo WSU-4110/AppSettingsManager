@@ -11,6 +11,7 @@ public class MySqlSettingRepository : ISettingRepository
     // Creates SettingsContext object
     private readonly SettingsContext _settingsContext;
     private readonly IBidirectionalConverter<Model.Setting, Setting> _settingsConverter;
+    private readonly IBidirectionalConverter<Model.SettingGroup, Model.SettingGroup> _settingsConverter;
 
     public MySqlSettingRepository(
         SettingsContext settingsContext,
@@ -23,13 +24,15 @@ public class MySqlSettingRepository : ISettingRepository
         _settingsConverter = settingsConverter;
     }
 
-    public async Task<Model.Setting> GetSetting(string settingId, int version)
+    public async Task<Model.Setting> GetSetting(string settingId, int version, string userId, string password)
     {
         // Call .Single() because there should only be one entry with this id/version
         // and .Single() will return a single object rather than a list
         var setting = await _settingsContext.Settings.SingleAsync(
             s => s.SettingGroupId == settingId && s.Version == version
         );
+
+        var permissions = await setting.Permissions.Single(permission => permission.UserId == UserId && permission.Password == Password); //Permissions
 
         return _settingsConverter.Convert(setting);
     }
