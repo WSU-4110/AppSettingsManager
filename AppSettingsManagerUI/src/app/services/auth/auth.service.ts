@@ -1,22 +1,32 @@
 import { Injectable } from '@angular/core';
+import { BffService } from '../bff/bff.service';
+import { User } from '../bff/models/User';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
   private loggedIn = false;
+  private user: User = {
+    Username: "",
+    Password: "",
+    Email: ""
+  };
 
-  constructor() { }
+  constructor(private bffService: BffService) { }
 
   login(username: string, password: string): boolean {
-    // Check if the username and password are valid
-    if (username === 'example' && password === 'password') {
-      // Set the user as logged in
+    this.bffService.getUser(username)
+      .subscribe(user => this.user = user);
+
+    if (this.user.Password == password) {
       this.loggedIn = true;
-      return true;
     }
-    return false;
+    else {
+      this.loggedIn = false;
+    }
+
+    return this.loggedIn;
   }
 
   logout(): void {
