@@ -23,22 +23,21 @@ variable "desired_tasks" {
   default = 1
 }
 
-data "aws_vpc" "vpc"{
+data "aws_vpc" "vpc" {
   default = true
 }
 
-resource "aws_subnet" "subnet" {
-  cidr_block        = "10.0.1.0/24"
+data "aws_subnet" "subnet" {
   vpc_id            = data.aws_vpc.vpc.id
+  default_for_az    = true
   availability_zone = "us-east-2a"
 }
 
-resource "aws_subnet" "subnet2" {
-  cidr_block        = "10.0.2.0/24"
+data "aws_subnet" "subnet2" {
   vpc_id            = data.aws_vpc.vpc.id
-  availability_zone = "us-east-2b" # Make sure to use a different AZ than the first subnet
+  default_for_az    = true
+  availability_zone = "us-east-2b"
 }
-
 
 resource "aws_security_group" "ecs_sg" {
   name        = "${local.application_name}-ecs_sg"
@@ -83,12 +82,12 @@ resource "aws_route_table" "route_table" {
 }
 
 resource "aws_route_table_association" "table1" {
-  subnet_id      = aws_subnet.subnet.id
+  subnet_id      = data.aws_subnet.subnet.id
   route_table_id = aws_route_table.route_table.id
 }
 
 resource "aws_route_table_association" "table2" {
-  subnet_id      = aws_subnet.subnet2.id
+  subnet_id      = data.aws_subnet.subnet2.id
   route_table_id = aws_route_table.route_table.id
 }
 
@@ -98,7 +97,7 @@ resource "aws_route_table_association" "table2" {
 #  vpc_endpoint_type = "Interface"
 #
 #  security_group_ids = [aws_security_group.ecs_sg.id]
-#  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+#  subnet_ids         = [data.aws_subnet.subnet.id, data.aws_subnet.subnet2.id]
 #  
 #  private_dns_enabled = true
 #}
@@ -109,7 +108,7 @@ resource "aws_route_table_association" "table2" {
 #  vpc_endpoint_type = "Interface"
 #
 #  security_group_ids = [aws_security_group.ecs_sg.id]
-#  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+#  subnet_ids         = [data.aws_subnet.subnet.id, data.aws_subnet.subnet2.id]
 #
 #  private_dns_enabled = true
 #}
@@ -120,7 +119,7 @@ resource "aws_route_table_association" "table2" {
 #  vpc_endpoint_type = "Interface"
 #
 #  security_group_ids = [aws_security_group.ecs_sg.id]
-#  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+#  subnet_ids         = [data.aws_subnet.subnet.id, data.aws_subnet.subnet2.id]
 #
 #  private_dns_enabled = true
 #}
@@ -131,7 +130,7 @@ resource "aws_route_table_association" "table2" {
 #  vpc_endpoint_type = "Interface"
 #
 #  security_group_ids = [aws_security_group.ecs_sg.id]
-#  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+#  subnet_ids         = [data.aws_subnet.subnet.id, data.aws_subnet.subnet2.id]
 #
 #  private_dns_enabled = true
 #}
@@ -142,7 +141,7 @@ resource "aws_route_table_association" "table2" {
 #  vpc_endpoint_type = "Interface"
 #
 #  security_group_ids = [aws_security_group.ecs_sg.id]
-#  subnet_ids         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+#  subnet_ids         = [data.aws_subnet.subnet.id, data.aws_subnet.subnet2.id]
 #
 #  private_dns_enabled = true
 #}
@@ -163,9 +162,8 @@ resource "aws_security_group" "alb_api" {
 resource "aws_lb" "lb_api" {
   name               = "${local.api_name}-alb"
   internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_api.id]
-  subnets            = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+  load_balancer_type = "network"
+  subnets            = [data.aws_subnet.subnet.id, data.aws_subnet.subnet2.id]
 }
 
 resource "aws_lb_target_group" "tg_api" {
@@ -214,9 +212,9 @@ resource "aws_security_group" "alb_bff" {
 resource "aws_lb" "lb_bff" {
   name               = "${local.bff_name}-alb"
   internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_bff.id]
-  subnets            = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+  load_balancer_type = "network"
+#  security_groups    = [aws_security_group.alb_bff.id]
+  subnets            = [data.aws_subnet.subnet.id, data.aws_subnet.subnet2.id]
 }
 
 resource "aws_lb_target_group" "tg_bff" {
@@ -250,8 +248,8 @@ resource "aws_lb_listener" "listener_bff" {
 }
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
-  name       = "${local.application_name}_rds_subnet_group"
-  subnet_ids = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+  name       = "${local.application_name}_rds_db_subnet_group"
+  subnet_ids = [data.aws_subnet.subnet.id, data.aws_subnet.subnet2.id]
 
   tags = {
     Name = "RDS Subnet Group"
@@ -427,7 +425,7 @@ resource "aws_ecs_service" "api" {
   }
 
   network_configuration {
-    subnets          = [aws_subnet.subnet.id]
+    subnets          = [data.aws_subnet.subnet.id]
     security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = true
   }
@@ -470,7 +468,7 @@ resource "aws_ecs_service" "bff" {
   }
 
   network_configuration {
-    subnets          = [aws_subnet.subnet.id]
+    subnets          = [data.aws_subnet.subnet.id]
     security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = true
   }
@@ -566,14 +564,48 @@ resource "aws_api_gateway_rest_api" "api" {
   name = local.api_name
 }
 
-resource "aws_api_gateway_integration" "api" {
+resource "aws_api_gateway_resource" "api" {
+  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+  path_part   = "api"
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_rest_api.api.root_resource_id
-  http_method = "ANY"
+}
+
+resource "aws_api_gateway_method" "api_method" {
+  authorization = "NONE"
+  http_method   = "ANY"
+  resource_id   = aws_api_gateway_resource.api.id
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+}
+
+resource "aws_api_gateway_vpc_link" "api_vpc_link" {
+  name        = "${local.api_name}-vpclink"
+  target_arns = [aws_lb.lb_api.arn]
+}
+
+resource "aws_api_gateway_integration" "api" {
+  rest_api_id          = aws_api_gateway_rest_api.api.id
+  resource_id          = aws_api_gateway_resource.api.id
+  http_method          = aws_api_gateway_method.api_method.http_method
+  cache_key_parameters = ["method.request.path.param"]
 
   type                    = "HTTP_PROXY"
-  integration_http_method = "ANY"
-  uri                     = aws_lb.lb_api.dns_name
+  integration_http_method = aws_api_gateway_method.api_method.http_method
+  connection_type         = "VPC_LINK"
+  connection_id           = data.aws_vpc.vpc.id
+  uri                     = "${aws_lb_listener.listener_api.protocol}://${aws_api_gateway_vpc_link.api_vpc_link.id}.us-east-2.amazonaws.com"
+
+  request_parameters = {
+    "integration.request.header.X-Authorization" = "'static'"
+  }
+
+  # Transforms the incoming XML request to JSON
+  request_templates = {
+    "application/xml" = <<EOF
+{
+   "body" : $input.json('$')
+}
+EOF
+  }
 }
 
 resource "aws_api_gateway_deployment" "api" {
@@ -587,14 +619,43 @@ resource "aws_api_gateway_rest_api" "bff" {
   name = local.bff_name
 }
 
-resource "aws_api_gateway_integration" "bff" {
+resource "aws_api_gateway_resource" "bff" {
+  parent_id   = aws_api_gateway_rest_api.bff.root_resource_id
+  path_part   = "bff"
   rest_api_id = aws_api_gateway_rest_api.bff.id
-  resource_id = aws_api_gateway_rest_api.bff.root_resource_id
-  http_method = "ANY"
+}
+
+resource "aws_api_gateway_method" "bff_method" {
+  authorization = "NONE"
+  http_method   = "ANY"
+  resource_id   = aws_api_gateway_resource.bff.id
+  rest_api_id   = aws_api_gateway_rest_api.bff.id
+}
+
+resource "aws_api_gateway_integration" "bff" {
+  rest_api_id          = aws_api_gateway_rest_api.bff.id
+  resource_id          = aws_api_gateway_resource.bff.id
+  http_method          = aws_api_gateway_method.bff_method.http_method
+  cache_key_parameters = ["method.request.path.param"]
 
   type                    = "HTTP_PROXY"
-  integration_http_method = "ANY"
-  uri                     = aws_lb.lb_bff.dns_name
+  integration_http_method = aws_api_gateway_method.bff_method.http_method
+  connection_type         = "VPC_LINK"
+  connection_id           = data.aws_vpc.vpc.id
+  uri                     = "${aws_lb_listener.listener_bff.protocol}://${aws_lb.lb_bff.dns_name}:${aws_lb_listener.listener_bff.port}/"
+
+  request_parameters = {
+    "integration.request.header.X-Authorization" = "'static'"
+  }
+
+  # Transforms the incoming XML request to JSON
+  request_templates = {
+    "application/xml" = <<EOF
+{
+   "body" : $input.json('$')
+}
+EOF
+  }
 }
 
 resource "aws_api_gateway_deployment" "bff" {
