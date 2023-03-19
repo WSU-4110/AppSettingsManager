@@ -11,19 +11,23 @@ public class MySqlSettingRepository : ISettingRepository
     // Creates SettingsContext object
     private readonly SettingsContext _settingsContext;
     private readonly IBidirectionalConverter<Model.Setting, Setting> _settingsConverter;
-    private readonly IBidirectionalConverter<Model.SettingGroup, Model.SettingGroup> _settingsConverter;
+    private readonly IBidirectionalConverter<Model.SettingGroup, SettingGroup> _settingGroupConverter;
 
     public MySqlSettingRepository(
         SettingsContext settingsContext,
-        IBidirectionalConverter<Model.Setting, Setting> settingsConverter
+        IBidirectionalConverter<Model.Setting, Setting> settingsConverter, 
+        IBidirectionalConverter<Model.SettingGroup, SettingGroup> settingGroupConverter
     )
     {
         // Injects SettingsContext configured in ServiceConfiguration.cs into _settingsContext object
         _settingsContext = settingsContext;
         // Injects biverter that we set up into _settingsConverter object
         _settingsConverter = settingsConverter;
+        //Injects group biverter that we set up into _settingsGroupConverter object
+        _settingGroupConverter = settingGroupConverter;
     }
 
+    
     public async Task<Model.Setting> GetSetting(string settingId, int version, string userId, string password)
     {
         // Call .Single() because there should only be one entry with this id/version
@@ -32,9 +36,9 @@ public class MySqlSettingRepository : ISettingRepository
             s => s.SettingGroupId == settingId && s.Version == version
         );
 
-        var permissions = await setting.Permissions.Single(permission => permission.UserId == UserId && permission.Password == Password); //Permissions
+        var permission = await setting.Permissions.Single(permission => permission.UserId == UserId && permission.Password == Password); //Permissions
 
-        return _settingsConverter.Convert(setting);
+        return permission.CurrentPermisionLevel PermissionLevel.None ? _settingsConverter.Convert(setting) : throw new Exception ("Insufficient permission");
     }
 
     public async Task<IEnumerable<Model.Setting>> GetAllSettingVersions(string settingId)
