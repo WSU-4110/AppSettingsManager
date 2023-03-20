@@ -360,3 +360,6 @@ MigrationBackup/
 *.angular*
 
 *dist/
+
+*.terraform*
+*.tfstate*

@@ -11,8 +11,15 @@ public static class ServiceConfiguration
         AppSettingsManagerApiConfig config
     )
     {
-        // This makes it so we can inject HttpClient into the repositories
-        services.AddHttpClient();
+        services.AddHttpClient(Constants.UsersClientName, client =>
+        {
+            client.BaseAddress = new Uri(config.BaseAddress + Constants.UsersRoute);
+        });
+
+        services.AddHttpClient(Constants.SettingsClientName, client =>
+        {
+            client.BaseAddress = new Uri(config.BaseAddress + Constants.SettingsRoute);
+        });
 
         // Registers service for repositories,
         // For instance, when you instantiate IUserRepository, it knows to grab HttpUserRepository

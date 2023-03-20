@@ -6,6 +6,7 @@ namespace AppSettingsManagerBff.Infrastructure.ApiRepositories;
 
 public class HttpUserRepository : IUserRepository
 {
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly HttpClient _httpClient;
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
@@ -13,12 +14,10 @@ public class HttpUserRepository : IUserRepository
         PropertyNameCaseInsensitive = true
     };
 
-    public HttpUserRepository(HttpClient httpClient, AppSettingsManagerApiConfig config)
+    public HttpUserRepository(IHttpClientFactory httpClientFactory)
     {
-        _httpClient = httpClient;
-
-        // So you don't have to type the whole url every time
-        _httpClient.BaseAddress = new Uri(config.BaseAddress + "users/");
+        _httpClientFactory = httpClientFactory;
+        _httpClient = _httpClientFactory.CreateClient(Constants.UsersClientName);
     }
 
     public async Task<ApiBaseUser> GetUser(string userId)

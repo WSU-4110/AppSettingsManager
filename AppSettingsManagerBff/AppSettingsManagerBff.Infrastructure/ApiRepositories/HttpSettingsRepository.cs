@@ -7,6 +7,7 @@ namespace AppSettingsManagerBff.Infrastructure.ApiRepositories;
 
 public class HttpSettingsRepository : ISettingsRepository
 {
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly HttpClient _httpClient;
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
@@ -15,9 +16,10 @@ public class HttpSettingsRepository : ISettingsRepository
     };
 
     // See comments on HttpUserRepository for explanations on this set up
-    public HttpSettingsRepository(HttpClient httpClient, AppSettingsManagerApiConfig config)
+    public HttpSettingsRepository(IHttpClientFactory httpClientFactory, AppSettingsManagerApiConfig config)
     {
-        _httpClient = httpClient;
+        _httpClientFactory = httpClientFactory;
+        _httpClient = _httpClientFactory.CreateClient(Constants.SettingsClientName);
 
         _httpClient.BaseAddress = new Uri(config.BaseAddress + "settings/");
     }
