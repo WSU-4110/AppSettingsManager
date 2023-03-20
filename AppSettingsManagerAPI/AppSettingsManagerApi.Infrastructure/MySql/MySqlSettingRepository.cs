@@ -28,39 +28,37 @@ public class MySqlSettingRepository : ISettingRepository
     }
 
     
-    public async Task<Model.Setting> GetSetting(string settingId, int version, string userId, string password)
+    public async Task<Model.SettingGroup> GetSettingGroup(string settingGroupId)
     {
-        // Call .Single() because there should only be one entry with this id/version
-        // and .Single() will return a single object rather than a list
-        var setting = await _settingsContext.Settings.SingleAsync(
-            s => s.SettingGroupId == settingId && s.Version == version
-        );
+        
+        var settingGroup = await GetSettingGroupFromContext(settingGroupId);
+        
 
-        var permission = await setting.Permissions.Single(permission => permission.UserId == UserId && permission.Password == Password); //Permissions
-
-        return permission.CurrentPermisionLevel PermissionLevel.None ? _settingsConverter.Convert(setting) : throw new Exception ("Insufficient permission");
+        return _settingGroupConverter.Convert(settingGroup);
+    }
+    public async Task<IEnumerable<Model.SettingGroup>> GetSettingGroupsByUser(string userId)
+    {
+        var settingGroups = await _settingsContext.Permissions.Include(p => p.SettingGroup).ThenInclude(sg => sg.Settings)
+            .Where(p => p.UserId == userId).Select(p => p.SettingGroup).ToListAsync();
+        
+        return setingGroups.Select(_settingGroupConverter.Convert);
+    
     }
 
-    public async Task<IEnumerable<Model.Setting>> GetAllSettingVersions(string settingId)
+    public async Task<Model.SettingGroup> CreateSetting(CreateSettingRequest request)
     {
-        var settings = await GetAllUnconvertedSettingVersions(settingId);
-
-        // This could also be written as settings.Select(s => _settingsConverter.Convert(s))
-
-        // You're allowed to abbreviate the syntax like below when you're just calling a
-        // function like that on every object in a list
-        return settings.Select(_settingsConverter.Convert);
-    }
-
-    public async Task<Model.Setting> CreateSetting(CreateSettingRequest request)
-    {
+        var settingGroup = await GetSettingGroupFromContext(request.SettingGroupId);
+        var initialSetting = !settingGroup.Settings.Any();
+        var newVersionNumber = !initialSetting ? settingGroup.Settings.Select(s => s.Version).Max() + 1 : 1;
+        
         var setting = new Setting
         {
-            SettingGroupId = request.Id,
-            Version = 1,
+            
+            SettingGroupId = request.SettingGroupId,
+            Version = newVersionNumber;
             Input = JsonSerializer.Serialize(request.Input),
-            IsCurrent = false,
-            CreatedBy = request.CreatedBy,
+            IsCurrent = initialSetting,
+            CreatedBy = request.UserId,
             CreatedAt = DateTimeOffset.UtcNow
         };
 
@@ -69,62 +67,53 @@ public class MySqlSettingRepository : ISettingRepository
         await _settingsContext.SaveChangesAsync();
 
         // Actually retrieves the new setting from the table to confirm it's there
-        return await GetSetting(request.Id, 1);
+        return _settingGroupConverter.Convert(await GetSettingGroupFromContext(request.SettingGroupId));
     }
 
-    // This method will eventually be more complex. Right now we're not implementing approval process/permissions
-    // so this is very similar to just creating a setting. Eventually you'll be able to do an update which creates
-    // a new version OR an update which changes an existing version that hasn't been approved/used yet
-    public async Task<Model.Setting> UpdateSetting(UpdateSettingRequest request)
+    
+    public async Task<Model.SettingGroup> CreateSettingGroup(string settingGroupId, strubg CreatedBy)
     {
-        var newVersion = (await GetLatestVersionNumber(request.Id)) + 1;
-        var newSetting = new Setting
+        var settingGroup = new SettingGroup
         {
-            SettingGroupId = request.Id,
-            Version = newVersion,
-            Input = JsonSerializer.Serialize(request.Input),
-            IsCurrent = false,
-            CreatedBy = request.CreatedBy,
-            CreatedAt = DateTimeOffset.UtcNow
+            Id = settingGroupId, CreatedBy = createdBy
         };
 
-        _settingsContext.Settings.Add(newSetting);
+        _settingsContext.Add(settingGroup);
+
         await _settingsContext.SaveChangesAsync();
 
-        return await GetSetting(request.Id, newVersion);
+        return _settingGroupConverter.Convert(settingGroup);
+    }
+
+    public async Task<Model.SettingGroup> ChangeTargetSettingVersion(UpdateTargetSettingRequest request)
+    {
+        var settingGroup = await GetSettingGroupFromContext(request.SettingGroupId);
+        var currentSetting = settingGroup.Settings.Single(s=> s.IsCurrent);
+        var newCurrentSetting = settingGroup.Settings.Single(s=> s.Version == request.NewCurrentVersion);
+
+        currentSetting.IsCurrent = false;
+        newCurrentSetting.IsCurrent = true;
+
+        await _settingsContext.SaveChangesAsync();
+        return _settingGroupConverter.Convert(settingGroup);
+    
     }
 
     // Not even sure what the use-case is for this other than the user deciding not to use the service anymore
     // Still a good method to have available though, and good for demonstrating that we have full control of the data
     //
     // Also assuming for now that we'd only want to delete the full group of settings (all versions)
-    public async Task<IEnumerable<Model.Setting>> DeleteSetting(string settingId)
+    public async Task<IEnumerable<Model.Setting>> DeleteSetting(string settingGroupId)
     {
-        var settings = await GetAllUnconvertedSettingVersions(settingId);
-        _settingsContext.Settings.RemoveRange(settings);
-        await _settingsContext.SaveChangesAsync();
+        var settingGroup = await GetSettingGroupFromContext(settingGroupId);
+        _settingsContext.SettingGroups.Remove(settingGroup);
+        await _settingGroupConverter.Convert(settingGroup);
 
-        // Could probably make this void (or with async method just "Task") but would like to show user the
-        // contents of what was just deleted
-        return settings.Select(_settingsConverter.Convert);
+
+        return _settingGroupConverter.Convert(settingGroup);
     }
 
-    private async Task<int> GetLatestVersionNumber(string settingId)
-    {
-        // Retrieve all settings with id
-        var settings = await GetAllUnconvertedSettingVersions(settingId);
-
-        // Pull versions off of settings list
-        var versions = settings.Select(s => s.Version);
-        return versions.Max();
-    }
-
-    // Not the biggest deal in this case, but breaking into its own method since this query is repeated more than once
-    // Important to take any logic that is repeated more than once and break into its own method
-    private async Task<List<Setting>> GetAllUnconvertedSettingVersions(string settingId)
-    {
-        return await _settingsContext.Settings
-            .Where(s => s.SettingGroupId == settingId)
-            .ToListAsync();
-    }
+    private async Task<SettingGroup> GetSettingGroupFromContext(string settingGroupId) =>
+        await _settingsContext.SettingGroups.Include(sg => sg.Settings).Include(sg => sg.Permissions)
+            .SingleAsync(sg => sg.Id == settingGroupId);
 }
