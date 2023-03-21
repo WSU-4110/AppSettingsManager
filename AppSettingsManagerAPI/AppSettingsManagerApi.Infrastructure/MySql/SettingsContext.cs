@@ -25,9 +25,9 @@ public class SettingsContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Declare keys and relationships here
-        modelBuilder.Entity<User>().HasKey(u => u.UserId);
+        modelBuilder.Entity<User>().HasKey(u => u.Id);
 
-        modelBuilder.Entity<SettingGroup>().HasKey(s => s.SettingGroupId);
+        modelBuilder.Entity<SettingGroup>().HasKey(s => s.Id);
 
         modelBuilder.Entity<Setting>().HasKey(s => new { s.SettingGroupId, s.Version });
         modelBuilder.Entity<Setting>().HasIndex(s => s.SettingGroupId);
