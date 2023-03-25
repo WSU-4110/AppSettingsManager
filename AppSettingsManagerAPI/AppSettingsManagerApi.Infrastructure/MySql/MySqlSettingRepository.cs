@@ -12,9 +12,7 @@ namespace AppSettingsManagerApi.Infrastructure.MySql;
         private ISettingRepository CreateSettingRepository();
     }
     // Creates SettingsContext object
-    private readonly SettingsContext _settingsContext;
-    private readonly IBidirectionalConverter<Model.Setting, Setting> _settingsConverter;
-    private readonly IBidirectionalConverter<Model.SettingGroup, SettingGroup> _settingGroupConverter;
+  
 
     public MySqlSettingRepositoryFactory implements ISettingRepositoryFactory(
         private ISettingRepository CreateSettingRepository();
@@ -48,7 +46,11 @@ namespace AppSettingsManagerApi.Infrastructure.MySql;
 
     public class MYSQLSettingRepository implements ISettingRepository
     {
-     public async Task<Model.SettingGroup> GetSettingGroup(string settingGroupId)
+
+        private readonly SettingsContext _settingsContext;
+        private readonly IBidirectionalConverter<Model.Setting, Setting> _settingsConverter;
+        private readonly IBidirectionalConverter<Model.SettingGroup, SettingGroup> _settingGroupConverter;
+        public async Task<Model.SettingGroup> GetSettingGroup(string settingGroupId)
         {
             
             var settingGroup = await GetSettingGroupFromContext(settingGroupId);
