@@ -25,9 +25,7 @@ public class Setting
     [Timestamp]
     public byte[] LastUpdatedAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
-    // Commenting these out until we implement permissions
-    /*public bool IsApproved { get; set; }
+    public bool IsApproved { get; set; }
     public DateTimeOffset ApprovedAt { get; set; }
     public string? ApprovedBy { get; set; }
-    public List<Permission> Permissions { get; set; }*/
 }
