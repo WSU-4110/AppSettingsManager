@@ -7,25 +7,16 @@ import { User } from '../bff/models/User';
 })
 export class AuthService {
   private loggedIn = false;
-  private user: User = {
-    Username: "",
-    Password: "",
-    Email: ""
-  };
+
+  private username: string = ``;
+  private password: string = ``;
 
   constructor(private bffService: BffService) { }
 
-  login(username: string, password: string): boolean {
-    this.bffService.getUser(username)
-      .subscribe(user => this.user = user);
-
-    if (this.user.Password == password) {
-      this.loggedIn = true;
-    }
-    else {
-      this.loggedIn = false;
-    }
-
+  async login(username: string, password: string): Promise<boolean> {
+    this.loggedIn = await this.bffService.authenticateUser(username, password);
+    this.username = username;
+    this.password = password;
     return this.loggedIn;
   }
 
@@ -39,4 +30,11 @@ export class AuthService {
     return this.loggedIn;
   }
 
+  getUsername(): string {
+    return this.username;
+  }
+
+  getPassword(): string {
+    return this.password;
+  }
 }
