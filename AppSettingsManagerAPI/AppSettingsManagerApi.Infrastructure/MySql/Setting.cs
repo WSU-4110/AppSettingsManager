@@ -25,7 +25,4 @@ public class Setting
     [Timestamp]
     public byte[] LastUpdatedAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
-    public bool IsApproved { get; set; }
-    public DateTimeOffset ApprovedAt { get; set; }
-    public string? ApprovedBy { get; set; }
 }

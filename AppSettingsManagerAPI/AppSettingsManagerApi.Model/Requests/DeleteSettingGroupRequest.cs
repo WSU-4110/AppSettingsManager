@@ -1,11 +1,8 @@
-using System.Text.Json.Nodes;
-
 namespace AppSettingsManagerApi.Model.Requests;
 
-public class CreateSettingRequest
+public class DeleteSettingGroupRequest
 {
     public string SettingGroupId { get; set; }
-    public JsonNode Input { get; set; }
     public string UserId { get; set; }
     public string Password { get; set; }
 }

@@ -42,6 +42,7 @@ public static class ServiceConfiguration
                 )
         );
 
+        services.AddScoped<IPermissionRepository, MySqlPermissionRepository>();
         services.AddScoped<IUserRepository, MySqlUserRepository>();
         services.AddScoped<ISettingRepository, MySqlSettingRepository>();
 

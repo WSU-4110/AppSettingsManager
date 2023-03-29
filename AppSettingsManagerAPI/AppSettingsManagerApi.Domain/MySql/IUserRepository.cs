@@ -1,11 +1,12 @@
 using AppSettingsManagerApi.Model;
+using AppSettingsManagerApi.Model.Requests;
 
 namespace AppSettingsManagerApi.Domain.MySql;
 
 public interface IUserRepository
 {
-    Task<User> GetUser(string userId);
-    Task<User> CreateUser(string userId, string password, string email);
-    Task<User> DeleteUser(string userId);
-    Task<User> UpdateUser(string userId, string newPassword);
+    Task<bool> AuthenticateUser(string userId, string password);
+    Task<User> CreateUser(CreateUserRequest request);
+    Task<User> UpdateUserPassword(UpdateUserPasswordRequest request);
+    Task<User> DeleteUser(DeleteUserRequest request);
 }
