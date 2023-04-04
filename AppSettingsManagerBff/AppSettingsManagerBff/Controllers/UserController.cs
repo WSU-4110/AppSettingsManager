@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using AppSettingsManagerBff.Domain.ApiRepositories;
-using AppSettingsManagerBff.Model.Api;
+using AppSettingsManagerBff.Model;
+using AppSettingsManagerBff.Model.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppSettingsManagerBff.Controllers;
@@ -16,36 +17,37 @@ public class UserController : Controller
         _userRepository = userRepository;
     }
 
-    [HttpGet("userId/{userId}")]
-    public async Task<ApiBaseUser> GetUser([FromRoute] [Required] string userId)
-    {
-        var user = await _userRepository.GetUser(userId);
-        return user;
-    }
-
-    [HttpPost("userId/{userId}/password/{password}/email/{email}")]
-    public async Task<ApiBaseUser> CreateUser(
-        [FromRoute] [Required] string userId,
-        [FromRoute] [Required] string password,
-        [FromRoute] [Required] string email
+    [HttpGet("auth/userId/{userId}/password/{password}")]
+    public async Task<bool> AuthenticateUser(
+        [FromRoute][Required] string userId,
+        [FromRoute][Required] string password
     )
     {
-        var response = await _userRepository.CreateUser(userId, password, email);
+        var response = await _userRepository.AuthenticateUser(userId, password);
         return response;
     }
 
-    [HttpPut("userId/{userId}/password/{newPassword}")]
-    public async Task<ApiBaseUser> UpdateUser(
-        [FromRoute] [Required] string userId,
-        [FromRoute] [Required] string newPassword
-    )
+    [HttpPost]
+    public async Task<User> CreateUser(CreateUserRequest request)
     {
-        return await _userRepository.UpdateUser(userId, newPassword);
+        var user = await _userRepository.CreateUser(request);
+        return user;
     }
 
-    [HttpDelete("delete/userId/{userId}")]
-    public async Task<ApiBaseUser> DeleteUser([FromRoute] [Required] string userId)
+    [HttpPut]
+    public async Task<User> UpdateUserPassword(UpdateUserPasswordRequest request)
     {
-        return await _userRepository.DeleteUser(userId);
+        var user = await _userRepository.UpdateUserPassword(request);
+        return user;
+    }
+
+    [HttpDelete("userId/{userId}/password/{password}")]
+    public async Task<User> DeleteUser(
+        [FromRoute][Required] string userId,
+        [FromRoute][Required] string password
+    )
+    {
+        var user = await _userRepository.DeleteUser(userId, password);
+        return user;
     }
 }
