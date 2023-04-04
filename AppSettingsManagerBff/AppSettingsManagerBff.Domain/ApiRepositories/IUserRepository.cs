@@ -1,11 +1,14 @@
-using AppSettingsManagerBff.Model.Api;
+using AppSettingsManagerBff.Model;
+using AppSettingsManagerBff.Model.Requests;
 
 namespace AppSettingsManagerBff.Domain.ApiRepositories;
 
-public interface IUserRepository
+public interface ISettingsRepository
 {
-    Task<ApiBaseUser> GetUser(string userId);
-    Task<ApiBaseUser> CreateUser(string userId, string password, string email);
-    Task<ApiBaseUser> UpdateUser(string userId, string newPassword);
-    Task<ApiBaseUser> DeleteUser(string userId);
+    Task<SettingGroup> GetSettingGroup(string userId, string password, string settingGroupId);
+    Task<IEnumerable<SettingGroup>> GetSettingGroupsForUser(string userId, string password);
+    Task<SettingGroup> CreateSettingGroup(CreateSettingRequest request);
+    Task<SettingGroup> UpdateSetting(CreateSettingRequest request);
+    Task<SettingGroup> ChangeTargetSettingVersion(UpdateTargetSettingRequest request);
+    Task<SettingGroup> DeleteSettingGroup(string userId, string password, string settingGroupId);
 }
