@@ -3,12 +3,10 @@ using AppSettingsManagerBff.Model.Requests;
 
 namespace AppSettingsManagerBff.Domain.ApiRepositories;
 
-public interface ISettingsRepository
+public interface IUserRepository
 {
-    Task<SettingGroup> GetSettingGroup(string userId, string password, string settingGroupId);
-    Task<IEnumerable<SettingGroup>> GetSettingGroupsForUser(string userId, string password);
-    Task<SettingGroup> CreateSettingGroup(CreateSettingRequest request);
-    Task<SettingGroup> UpdateSetting(CreateSettingRequest request);
-    Task<SettingGroup> ChangeTargetSettingVersion(UpdateTargetSettingRequest request);
-    Task<SettingGroup> DeleteSettingGroup(string userId, string password, string settingGroupId);
+    Task<bool> AuthenticateUser(string userId, string password);
+    Task<User> CreateUser(CreateUserRequest request);
+    Task<User> UpdateUserPassword(UpdateUserPasswordRequest request);
+    Task<User> DeleteUser(string userId, string password);
 }
