@@ -1,4 +1,7 @@
-namespace AppSettingsManagerApi.Model;
+using System.Collections.Generic;
+using System;
+
+namespace AppSettingsManagerBff.Model;
 
 public class SettingGroup
 {

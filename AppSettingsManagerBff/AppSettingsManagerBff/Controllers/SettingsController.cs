@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using AppSettingsManagerBff.Domain.ApiRepositories;
-using AppSettingsManagerBff.Model.Api;
+using AppSettingsManagerBff.Model;
+using AppSettingsManagerBff.Model.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppSettingsManagerBff.Controllers;
@@ -16,32 +17,66 @@ public class SettingsController : Controller
         _settingsRepository = settingsRepository;
     }
 
-    [HttpPost]
-    public async Task<ApiSetting> CreateSetting(CreateSettingRequest request)
-    {
-        return await _settingsRepository.CreateSetting(request);
-    }
-
-    [HttpGet("settingId/{settingId}/version/{version}")]
-    public async Task<ApiSetting> GetSetting(
-        [FromRoute] [Required] string settingId,
-        [FromRoute] [Required] int version
+    [HttpGet("userId/{userId}/password/{password}/settingGroupId/{settingGroupId}")]
+    public async Task<SettingGroup> GetSettingGroup(
+        [FromRoute][Required] string userId,
+        [FromRoute][Required] string password,
+        [FromRoute][Required] string settingGroupId
     )
     {
-        return await _settingsRepository.GetSetting(settingId, version);
+        var settingGroup = await _settingsRepository.GetSettingGroup(
+            userId,
+            password,
+            settingGroupId
+        );
+        return settingGroup;
+    }
+
+    [HttpGet("userId/{userId}/password/{password}")]
+    public async Task<IEnumerable<SettingGroup>> GetAllSettingGroupsForUser(
+        [FromRoute][Required] string userId,
+        [FromRoute][Required] string password
+    )
+    {
+        var settingGroup = await _settingsRepository.GetSettingGroupsForUser(userId, password);
+        return settingGroup;
+    }
+
+    [HttpPost]
+    public async Task<SettingGroup> CreateSettingGroup(
+        [FromBody][Required] CreateSettingRequest request
+    )
+    {
+        var settingGroup = await _settingsRepository.CreateSettingGroup(request);
+        return settingGroup;
     }
 
     [HttpPut]
-    public async Task<ApiSetting> UpdateSetting([FromBody] [Required] UpdateSettingRequest request)
+    public async Task<SettingGroup> UpdateSetting(CreateSettingRequest request)
     {
-        return await _settingsRepository.UpdateSetting(request);
+        var settingGroup = await _settingsRepository.UpdateSetting(request);
+        return settingGroup;
     }
 
-    [HttpDelete("delete/settingId/{settingId}")]
-    public async Task<IEnumerable<ApiSetting>> DeleteSetting(
-        [FromRoute] [Required] string settingId
+    [HttpPut("target")]
+    public async Task<SettingGroup> ChangeTargetSettingVersion(UpdateTargetSettingRequest request)
+    {
+        var settingGroup = await _settingsRepository.ChangeTargetSettingVersion(request);
+        return settingGroup;
+    }
+
+    [HttpDelete("userId/{userId}/password/{password}/settingGroupId/{settingGroupId}")]
+    public async Task<SettingGroup> DeleteSettingGroup(
+        [FromRoute][Required] string userId,
+        [FromRoute][Required] string password,
+        [FromRoute][Required] string settingGroupId
     )
     {
-        return await _settingsRepository.DeleteSetting(settingId);
+        var settingGroup = await _settingsRepository.DeleteSettingGroup(
+            userId,
+            password,
+            settingGroupId
+        );
+        return settingGroup;
     }
 }
