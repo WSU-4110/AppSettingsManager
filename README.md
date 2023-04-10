@@ -16,7 +16,7 @@ implemented instantly.
 ## Tech Stack
 This application can be deployed entirely within Amazon Web Services:
 - Database: RDS-Aurora-MySQL
-- API/BFF Hosting: ECS
+- API/BFF Hosting: Firebase
 - User Interface: Cloudfront
 
 All of these services can accessed using the AWS free-tier which should be sufficient for the scope of this
