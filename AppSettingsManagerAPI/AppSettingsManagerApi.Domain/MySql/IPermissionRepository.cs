@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using AppSettingsManagerApi.Model;
 using AppSettingsManagerApi.Model.Requests;
 using Permission = AppSettingsManagerApi.Model.Permission;
@@ -12,6 +13,10 @@ public interface IPermissionRepository
     Task<Permission> PermissionRequestResponse(PermissionRequestResponse response);
     Task<Permission> DeletePermission(string userId, string settingGroupId);
 
-    Task CheckPermission(string userId, string password, string settingGroupId,
-        PermissionLevel requiredPermissionLevel);
+    Task CheckPermission(
+        string userId,
+        string password,
+        string settingGroupId,
+        PermissionLevel requiredPermissionLevel
+    );
 }

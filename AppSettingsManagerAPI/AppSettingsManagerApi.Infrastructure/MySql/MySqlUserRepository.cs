@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using AppSettingsManagerApi.Domain.Conversion;
 using AppSettingsManagerApi.Domain.Exceptions;
 using AppSettingsManagerApi.Domain.MySql;
@@ -24,9 +26,8 @@ public class MySqlUserRepository : IUserRepository
     {
         try
         {
-            var user = await _settingsContext.Users.SingleAsync(u =>
-                u.Id == userId &&
-                u.Password == password
+            var user = await _settingsContext.Users.SingleAsync(
+                u => u.Id == userId && u.Password == password
             );
 
             return true;

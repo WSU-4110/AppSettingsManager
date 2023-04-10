@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace AppSettingsManagerApi.Facades;
 
 public static class ServiceConfiguration

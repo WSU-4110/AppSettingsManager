@@ -1,4 +1,5 @@
-using AppSettingsManagerApi.Domain.Exceptions;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using AppSettingsManagerApi.Domain.MySql;
 using AppSettingsManagerApi.Model;
 using AppSettingsManagerApi.Model.Requests;
@@ -19,6 +20,8 @@ public class SettingsFacade
         _settingRepository = settingRepository;
         _permissionRepository = permissionRepository;
     }
+
+    #region Get
 
     public async Task<SettingGroup> GetSettingGroup(GetSettingGroupRequest request)
     {
@@ -47,6 +50,23 @@ public class SettingsFacade
 
         return settingGroups;
     }
+
+    public async Task<Dictionary<string, string>> GetSettings(string settingGroupId, int version)
+    {
+        var settings = await _settingRepository.GetSettings(settingGroupId, version);
+
+        return settings;
+    }
+
+    public async Task<string> GetSetting(string settingGroupId, int version, string variableName)
+    {
+        var settings = await _settingRepository.GetSettings(settingGroupId, version);
+        var setting = settings[variableName];
+        
+        return setting;
+    }
+
+    #endregion
 
     public async Task<SettingGroup> CreateSettingGroup(CreateSettingRequest request)
     {

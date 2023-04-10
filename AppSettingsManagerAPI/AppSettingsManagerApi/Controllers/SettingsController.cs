@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using AppSettingsManagerApi.Facades;
 using AppSettingsManagerApi.Model.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +24,8 @@ public class SettingsController : Controller
         _settingsFacade = settingsFacade;
     }
 
+    #region Get
+
     // The user is expected to include the parameters for this method in the request url
     // An example would be https://localhost:xxxx/settings/settingId/TEST/version/1
     //
@@ -40,7 +44,7 @@ public class SettingsController : Controller
             Password = password,
             SettingGroupId = settingGroupId
         };
-        
+
         var settingGroup = await _settingsFacade.GetSettingGroup(request);
         return settingGroup;
     }
@@ -51,15 +55,34 @@ public class SettingsController : Controller
         [FromRoute] [Required] string password
     )
     {
-        var request = new GetSettingGroupRequest
-        {
-            UserId = userId,
-            Password = password
-        };
-        
+        var request = new GetSettingGroupRequest { UserId = userId, Password = password };
+
         var settingGroups = await _settingsFacade.GetAllSettingGroupsForUser(request);
         return settingGroups;
     }
+
+    [HttpGet("settingGroupId/{settingGroupId}/version/{version}")]
+    public async Task<Dictionary<string, string>> GetSettings(
+        [FromRoute] [Required] string settingGroupId,
+        [FromRoute] [Required] int version
+    )
+    {
+        var setting = await _settingsFacade.GetSettings(settingGroupId, version);
+        return setting;
+    }
+    
+    [HttpGet("settingGroupId/{settingGroupId}/version/{version}/variableName/{variableName}")]
+    public async Task<string> GetSetting(
+        [FromRoute] [Required] string settingGroupId,
+        [FromRoute] [Required] int version,
+        [FromRoute] [Required] string variableName
+    )
+    {
+        var setting = await _settingsFacade.GetSetting(settingGroupId, version, variableName);
+        return setting;
+    }
+
+    #endregion
 
     // HttpPost for creating new items
     [HttpPost]
@@ -106,25 +129,31 @@ public class SettingsController : Controller
             Password = password,
             SettingGroupId = settingGroupId
         };
-        
+
         var settingGroup = await _settingsFacade.DeleteSettingGroup(request);
         return settingGroup;
     }
 
     [HttpPost("permission")]
-    public async Task<Model.Permission> CreateNewPermission([FromBody] [Required] CreatePermissionRequest request)
+    public async Task<Model.Permission> CreateNewPermission(
+        [FromBody] [Required] CreatePermissionRequest request
+    )
     {
         return await _settingsFacade.RequestNewSettingGroupAccess(request);
     }
 
     [HttpPut("permission")]
-    public async Task<Model.Permission> UpdatePermission([FromBody] [Required] UpdatePermissionRequest request)
+    public async Task<Model.Permission> UpdatePermission(
+        [FromBody] [Required] UpdatePermissionRequest request
+    )
     {
         return await _settingsFacade.UpdateSettingGroupAccess(request);
     }
 
     [HttpPut("permission/response")]
-    public async Task<Model.Permission> PermissionUpdateResponse([FromBody] [Required] PermissionRequestResponse request)
+    public async Task<Model.Permission> PermissionUpdateResponse(
+        [FromBody] [Required] PermissionRequestResponse request
+    )
     {
         return await _settingsFacade.PermissionRequestResponse(request);
     }

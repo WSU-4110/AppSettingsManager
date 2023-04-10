@@ -1,6 +1,3 @@
 namespace AppSettingsManagerApi.Facades;
 
-public class UserFacade
-{
-    
-}
+public class UserFacade { }

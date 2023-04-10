@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using AppSettingsManagerApi.Domain.MySql;
 using AppSettingsManagerApi.Model.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ public class UserController
     {
         return await _userRepository.AuthenticateUser(userId, password);
     }
-    
+
     [HttpPost]
     public async Task<User> CreateUser([FromBody] [Required] CreateUserRequest request)
     {
