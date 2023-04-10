@@ -1,18 +1,12 @@
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
 using AppSettingsManagerBff.Domain.ApiRepositories;
-using AppSettingsManagerBff.Model.Api;
+using AppSettingsManagerBff.Model;
+using AppSettingsManagerBff.Model.Requests;
 
 namespace AppSettingsManagerBff.Infrastructure.ApiRepositories;
 
 public class HttpSettingsRepository : ISettingsRepository
 {
     private readonly HttpClient _httpClient;
-
-    private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
-    {
-        PropertyNameCaseInsensitive = true
-    };
 
     // See comments on HttpUserRepository for explanations on this set up
     public HttpSettingsRepository(HttpClient httpClient, AppSettingsManagerApiConfig config)
@@ -22,92 +16,63 @@ public class HttpSettingsRepository : ISettingsRepository
         _httpClient.BaseAddress = new Uri(config.BaseAddress + "settings/");
     }
 
-    public async Task<ApiSetting> CreateSetting(CreateSettingRequest request)
+    public async Task<SettingGroup> GetSettingGroup(
+        string userId,
+        string password,
+        string settingGroupId
+    )
     {
-        // Serialize request object to string
-        var serializedRequest = JsonSerializer.Serialize(request);
-
-        // Wrap request object in StringContent object
-        var content = new StringContent(
-            serializedRequest,
-            System.Text.Encoding.UTF8,
-            "application/json"
+        var response = await _httpClient.GetAsync(
+            Constants.GetRequestUri(userId, password, settingGroupId)
         );
 
-        // Send request
-        // The requestUri parameter is "" because there is nothing to add to the base URL we have already set up
+        return await Constants.DeserializeResponse<SettingGroup>(response);
+    }
+
+    public async Task<IEnumerable<SettingGroup>> GetSettingGroupsForUser(
+        string userId,
+        string password
+    )
+    {
+        var response = await _httpClient.GetAsync(Constants.GetRequestUri(userId, password));
+
+        return await Constants.DeserializeResponse<IEnumerable<SettingGroup>>(response);
+    }
+
+    public async Task<SettingGroup> CreateSettingGroup(CreateSettingRequest request)
+    {
+        var content = Constants.GetStringContent(request);
         var response = await _httpClient.PostAsync("", content);
-        response.EnsureSuccessStatusCode();
 
-        // Extract response content as json string
-        var jsonResponse = await response.Content.ReadAsStringAsync();
-
-        // Deserialize json string
-        var setting = JsonSerializer.Deserialize<ApiSetting>(jsonResponse, _jsonSerializerOptions);
-
-        // "??" means "if null then"
-        return setting ?? throw new HttpRequestException();
+        return await Constants.DeserializeResponse<SettingGroup>(response);
     }
 
-    public async Task<ApiSetting> GetSetting(string settingId, int version)
+    public async Task<SettingGroup> UpdateSetting(CreateSettingRequest request)
     {
-        // Send request
-        var response = await _httpClient.GetAsync($"settingId/{settingId}/version/{version}");
-        response.EnsureSuccessStatusCode();
-
-        // Extract response content as json string
-        var jsonResponse = await response.Content.ReadAsStringAsync();
-
-        // Deserialize json string
-        var setting = JsonSerializer.Deserialize<ApiSetting>(jsonResponse, _jsonSerializerOptions);
-
-        // "??" means "if null then"
-        return setting ?? throw new HttpRequestException();
-    }
-
-    public async Task<ApiSetting> UpdateSetting(UpdateSettingRequest request)
-    {
-        // Serialize request object to string
-        var serializedRequest = JsonSerializer.Serialize(request);
-
-        // Wrap request object in StringContent object
-        var content = new StringContent(
-            serializedRequest,
-            System.Text.Encoding.UTF8,
-            "application/json"
-        );
-
-        // Send request
-
+        var content = Constants.GetStringContent(request);
         var response = await _httpClient.PutAsync("", content);
-        response.EnsureSuccessStatusCode();
 
-        // Extract response content as json string
-        var jsonResponse = await response.Content.ReadAsStringAsync();
-
-        // Deserialize json string
-        var setting = JsonSerializer.Deserialize<ApiSetting>(jsonResponse, _jsonSerializerOptions);
-
-        // "??" means "if null then"
-        return setting ?? throw new HttpRequestException();
+        return await Constants.DeserializeResponse<SettingGroup>(response);
     }
 
-    public async Task<IEnumerable<ApiSetting>> DeleteSetting(string settingId)
+    public async Task<SettingGroup> ChangeTargetSettingVersion(UpdateTargetSettingRequest request)
     {
-        // Send request
-        var response = await _httpClient.DeleteAsync($"delete/settingId/{settingId}");
-        response.EnsureSuccessStatusCode();
+        var content = Constants.GetStringContent(request);
+        var response = await _httpClient.PutAsync("target", content);
 
-        // Extract response content as json string
-        var jsonResponse = await response.Content.ReadAsStringAsync();
+        return await Constants.DeserializeResponse<SettingGroup>(response);
+    }
 
-        // Deserialize json string
-        var setting = JsonSerializer.Deserialize<IEnumerable<ApiSetting>>(
-            jsonResponse,
-            _jsonSerializerOptions
+    public async Task<SettingGroup> DeleteSettingGroup(
+        string userId,
+        string password,
+        string settingGroupId
+    )
+    {
+        var response = await _httpClient.DeleteAsync(
+            Constants.GetRequestUri(userId, password, settingGroupId)
         );
 
-        // "??" means "if null then"
-        return setting ?? throw new HttpRequestException();
+        return await Constants.DeserializeResponse<SettingGroup>(response);
     }
 }
