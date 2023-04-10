@@ -9,6 +9,7 @@ public class SettingGroup
 
     [Timestamp]
     public byte[] LastUpdatedAt { get; set; }
+
     public List<Setting> Settings { get; set; } = new List<Setting>();
     public List<Permission> Permissions { get; set; } = new List<Permission>();
 }

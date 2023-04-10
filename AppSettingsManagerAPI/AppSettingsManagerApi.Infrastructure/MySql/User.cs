@@ -7,7 +7,7 @@ public class User
     // These labels are optional but recommended
     // Make sure the limits you set make sense based on the field being affected
     [MaxLength(36)]
-    public string UserId { get; set; }
+    public string Id { get; set; }
 
     [MaxLength(36)]
     public string Password { get; set; }
@@ -16,5 +16,5 @@ public class User
     public string Email { get; set; }
 
     // The User has many Permissions relationship is defined in the SettingsContext.cs file
-    public List<Permission> Permissions { get; set; }
+    public List<Permission> Permissions { get; set; } = new List<Permission>();
 }

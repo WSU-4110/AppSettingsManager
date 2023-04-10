@@ -4,17 +4,16 @@ services:
     image: mysql:latest
     restart: always
     environment:
-      MYSQL_DATABASE: 'db'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
-      MY_SQL_ROOT_HOST: '%'
+      MYSQL_ROOT_HOST: '%'
     ports:
       - '3306:3306'
     expose:
       - '3306'
     volumes:
       - my-db:/c/Temp
+      - ./sql:/docker-entrypoint-initdb.d
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
   admin:
     image: phpmyadmin/phpmyadmin:latest
     ports:

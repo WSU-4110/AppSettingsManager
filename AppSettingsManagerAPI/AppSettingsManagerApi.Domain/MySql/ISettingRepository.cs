@@ -1,12 +1,14 @@
+using AppSettingsManagerApi.Model;
 using AppSettingsManagerApi.Model.Requests;
 
 namespace AppSettingsManagerApi.Domain.MySql;
 
 public interface ISettingRepository
 {
-    Task<Model.Setting> GetSetting(string settingId, int version);
-    Task<IEnumerable<Model.Setting>> GetAllSettingVersions(string settingId);
-    Task<Model.Setting> CreateSetting(CreateSettingRequest request);
-    Task<Model.Setting> UpdateSetting(UpdateSettingRequest request);
-    Task<IEnumerable<Model.Setting>> DeleteSetting(string settingId);
+    Task<SettingGroup> GetSettingGroup(string settingGroupId);
+    Task<IEnumerable<SettingGroup>> GetSettingGroupsByUser(string userId);
+    Task<SettingGroup> CreateSetting(CreateSettingRequest request);
+    Task<SettingGroup> CreateSettingGroup(string settingGroupId, string createdBy);
+    Task<SettingGroup> ChangeTargetSettingVersion(UpdateTargetSettingRequest request);
+    Task<SettingGroup> DeleteSetting(string settingGroupId);
 }
