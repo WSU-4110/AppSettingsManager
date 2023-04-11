@@ -59,24 +59,22 @@ public class SettingsController : Controller
         return settingGroups;
     }
 
-    [HttpGet("settingGroupId/{settingGroupId}/version/{version}")]
+    [HttpGet("settingGroupId/{settingGroupId}")]
     public async Task<Dictionary<string, string>> GetSettings(
-        [FromRoute] [Required] string settingGroupId,
-        [FromRoute] [Required] int version
+        [FromRoute] [Required] string settingGroupId
     )
     {
-        var setting = await _settingFacade.GetSettings(settingGroupId, version);
+        var setting = await _settingFacade.GetSettings(settingGroupId);
         return setting;
     }
-    
-    [HttpGet("settingGroupId/{settingGroupId}/version/{version}/variableName/{variableName}")]
+
+    [HttpGet("settingGroupId/{settingGroupId}/variableName/{variableName}")]
     public async Task<string> GetSetting(
         [FromRoute] [Required] string settingGroupId,
-        [FromRoute] [Required] int version,
         [FromRoute] [Required] string variableName
     )
     {
-        var setting = await _settingFacade.GetSetting(settingGroupId, version, variableName);
+        var setting = await _settingFacade.GetSetting(settingGroupId, variableName);
         return setting;
     }
 

@@ -7,7 +7,7 @@ public interface ISettingRepository
 {
     Task<SettingGroup> GetSettingGroup(string settingGroupId);
     Task<IEnumerable<SettingGroup>> GetSettingGroupsByUser(string userId);
-    Task<Dictionary<string, string>> GetSettings(string settingGroupId, int version);
+    Task<Dictionary<string, string>> GetSettings(string settingGroupId);
     Task<SettingGroup> CreateSetting(CreateSettingRequest request);
     Task<SettingGroup> CreateSettingGroup(string settingGroupId, string createdBy);
     Task<SettingGroup> ChangeTargetSettingVersion(UpdateTargetSettingRequest request);
