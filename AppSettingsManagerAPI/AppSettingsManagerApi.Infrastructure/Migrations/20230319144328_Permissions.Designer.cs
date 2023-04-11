@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppSettingsManagerApi.Infrastructure.Migrations
 {
     [DbContext(typeof(SettingsContext))]
-    [Migration("20230227202735_Permissions")]
+    [Migration("20230319144328_Permissions")]
     partial class Permissions
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,7 +89,7 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
 
             modelBuilder.Entity("AppSettingsManagerApi.Infrastructure.MySql.SettingGroup", b =>
                 {
-                    b.Property<string>("SettingGroupId")
+                    b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
@@ -101,14 +101,14 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
-                    b.HasKey("SettingGroupId");
+                    b.HasKey("Id");
 
                     b.ToTable("SettingGroups");
                 });
 
             modelBuilder.Entity("AppSettingsManagerApi.Infrastructure.MySql.User", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("Id")
                         .HasMaxLength(36)
                         .HasColumnType("varchar(36)");
 
@@ -122,7 +122,7 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("varchar(36)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.ToTable("Users");
                 });

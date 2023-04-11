@@ -56,12 +56,6 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                     b.Property<int>("Version")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("ApprovedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("ApprovedBy")
-                        .HasColumnType("longtext");
-
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -73,9 +67,6 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                     b.Property<string>("Input")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsCurrent")
                         .HasColumnType("tinyint(1)");
@@ -96,7 +87,7 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
 
             modelBuilder.Entity("AppSettingsManagerApi.Infrastructure.MySql.SettingGroup", b =>
                 {
-                    b.Property<string>("SettingGroupId")
+                    b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatedBy")
@@ -108,14 +99,14 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
-                    b.HasKey("SettingGroupId");
+                    b.HasKey("Id");
 
                     b.ToTable("SettingGroups");
                 });
 
             modelBuilder.Entity("AppSettingsManagerApi.Infrastructure.MySql.User", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("Id")
                         .HasMaxLength(36)
                         .HasColumnType("varchar(36)");
 
@@ -129,7 +120,7 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("varchar(36)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.ToTable("Users");
                 });

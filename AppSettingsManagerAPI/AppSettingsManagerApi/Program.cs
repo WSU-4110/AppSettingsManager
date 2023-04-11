@@ -1,3 +1,4 @@
+using AppSettingsManagerApi.Facades;
 using AppSettingsManagerApi.Infrastructure.MySql;
 using AppSettingsManagerApi.Infrastructure.MySql.Converters;
 
@@ -28,6 +29,8 @@ builder.Services.AddConverters();
 builder.Services.AddMySqlSettingsStorage(
     builder.Configuration.GetConnectionString("DefaultConnection")
 );
+
+builder.Services.AddFacades();
 
 var app = builder.Build();
 

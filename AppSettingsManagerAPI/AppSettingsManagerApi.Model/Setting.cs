@@ -4,8 +4,8 @@ namespace AppSettingsManagerApi.Model;
 
 public class Setting
 {
-    public string Id { get; set; }
-    
+    public string SettingGroupId { get; set; }
+
     // A JsonNode allows you to interact with a Json object with additional operations
     // One big advantage of JsonNode is the ability to reference values like a dictionary i.e. var x = JsonNode[key]
     public JsonNode Input { get; set; }
