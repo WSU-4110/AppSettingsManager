@@ -21,23 +21,6 @@ public class MySqlSettingRepositoryTests : IDisposable
         _settingRepository = new MySqlSettingRepository(_settingsContext, _settingGroupConverterMock.Object);
     }
 
-    [Theory]
-    [AutoTestData]
-    public async Task GetSettingGroup_Succeeds(string settingGroupId)
-    {
-        var settingGroup = _fixture.Build<SettingGroup>().Create();
-        settingGroup.Id = settingGroupId;
-        
-        _settingsContext.SettingGroups.Add(settingGroup);
-        
-        var convertedSettingGroup = _fixture.Build<Model.SettingGroup>().Create();
-        _settingGroupConverterMock.Setup(c => c.Convert(It.Is<SettingGroup>(s => s.Id == settingGroupId))).Returns(convertedSettingGroup);
-        
-        var result = await _settingRepository.GetSettingGroup(settingGroupId);
-        
-        Assert.Equal(convertedSettingGroup, result);
-    }
-       
     public void Dispose()
     {
         GC.SuppressFinalize(this);

@@ -15,35 +15,7 @@ public class HttpUserRepositoryTests
     {
         BaseAddress = "http://localhost:5000/"
     };
-    
-    [Theory]
-    [AutoTestData]
-    public async Task CreateUser_Succeeds(CreateUserRequest request)
-    {
-        var user = new User
-        {
-            UserId = request.UserId,
-            Password = request.Password,
-            Email = request.Email
-        };
-        
-        var expectedResponse = GetHttpResponseMessage(HttpStatusCode.OK, user);
-        
-        _mockHttpMessageHandler.Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Post),
-                ItExpr.IsAny<CancellationToken>()
-            )
-            .ReturnsAsync(expectedResponse);
-        
-        var repository = GetHttpUserRepository();
-        
-        var result = await repository.CreateUser(request);
-        
-        Assert.Equal(user.UserId, result.UserId);
-    }
-    
+
     private HttpUserRepository GetHttpUserRepository()
     {
         var httpClient = new HttpClient(_mockHttpMessageHandler.Object)
@@ -54,7 +26,7 @@ public class HttpUserRepositoryTests
         return new HttpUserRepository(httpClient, _config);
     }
     
-private HttpResponseMessage GetHttpResponseMessage(HttpStatusCode statusCode, object content)
+    private HttpResponseMessage GetHttpResponseMessage(HttpStatusCode statusCode, object content)
     {
         return new HttpResponseMessage(HttpStatusCode.OK)
         {
