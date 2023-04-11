@@ -11,11 +11,9 @@ public static class SettingContextBuilder
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
         
-        var options = new DbContextOptionsBuilder<SettingsContext>()
-            .UseSqlite(connection)
-            .Options;
+        var options = new DbContextOptionsBuilder<SettingsContext>().Options;
         
-        var context = new SettingsContext(options);
+        var context = new TestSettingsContext(options);
 
         var createDb = context.Database.GenerateCreateScript();
 
