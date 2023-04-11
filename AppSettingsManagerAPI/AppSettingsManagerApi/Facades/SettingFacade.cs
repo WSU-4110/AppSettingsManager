@@ -72,7 +72,9 @@ public class SettingFacade
             request.SettingGroupId,
             request.UserId
         );
+        
         var setting = _settingRepository.CreateSetting(request);
+        
         var permissionRequest = new CreatePermissionRequest
         {
             SettingGroupId = request.SettingGroupId,
