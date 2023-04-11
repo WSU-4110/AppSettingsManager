@@ -1,4 +1,3 @@
-using System.Linq;
 using AppSettingsManagerApi.Domain.Conversion;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql.Converters;

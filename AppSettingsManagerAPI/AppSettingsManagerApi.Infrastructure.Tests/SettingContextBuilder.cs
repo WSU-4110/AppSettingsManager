@@ -1,0 +1,31 @@
+using AppSettingsManagerApi.Infrastructure.MySql;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+
+namespace AppSettingsManagerApi.Infrastructure.Tests;
+
+public static class SettingContextBuilder
+{
+    public static SettingsContext BuildTestSettingsContext()
+    {
+        var connection = new SqliteConnection("Filename=:memory:");
+        connection.Open();
+        
+        var options = new DbContextOptionsBuilder<SettingsContext>()
+            .UseSqlite(connection)
+            .Options;
+        
+        var context = new SettingsContext(options);
+
+        var createDb = context.Database.GenerateCreateScript();
+
+        createDb = createDb.Replace("\"LastUpdatedAt\" BLOB NOT NULL",
+            "\"LastUpdatedAt\" BLOB NOT NULL DEFAULT (randomblob(8))");
+        
+        context.Database.ExecuteSqlRaw(createDb);
+
+        context.SaveChanges();
+        
+        return context;
+    }
+}

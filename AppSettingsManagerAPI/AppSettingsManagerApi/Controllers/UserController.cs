@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using AppSettingsManagerApi.Domain.MySql;
 using AppSettingsManagerApi.Model.Requests;
 using Microsoft.AspNetCore.Mvc;

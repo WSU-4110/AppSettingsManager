@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using AppSettingsManagerApi.Domain.Conversion;
 using AppSettingsManagerApi.Domain.Exceptions;
 using AppSettingsManagerApi.Domain.MySql;

@@ -1,5 +1,3 @@
-using System;
-
 namespace AppSettingsManagerApi.Domain.Exceptions;
 
 public class IncorrectPasswordException : Exception

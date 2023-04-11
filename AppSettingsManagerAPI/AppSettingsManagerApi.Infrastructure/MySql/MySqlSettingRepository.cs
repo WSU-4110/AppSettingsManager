@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json;
-using System.Threading.Tasks;
 using AppSettingsManagerApi.Domain.Conversion;
 using AppSettingsManagerApi.Domain.MySql;
 using AppSettingsManagerApi.Model.Requests;
@@ -14,7 +10,6 @@ namespace AppSettingsManagerApi.Infrastructure.MySql;
 public class MySqlSettingRepository : ISettingRepository
 {
     private readonly SettingsContext _settingsContext;
-    private readonly IBidirectionalConverter<Model.Setting, Setting> _settingConverter;
     private readonly IBidirectionalConverter<
         Model.SettingGroup,
         SettingGroup
@@ -22,13 +17,11 @@ public class MySqlSettingRepository : ISettingRepository
 
     public MySqlSettingRepository(
         SettingsContext settingsContext,
-        IBidirectionalConverter<Model.Setting, Setting> settingConverter,
         IBidirectionalConverter<Model.SettingGroup, SettingGroup> settingGroupConverter
     )
     {
         // Injects SettingsContext configured in ServiceConfiguration.cs into _settingsContext object
         _settingsContext = settingsContext;
-        _settingConverter = settingConverter;
         _settingGroupConverter = settingGroupConverter;
     }
 

@@ -9,6 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoFixture" Version="4.18.0" />
+        <PackageReference Include="AutoFixture.AutoMoq" Version="4.18.0" />
+        <PackageReference Include="AutoFixture.Xunit2" Version="4.18.0" />
+        <PackageReference Include="JsonSchema.Net" Version="4.0.3" />
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.4" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
         <PackageReference Include="Moq" Version="4.18.4" />
         <PackageReference Include="xunit" Version="2.4.1" />
@@ -20,6 +26,13 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AppSettingsManagerApi.Domain\AppSettingsManagerApi.Domain.csproj" />
+      <ProjectReference Include="..\AppSettingsManagerApi.Infrastructure\AppSettingsManagerApi.Infrastructure.csproj" />
+      <ProjectReference Include="..\AppSettingsManagerApi.Model\AppSettingsManagerApi.Model.csproj" />
+      <ProjectReference Include="..\AppSettingsManagerApi\AppSettingsManagerApi.csproj" />
     </ItemGroup>
 
 </Project>

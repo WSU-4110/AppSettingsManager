@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using AppSettingsManagerApi.Domain.MySql;
 using AppSettingsManagerApi.Model;
 using AppSettingsManagerApi.Model.Requests;
