@@ -5,7 +5,6 @@ public static class ServiceConfiguration
     public static IServiceCollection AddFacades(this IServiceCollection services)
     {
         services.AddScoped<SettingFacade>();
-        services.AddScoped<UserFacade>();
 
         return services;
     }
