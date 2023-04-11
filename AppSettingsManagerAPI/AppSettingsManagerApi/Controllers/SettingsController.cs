@@ -17,11 +17,11 @@ namespace AppSettingsManagerApi.Controllers;
 [Route("settings")]
 public class SettingsController : Controller
 {
-    private readonly SettingsFacade _settingsFacade;
+    private readonly SettingFacade _settingFacade;
 
-    public SettingsController(SettingsFacade settingsFacade)
+    public SettingsController(SettingFacade settingFacade)
     {
-        _settingsFacade = settingsFacade;
+        _settingFacade = settingFacade;
     }
 
     #region Get
@@ -45,7 +45,7 @@ public class SettingsController : Controller
             SettingGroupId = settingGroupId
         };
 
-        var settingGroup = await _settingsFacade.GetSettingGroup(request);
+        var settingGroup = await _settingFacade.GetSettingGroup(request);
         return settingGroup;
     }
 
@@ -57,7 +57,7 @@ public class SettingsController : Controller
     {
         var request = new GetSettingGroupRequest { UserId = userId, Password = password };
 
-        var settingGroups = await _settingsFacade.GetAllSettingGroupsForUser(request);
+        var settingGroups = await _settingFacade.GetAllSettingGroupsForUser(request);
         return settingGroups;
     }
 
@@ -67,7 +67,7 @@ public class SettingsController : Controller
         [FromRoute] [Required] int version
     )
     {
-        var setting = await _settingsFacade.GetSettings(settingGroupId, version);
+        var setting = await _settingFacade.GetSettings(settingGroupId, version);
         return setting;
     }
     
@@ -78,7 +78,7 @@ public class SettingsController : Controller
         [FromRoute] [Required] string variableName
     )
     {
-        var setting = await _settingsFacade.GetSetting(settingGroupId, version, variableName);
+        var setting = await _settingFacade.GetSetting(settingGroupId, version, variableName);
         return setting;
     }
 
@@ -92,7 +92,7 @@ public class SettingsController : Controller
         [FromBody] [Required] CreateSettingRequest request
     )
     {
-        var settingGroup = await _settingsFacade.CreateSettingGroup(request);
+        var settingGroup = await _settingFacade.CreateSettingGroup(request);
         return settingGroup;
     }
 
@@ -102,7 +102,7 @@ public class SettingsController : Controller
         [FromBody] [Required] CreateSettingRequest request
     )
     {
-        var settingGroup = await _settingsFacade.UpdateSetting(request);
+        var settingGroup = await _settingFacade.UpdateSetting(request);
         return settingGroup;
     }
 
@@ -111,7 +111,7 @@ public class SettingsController : Controller
         [FromBody] [Required] UpdateTargetSettingRequest request
     )
     {
-        var settingGroup = await _settingsFacade.ChangeTargetSettingVersion(request);
+        var settingGroup = await _settingFacade.ChangeTargetSettingVersion(request);
         return settingGroup;
     }
 
@@ -130,7 +130,7 @@ public class SettingsController : Controller
             SettingGroupId = settingGroupId
         };
 
-        var settingGroup = await _settingsFacade.DeleteSettingGroup(request);
+        var settingGroup = await _settingFacade.DeleteSettingGroup(request);
         return settingGroup;
     }
 
@@ -139,7 +139,7 @@ public class SettingsController : Controller
         [FromBody] [Required] CreatePermissionRequest request
     )
     {
-        return await _settingsFacade.RequestNewSettingGroupAccess(request);
+        return await _settingFacade.RequestNewSettingGroupAccess(request);
     }
 
     [HttpPut("permission")]
@@ -147,7 +147,7 @@ public class SettingsController : Controller
         [FromBody] [Required] UpdatePermissionRequest request
     )
     {
-        return await _settingsFacade.UpdateSettingGroupAccess(request);
+        return await _settingFacade.UpdateSettingGroupAccess(request);
     }
 
     [HttpPut("permission/response")]
@@ -155,6 +155,6 @@ public class SettingsController : Controller
         [FromBody] [Required] PermissionRequestResponse request
     )
     {
-        return await _settingsFacade.PermissionRequestResponse(request);
+        return await _settingFacade.PermissionRequestResponse(request);
     }
 }

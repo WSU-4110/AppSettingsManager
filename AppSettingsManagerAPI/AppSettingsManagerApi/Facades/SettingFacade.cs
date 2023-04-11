@@ -7,12 +7,12 @@ using SettingGroup = AppSettingsManagerApi.Model.SettingGroup;
 
 namespace AppSettingsManagerApi.Facades;
 
-public class SettingsFacade
+public class SettingFacade
 {
     private readonly ISettingRepository _settingRepository;
     private readonly IPermissionRepository _permissionRepository;
 
-    public SettingsFacade(
+    public SettingFacade(
         ISettingRepository settingRepository,
         IPermissionRepository permissionRepository
     )
