@@ -28,7 +28,35 @@ public class MySqlSettingRepositoryTests : IDisposable
         );
     }
 
-    
+    [Theory]
+    [AutoTestData]
+    public async Task GetSettingGroup_ReturnsSettingGroup(string settingGroupId)
+    {
+        var settingGroup = _fixture.Build<SettingGroup>().Create();
+        SetLastUpdatedAt(settingGroup);
+        settingGroup.Id = settingGroupId;
+        var expectedSettingGroup = _fixture.Build<Model.SettingGroup>().Create();
+
+        _settingsContext.SettingGroups.Add(settingGroup);
+        await _settingsContext.SaveChangesAsync();
+
+        _settingGroupConverterMock
+            .Setup(s => s.Convert(settingGroup))
+            .Returns(expectedSettingGroup);
+
+        var actualSettingGroup = await _settingRepository.GetSettingGroup(settingGroupId);
+
+        Assert.Equal(expectedSettingGroup, actualSettingGroup);
+    }
+
+    [Theory]
+    [AutoTestData]
+    public async Task GetSettingGroup_ThrowsInvalidOperationException(string settingGroupId)
+    {
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _settingRepository.GetSettingGroup(settingGroupId)
+        );
+    }
 
     private void SetLastUpdatedAt(SettingGroup settingGroup)
     {
