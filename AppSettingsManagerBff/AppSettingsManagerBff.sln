@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppSettingsManagerBff.Domai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppSettingsManagerBff.Model", "AppSettingsManagerBff.Model\AppSettingsManagerBff.Model.csproj", "{7537826A-EEDE-47AD-9F99-FC4454F3A755}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppSettingsManagerBff.Infrastructure.Tests", "AppSettingsManagerBff.Infrastructure.Tests\AppSettingsManagerBff.Infrastructure.Tests.csproj", "{5208899E-DF0B-4E54-B574-A5AFEE5F5592}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{7537826A-EEDE-47AD-9F99-FC4454F3A755}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7537826A-EEDE-47AD-9F99-FC4454F3A755}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7537826A-EEDE-47AD-9F99-FC4454F3A755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5208899E-DF0B-4E54-B574-A5AFEE5F5592}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5208899E-DF0B-4E54-B574-A5AFEE5F5592}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5208899E-DF0B-4E54-B574-A5AFEE5F5592}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5208899E-DF0B-4E54-B574-A5AFEE5F5592}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using System.Text.Json;
 using AppSettingsManagerApi.Domain.Conversion;
 using AppSettingsManagerApi.Domain.MySql;
@@ -9,7 +10,6 @@ namespace AppSettingsManagerApi.Infrastructure.MySql;
 public class MySqlSettingRepository : ISettingRepository
 {
     private readonly SettingsContext _settingsContext;
-    private readonly IBidirectionalConverter<Model.Setting, Setting> _settingConverter;
     private readonly IBidirectionalConverter<
         Model.SettingGroup,
         SettingGroup
@@ -17,15 +17,15 @@ public class MySqlSettingRepository : ISettingRepository
 
     public MySqlSettingRepository(
         SettingsContext settingsContext,
-        IBidirectionalConverter<Model.Setting, Setting> settingConverter,
         IBidirectionalConverter<Model.SettingGroup, SettingGroup> settingGroupConverter
     )
     {
         // Injects SettingsContext configured in ServiceConfiguration.cs into _settingsContext object
         _settingsContext = settingsContext;
-        _settingConverter = settingConverter;
         _settingGroupConverter = settingGroupConverter;
     }
+
+    #region Get
 
     public async Task<Model.SettingGroup> GetSettingGroup(string settingGroupId)
     {
@@ -45,6 +45,19 @@ public class MySqlSettingRepository : ISettingRepository
 
         return settingGroups.Select(_settingGroupConverter.Convert);
     }
+
+    public async Task<Dictionary<string, string>> GetSettings(string settingGroupId, int version)
+    {
+        var settings = await _settingsContext.Settings
+            .Where(s => s.SettingGroupId == settingGroupId && s.Version == version)
+            .Select(s => s.Input)
+            .SingleAsync();
+
+        return JsonSerializer.Deserialize<Dictionary<string, string>>(settings)
+            ?? throw new SerializationException();
+    }
+
+    #endregion
 
     public async Task<Model.SettingGroup> CreateSetting(CreateSettingRequest request)
     {

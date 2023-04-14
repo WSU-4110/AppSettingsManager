@@ -112,7 +112,8 @@ namespace AppSettingsManagerApi.Infrastructure.Migrations
                 column: "SettingGroupId",
                 principalTable: "SettingGroups",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

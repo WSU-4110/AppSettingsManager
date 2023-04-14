@@ -25,7 +25,7 @@ public class UserController
     {
         return await _userRepository.AuthenticateUser(userId, password);
     }
-    
+
     [HttpPost]
     public async Task<User> CreateUser([FromBody] [Required] CreateUserRequest request)
     {

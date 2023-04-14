@@ -4,8 +4,7 @@ public static class ServiceConfiguration
 {
     public static IServiceCollection AddFacades(this IServiceCollection services)
     {
-        services.AddScoped<SettingsFacade>();
-        services.AddScoped<UserFacade>();
+        services.AddScoped<SettingFacade>();
 
         return services;
     }
