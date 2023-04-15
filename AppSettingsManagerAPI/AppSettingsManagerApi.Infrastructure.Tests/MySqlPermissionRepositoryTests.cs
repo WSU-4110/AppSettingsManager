@@ -1,8 +1,9 @@
 using AppSettingsManagerApi.Domain.Conversion;
+using AppSettingsManagerApi.Model;
 using AppSettingsManagerApi.Infrastructure.MySql;
+using Permission = AppSettingsManagerApi.Infrastructure.MySql.Permission;
 using AppSettingsManagerApi.Tests;
 using AutoFixture;
-
 namespace AppSettingsManagerApi.Infrastructure.Tests;
 
 public class MySqlPermissionRepositoryTests : IDisposable
@@ -24,6 +25,16 @@ public class MySqlPermissionRepositoryTests : IDisposable
             _settingsContext,
             _permissionConverterMock.Object
         );
+    }
+    
+    [Theory]
+    [AutoTestData]
+    public async Task GetPermission_ThrowsInvalidOperationException(string userId, string settingGroupId)
+    {
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _permissionRepository.GetPermission(userId, settingGroupId)
+        );
+
     }
 
     public void Dispose()
