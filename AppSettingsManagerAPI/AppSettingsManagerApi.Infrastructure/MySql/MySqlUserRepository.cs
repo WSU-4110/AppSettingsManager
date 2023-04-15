@@ -1,5 +1,7 @@
 using AppSettingsManagerApi.Domain.Conversion;
+using AppSettingsManagerApi.Domain.Exceptions;
 using AppSettingsManagerApi.Domain.MySql;
+using AppSettingsManagerApi.Model.Requests;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppSettingsManagerApi.Infrastructure.MySql;
@@ -18,44 +20,67 @@ public class MySqlUserRepository : IUserRepository
         _userConverter = userConverter;
     }
 
-    public async Task<Model.User> GetUser(string userId)
+    public async Task<bool> AuthenticateUser(string userId, string password)
     {
-        return _userConverter.Convert(
-            await _settingsContext.Users.SingleAsync(u => u.UserId == userId)
-        );
+        try
+        {
+            var user = await _settingsContext.Users.SingleAsync(
+                u => u.Id == userId && u.Password == password
+            );
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
     }
 
-    public async Task<Model.User> CreateUser(string userId, string password, string email)
+    public async Task<Model.User> CreateUser(CreateUserRequest request)
     {
-        var newUser = new User
+        var user = new User
         {
-            UserId = userId,
-            Password = password,
-            Email = email
+            Id = request.UserId,
+            Password = request.Password,
+            Email = request.Email
         };
 
-        await _settingsContext.Users.AddAsync(newUser);
+        _settingsContext.Users.Add(user);
+        await _settingsContext.SaveChangesAsync();
+
+        return _userConverter.Convert(user);
+    }
+
+    public async Task<Model.User> UpdateUserPassword(UpdateUserPasswordRequest request)
+    {
+        var user = await _settingsContext.Users.SingleAsync(u => u.Id == request.UserId);
+
+        CheckPassword(user, request.OldPassword);
+
+        user.Password = request.NewPassword;
 
         await _settingsContext.SaveChangesAsync();
 
-        return _userConverter.Convert(_settingsContext.Users.Single(u => u.UserId == userId));
+        return _userConverter.Convert(user);
     }
 
-    public async Task<Model.User> DeleteUser(string userId)
+    public async Task<Model.User> DeleteUser(DeleteUserRequest request)
     {
-        var user = await _settingsContext.Users.SingleAsync(u => u.UserId == userId);
+        var user = await _settingsContext.Users.SingleAsync(u => u.Id == request.UserId);
+
+        CheckPassword(user, request.Password);
 
         _settingsContext.Users.Remove(user);
         await _settingsContext.SaveChangesAsync();
+
         return _userConverter.Convert(user);
     }
 
-    public async Task<Model.User> UpdateUser(string userId, string newPassword)
+    private void CheckPassword(User user, string password)
     {
-        var user = await _settingsContext.Users.SingleAsync(u => u.UserId == userId);
-
-        user.Password = newPassword;
-        await _settingsContext.SaveChangesAsync();
-        return _userConverter.Convert(user);
+        if (user.Password != password)
+        {
+            throw new IncorrectPasswordException(user.Id);
+        }
     }
 }

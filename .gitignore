@@ -355,8 +355,17 @@ MigrationBackup/
 
 *.vscode*
 
+
+*terraform*
+
+
 *.ds_store*
 
 *.angular*
 
+
+*AppSettingsManagerUi/dist/*
+
+
 *dist/
+

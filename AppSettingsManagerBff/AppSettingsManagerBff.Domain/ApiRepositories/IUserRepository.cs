@@ -1,11 +1,12 @@
-using AppSettingsManagerBff.Model.Api;
+using AppSettingsManagerBff.Model;
+using AppSettingsManagerBff.Model.Requests;
 
 namespace AppSettingsManagerBff.Domain.ApiRepositories;
 
 public interface IUserRepository
 {
-    Task<ApiBaseUser> GetUser(string userId);
-    Task<ApiBaseUser> CreateUser(string userId, string password, string email);
-    Task<ApiBaseUser> UpdateUser(string userId, string newPassword);
-    Task<ApiBaseUser> DeleteUser(string userId);
+    Task<bool> AuthenticateUser(string userId, string password);
+    Task<User> CreateUser(CreateUserRequest request);
+    Task<User> UpdateUserPassword(UpdateUserPasswordRequest request);
+    Task<User> DeleteUser(string userId, string password);
 }
