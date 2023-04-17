@@ -37,8 +37,9 @@ public static class ServiceConfiguration
             options =>
                 options.UseMySql(
                     connectionString,
-                    ServerVersion.AutoDetect(connectionString),
-                    o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
+                    new MySqlServerVersion(new Version(8, 0)),
+                    o => 
+                        o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
                 )
         );
 
