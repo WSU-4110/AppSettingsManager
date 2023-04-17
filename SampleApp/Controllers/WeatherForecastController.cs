@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace SampleApp.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("weather")]
 public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] Summaries = new[]
@@ -21,16 +21,13 @@ public class WeatherForecastController : ControllerBase
     };
     
     private const string EnableWeatherForecast = "EnableWeatherForecast";
-
-    private readonly ILogger<WeatherForecastController> _logger;
+    
     private readonly SettingsClient _settingsClient;
 
     public WeatherForecastController(
-        ILogger<WeatherForecastController> logger,
         SettingsClient settingsClient
     )
     {
-        _logger = logger;
         _settingsClient = settingsClient;
     }
 
@@ -41,7 +38,7 @@ public class WeatherForecastController : ControllerBase
         
         if (!getSetting || !enable)
         {
-            throw new Exception("This feature is disabled");
+            throw new BadHttpRequestException("This feature is disabled.", 400);
         }
         
         return Enumerable

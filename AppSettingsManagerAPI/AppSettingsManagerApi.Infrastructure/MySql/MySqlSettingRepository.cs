@@ -36,11 +36,12 @@ public class MySqlSettingRepository : ISettingRepository
 
     public async Task<IEnumerable<Model.SettingGroup>> GetSettingGroupsByUser(string userId)
     {
-        var settingGroups = await _settingsContext.Permissions
-            .Include(p => p.SettingGroup)
-            .ThenInclude(sg => sg.Settings)
-            .Where(p => p.UserId == userId)
-            .Select(p => p.SettingGroup)
+        var settingGroups = await _settingsContext.SettingGroups
+            .Include(sg => sg.Settings)
+            .Include(sg => sg.Permissions)
+            .Where(
+                sg => sg.Permissions.Any(p => p.UserId == userId && p.CurrentPermissionLevel > 0)
+            )
             .ToListAsync();
 
         return settingGroups.Select(_settingGroupConverter.Convert);
