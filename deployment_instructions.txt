@@ -1,0 +1,20 @@
+appsettingsmanager
+Pa55word
+
+cd code/appsettingsmanager/appsettingsmanagerapi/appsettingsmanagerapi
+cd code/appsettingsmanager/appsettingsmanagerbff/appsettingsmanagerbff
+
+dotnet publish -c Release /p:Environment=prod
+
+cd code/appsettingsmanager/appsettingsmanagerapi/appsettingsmanagerapi/bin/Release/net6.0/publish
+cd code/appsettingsmanager/appsettingsmanagerbff/appsettingsmanagerbff/bin/Release/net6.0/publish
+
+zip -r ../publish.zip .
+
+az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src /Users/jackflenna/code/AppSettingsManager/AppSettingsManagerAPI/AppSettingsManagerApi/bin/Release/net6.0/publish.zip
+
+az webapp deployment source config-zip --name appsettingsmanagerbff --resource-group appsettingsmanager --src /Users/jackflenna/code/AppSettingsManager/AppSettingsManagerBff/AppSettingsManagerBff/bin/Release/net6.0/publish.zip
+
+Server="appsettingsmanagerdb.mysql.database.azure.com";UserID = "appsettingsmanager";Password="Pa55word";Database="mysql";
+
+
