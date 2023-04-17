@@ -1,0 +1,192 @@
+
+.banner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  background: #5825EA;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.banner-title {
+    position: absolute;
+    height: 275px;
+    top: 165px;
+    right: 50%;
+    transform: translateX(50%);
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 96px;
+    line-height: 110%;
+    text-align: right;
+    color: #FFFFFF;
+    text-shadow: 18px 19px 5px rgba(0, 0, 0, 0.08);
+}
+
+
+.banner-subtitle {
+    position: absolute;
+    width: 384px;
+    height: 64px;
+    right: 50%;
+    top: 510px;
+    transform: translateX(50%);
+    font-family: 'Plus Jakarta Sans';
+    font-style: normal;
+    font-weight: 200;
+    font-size: 15px;
+    line-height: 150%;
+    color: #D8D8D8;
+}
+.contact-button {
+    background-color: white;
+    color: black;
+    border: 3px solid black;
+    border-radius: 50px;
+    padding: 5px 0px 5px 0px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 20px;
+    transition: background-color 0.3s ease;
+    width: 150px;
+    position: relative;
+  }
+  
+  .contact-button:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-left: 15px solid #000;
+    border-bottom: 10px solid transparent;
+  }
+  
+  .contact-button:hover {
+    background-color: #0062cc;
+    color: #fff;
+  }
+
+.triangle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-top: 1000px solid transparent;
+    border-right: 800px solid #716EF2;
+    border-bottom: 0;
+    border-left: 0;
+  }
+  
+  
+
+.card {
+    box-sizing: border-box;
+    position: absolute;
+    width: 533px;
+    height: 642px;
+    top: 50%;
+    left: 25%;
+    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
+    background: #FFFFFF;
+    border: 1px solid #E5E5E9;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Plus Jakarta Sans';
+      
+  }
+  
+  .login-card {
+    margin-bottom: 40px;
+  }
+  h2 {
+    font-size: 48px;
+    margin-bottom: 60px;
+    color: #484444;
+    margin-top: 100px;
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    width: 100%;
+    position: relative;
+  }
+  
+  
+  .form-field input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    font-size: 16px;
+  }
+  
+  
+  .submit-button {
+    background-color: #716EF2;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+    width: 300px;
+  }
+  
+  .submit-button:hover {
+    background-color: #0062cc;
+  }
+  
+  .sign-up-link {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+
+  .banner-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 880px;
+    z-index: 9990;
+    }
+    
+    .banner-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-family: Plus Jakarta Sans;
+    margin-right: 20px;
+    padding: 5px;
+    border-radius: 3px;
+    }
+    
+    .banner-link-separator {
+    color: #fff;
+    font-size: 16px;
+    margin-right: 20px;
+    }
+    
+    .banner-link:hover {
+    background-color: #0062cc;
+    color: #fff;
+    }
