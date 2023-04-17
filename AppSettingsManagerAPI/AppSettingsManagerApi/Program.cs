@@ -26,8 +26,8 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddConverters();
 
-string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-string certPath = Path.Combine(
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var certPath = Path.Combine(
     builder.Environment.ContentRootPath,
     "cert",
     "DigiCertGlobalRootCA.crt.pem"
