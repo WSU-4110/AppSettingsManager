@@ -46,10 +46,10 @@ public class MySqlSettingRepository : ISettingRepository
         return settingGroups.Select(_settingGroupConverter.Convert);
     }
 
-    public async Task<Dictionary<string, string>> GetSettings(string settingGroupId, int version)
+    public async Task<Dictionary<string, string>> GetSettings(GetSettingGroupRequest request)
     {
         var settings = await _settingsContext.Settings
-            .Where(s => s.SettingGroupId == settingGroupId && s.Version == version)
+            .Where(s => s.SettingGroupId == request.SettingGroupId && s.IsCurrent)
             .Select(s => s.Input)
             .SingleAsync();
 

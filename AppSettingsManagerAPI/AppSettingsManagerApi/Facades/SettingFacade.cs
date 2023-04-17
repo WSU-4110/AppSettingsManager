@@ -49,18 +49,32 @@ public class SettingFacade
         return settingGroups;
     }
 
-    public async Task<Dictionary<string, string>> GetSettings(string settingGroupId, int version)
+    public async Task<Dictionary<string, string>> GetSettings(GetSettingGroupRequest request)
     {
-        var settings = await _settingRepository.GetSettings(settingGroupId, version);
+        await _permissionRepository.CheckPermission(
+            request.UserId,
+            request.Password,
+            request.SettingGroupId,
+            PermissionLevel.Read
+        );
+        
+        var settings = await _settingRepository.GetSettings(request);
 
         return settings;
     }
 
-    public async Task<string> GetSetting(string settingGroupId, int version, string variableName)
+    public async Task<string> GetSetting(GetSettingGroupRequest request, string variableName)
     {
-        var settings = await _settingRepository.GetSettings(settingGroupId, version);
-        var setting = settings[variableName];
+        await _permissionRepository.CheckPermission(
+            request.UserId,
+            request.Password,
+            request.SettingGroupId,
+            PermissionLevel.Read
+        );
         
+        var settings = await _settingRepository.GetSettings(request);
+        var setting = settings[variableName];
+
         return setting;
     }
 
@@ -72,9 +86,9 @@ public class SettingFacade
             request.SettingGroupId,
             request.UserId
         );
-        
+
         var setting = _settingRepository.CreateSetting(request);
-        
+
         var permissionRequest = new CreatePermissionRequest
         {
             SettingGroupId = request.SettingGroupId,
