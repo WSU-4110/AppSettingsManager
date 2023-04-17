@@ -26,9 +26,15 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddConverters();
 
-builder.Services.AddMySqlSettingsStorage(
-    builder.Configuration.GetConnectionString("DefaultConnection")
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string certPath = Path.Combine(
+    builder.Environment.ContentRootPath,
+    "cert",
+    "DigiCertGlobalRootCA.crt.pem"
 );
+connectionString = connectionString.Replace("{path_to_CA_cert}", certPath);
+
+builder.Services.AddMySqlSettingsStorage(connectionString);
 
 builder.Services.AddFacades();
 

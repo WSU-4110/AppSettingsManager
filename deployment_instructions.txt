@@ -5,6 +5,7 @@ cd code/appsettingsmanager/appsettingsmanagerapi/appsettingsmanagerapi
 cd code/appsettingsmanager/appsettingsmanagerbff/appsettingsmanagerbff
 
 dotnet publish -c Release -p:ASPNETCORE_ENVIRONMENT=prod
+dotnet publish -c Release
 
 cd code/appsettingsmanager/appsettingsmanagerapi/appsettingsmanagerapi/bin/Release/net6.0/publish
 cd code/appsettingsmanager/appsettingsmanagerbff/appsettingsmanagerbff/bin/Release/net6.0/publish
@@ -19,3 +20,14 @@ Server="appsettingsmanagerdb.mysql.database.azure.com";UserID = "appsettingsmana
 
 
 az webapp log tail --name appsettingsmanagerapi --resource-group appsettingsmanager
+
+"Server=localhost;Database=db;Uid=user;Pwd=password;"
+
+cd
+cd code/appsettingsmanager/appsettingsmanagerapi/appsettingsmanagerapi
+dotnet clean
+dotnet publish -c Release
+cd
+cd code/appsettingsmanager/appsettingsmanagerapi/appsettingsmanagerapi/bin/Release/net6.0/publish
+zip -r ../publish.zip .
+az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src /Users/jackflenna/code/AppSettingsManager/AppSettingsManagerAPI/AppSettingsManagerApi/bin/Release/net6.0/publish.zip

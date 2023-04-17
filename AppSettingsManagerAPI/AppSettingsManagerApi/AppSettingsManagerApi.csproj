@@ -23,6 +23,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="cert\DigiCertGlobalRootCA.crt.pem" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\AppSettingsManagerApi.Infrastructure\AppSettingsManagerApi.Infrastructure.csproj" />
     </ItemGroup>
 
