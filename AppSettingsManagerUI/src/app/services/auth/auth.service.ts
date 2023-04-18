@@ -27,25 +27,24 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return this.currentUserValue !== '';
+    const isAuthenticated = this.currentUserValue !== '' && this.currentPasswordValue !== '';
+    return isAuthenticated;
   }
 
   async login(userId: string, password: string): Promise<boolean> {
-    try {
-      const isAuthenticated = this.userService.authenticateUser(userId, password);
-      if (isAuthenticated) {
-        localStorage.setItem('currentUser', userId);
-        localStorage.setItem('currentPassword', password);
-        this.currentUserSubject.next(userId);
-        this.currentPasswordSubject.next(password);
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-      return false;
-    }
+    return new Promise<boolean>((resolve) => {
+      this.userService.authenticateUser(userId, password).subscribe(isAuthenticated => {
+        if (isAuthenticated) {
+          localStorage.setItem('currentUser', userId);
+          localStorage.setItem('currentPassword', password);
+          this.currentUserSubject.next(userId);
+          this.currentPasswordSubject.next(password);
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
+    });
   }
 
   logout(): void {

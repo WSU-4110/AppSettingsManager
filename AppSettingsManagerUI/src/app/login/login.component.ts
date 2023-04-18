@@ -34,8 +34,12 @@ export class LoginComponent implements OnInit {
   async onSubmit(): Promise<void> {
     const username = this.loginForm.get('usernameLogin')?.value ?? '';
     const password = this.loginForm.get('passwordLogin')?.value ?? '';
-    const loggedIn = await this.authService.login(username, password);
-    if (!loggedIn) {
+
+    await this.authService.login(username, password);
+
+    const isAuthenticated = this.authService.isAuthenticated();
+
+    if (!isAuthenticated) {
       alert('Invalid username or password');
     }
     else {
@@ -53,17 +57,19 @@ export class LoginComponent implements OnInit {
       Email: email
     };
 
-    this.userService.createUser(request);
+    this.userService.createUser(request).subscribe(() => {
+      alert(`Account with username ${userId} added!`);
+    });
 
-    alert(`Account with username ${userId} added!`);
+    await this.authService.login(userId, password);
 
-    const loggedIn = await this.authService.login(userId, password);
+    const isAuthenticated = this.authService.isAuthenticated();
 
-    if (!loggedIn) {
+    if (!isAuthenticated) {
       alert('Please try signing in with your new credentials');
     }
     else {
-       this.router.navigate(['/home'])
+      this.router.navigate(['/home'])
     }
   }
 }

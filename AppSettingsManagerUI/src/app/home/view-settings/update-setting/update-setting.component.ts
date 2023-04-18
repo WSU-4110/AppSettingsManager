@@ -21,15 +21,10 @@ export class UpdateSettingComponent implements OnInit {
       this.router.navigate(['']);
     }
 
-    this.input = JSON.stringify(
-      {
-        key1: 'value1',
-        key2: 'value2',
-        key3: 'value3',
-      },
-      null,
-      2
-    );
+    this.settingsService.getSettingGroup(this.auth.currentUserValue, this.auth.currentPasswordValue, this.route.snapshot.paramMap.get('id') ?? '').subscribe(settingGroup => {
+      const setting = settingGroup.settings.filter(setting => setting.isCurrent)[0];
+      this.input = JSON.stringify(setting.input, null, 2);
+    });
   }
 
   onBackClick(): void {
@@ -37,15 +32,19 @@ export class UpdateSettingComponent implements OnInit {
   }
 
   async onSaveClick(): Promise<void> {
+    const parsedInput = JSON.parse(this.input);
+
     const request: CreateSettingRequest = {
       SettingGroupId: this.route.snapshot.paramMap.get('id') ?? '',
-      Input: this.input,
+      Input: parsedInput,
       UserId: this.auth.currentUserValue,
       Password: this.auth.currentPasswordValue
     }
 
-    this.settingsService.updateSetting(request);
-
-    this.router.navigate(['home', this.route.snapshot.paramMap.get('id'), 'settings']);
+    this.settingsService.updateSetting(request).subscribe(
+      (settingGroup) => {
+        this.router.navigate(['home', settingGroup.id, 'settings']);
+      }
+    );
   }
 }

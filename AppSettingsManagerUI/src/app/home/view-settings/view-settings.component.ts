@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { SettingsService } from '../../services/bff/settings.service';
 import * as models from '../../services/bff/models';
 import { MatDialog } from '@angular/material/dialog';
+import { UpdateTargetSettingRequest } from 'src/app/services/bff/models/UpdateTargetSettingRequest';
 
 @Component({
   selector: 'app-view-settings',
@@ -13,7 +14,8 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class ViewSettingsComponent implements OnInit {
   settings: models.Setting[] = [];
-  columnsToDisplay: string[] = ['Id', 'Version', 'Input'];
+  columnsToDisplay: string[] = ['Id', 'Version', 'Input', 'IsCurrent', 'CreatedBy'];
+  newTargetVersion = 0;
 
   constructor(private route: ActivatedRoute, private router: Router, private settingsService: SettingsService, public dialog: MatDialog, private auth: AuthService) {   }
 
@@ -30,5 +32,24 @@ export class ViewSettingsComponent implements OnInit {
 
   onUpdateSetting() {
     this.router.navigate(['/home', this.route.snapshot.paramMap.get('id'), 'settings', 'update']);
+  }
+
+  async onUpdateTargetSetting() {
+    const request = new UpdateTargetSettingRequest(this.auth.currentUserValue, this.auth.currentPasswordValue, this.route.snapshot.paramMap.get('id') ?? '', this.newTargetVersion);
+
+    this.settingsService.changeTargetSettingVersion(request).subscribe(() => {
+      this.ngOnInit();
+    });
+  }
+
+  onClickBack() {
+    this.router.navigate(['/home']);
+  }
+
+  async onDeleteSettingGroup() {
+    const settingGroupId = this.route.snapshot.paramMap.get('id') ?? '';
+    this.settingsService.deleteSettingGroup(this.auth.currentUserValue, this.auth.currentPasswordValue, settingGroupId).subscribe(() => {
+      this.router.navigate(['/home']);
+    });
   }
 }

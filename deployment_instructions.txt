@@ -49,3 +49,8 @@ cd
 cd code/appsettingsmanager/sampleapp/bin/Release/net6.0/publish
 zip -r ../publish.zip .
 az webapp deployment source config-zip --name appsettingsmanager-sampleapp --resource-group appsettingsmanager --src /Users/jackflenna/code/AppSettingsManager/SampleApp/bin/Release/net6.0/publish.zip
+
+cd
+cd code/appsettingsmanager/appsettingsmanagerui
+ng build
+az storage blob upload-batch --destination \$web --source /Users/jackflenna/code/appsettingsmanager/appsettingsmanagerui/dist/app-settings-manager-ui --account-name appsettingsmanager --overwrite

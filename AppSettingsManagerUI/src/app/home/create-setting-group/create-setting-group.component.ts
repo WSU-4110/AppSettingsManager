@@ -1,6 +1,5 @@
-import { Component, Inject, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from '../../services/auth/auth.service';
 import { SettingsService } from 'src/app/services/bff/settings.service';
 import { CreateSettingRequest } from 'src/app/services/bff/models/CreateSettingRequest';
@@ -10,25 +9,46 @@ import { CreateSettingRequest } from 'src/app/services/bff/models/CreateSettingR
   templateUrl: './create-setting-group.component.html',
   styleUrls: ['./create-setting-group.component.scss']
 })
-export class CreateSettingGroupComponent {
+export class CreateSettingGroupComponent implements OnInit {
+  input = '';
+  settingGroupId = '';
+
   constructor(
-    public dialogRef: MatDialogRef<CreateSettingGroupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
     private settingsService: SettingsService, private auth: AuthService, private router: Router) {}
+
+  ngOnInit(): void {
+    if (!this.auth.isAuthenticated()){
+      this.router.navigate(['']);
+    }
+
+    this.input = JSON.stringify(
+      {
+        key1: 'value1',
+        key2: 'value2',
+        key3: 'value3',
+      },
+      null,
+      2
+    );
+  }
 
   onBackClick(): void {
     this.router.navigate(['home']);
   }
 
-  async onSaveClick(): Promise<void> {
+  onSaveClick(): void {
+    const parsedInput = JSON.parse(this.input);
+
     const request: CreateSettingRequest = {
-      SettingGroupId: this.data.settingGroupId,
-      Input: this.data.input,
+      SettingGroupId: this.settingGroupId,
+      Input: parsedInput,
       UserId: this.auth.currentUserValue,
       Password: this.auth.currentPasswordValue
     };
-    this.settingsService.createSettingGroup(request);
-    this.router.navigate(['home']);
+
+    this.settingsService.createSettingGroup(request).subscribe(() => {
+      this.router.navigate(['home']);
+    });
   }
 
 }
