@@ -11,6 +11,7 @@ import { CreateUserRequest } from '../services/bff/models/CreateUserRequest';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  showSignUp = false;
   loginForm: FormGroup;
   signUpForm: FormGroup;
   constructor(private authService: AuthService, private router: Router, private userService: UserService) {

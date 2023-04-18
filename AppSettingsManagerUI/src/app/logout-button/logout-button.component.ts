@@ -3,11 +3,11 @@ import { AuthService } from '../services/auth/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  selector: 'app-logout-button',
+  templateUrl: './logout-button.component.html',
+  styleUrls: ['./logout-button.component.scss']
 })
-export class HeaderComponent {
+export class LogoutButtonComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   onLogout(): void {
