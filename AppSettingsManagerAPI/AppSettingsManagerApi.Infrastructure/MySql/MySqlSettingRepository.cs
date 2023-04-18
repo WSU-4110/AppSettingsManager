@@ -72,7 +72,7 @@ public class MySqlSettingRepository : ISettingRepository
         var setting = new Setting
         {
             SettingGroupId = request.SettingGroupId,
-            Input = JsonSerializer.Serialize(request.Input),
+            Input = request.Input,
             Version = newVersionNumber,
             IsCurrent = initialSetting,
             CreatedBy = request.UserId,

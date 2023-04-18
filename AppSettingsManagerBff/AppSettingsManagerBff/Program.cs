@@ -18,6 +18,10 @@ var appSettingsManagerApiConfig = builder.Configuration
 
 builder.Services.AddApiRepositories(appSettingsManagerApiConfig);
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddAzureWebAppDiagnostics();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -36,19 +36,12 @@ export class CreateSettingGroupComponent implements OnInit {
     this.router.navigate(['home']);
   }
 
-  onSaveClick(): void {
+  async onSaveClick(): Promise<void> {
     const parsedInput = JSON.parse(this.input);
 
-    const request: CreateSettingRequest = {
-      SettingGroupId: this.settingGroupId,
-      Input: parsedInput,
-      UserId: this.auth.currentUserValue,
-      Password: this.auth.currentPasswordValue
-    };
+    const request = new CreateSettingRequest(this.auth.currentUserValue, this.settingGroupId, parsedInput, this.auth.currentPasswordValue);
 
-    this.settingsService.createSettingGroup(request).subscribe(() => {
-      this.router.navigate(['home']);
-    });
+    this.settingsService.createSettingGroup(request).subscribe(() => this.router.navigate(['home']));
   }
 
 }

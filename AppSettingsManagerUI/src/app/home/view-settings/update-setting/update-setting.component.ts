@@ -34,12 +34,7 @@ export class UpdateSettingComponent implements OnInit {
   async onSaveClick(): Promise<void> {
     const parsedInput = JSON.parse(this.input);
 
-    const request: CreateSettingRequest = {
-      SettingGroupId: this.route.snapshot.paramMap.get('id') ?? '',
-      Input: parsedInput,
-      UserId: this.auth.currentUserValue,
-      Password: this.auth.currentPasswordValue
-    }
+    const request: CreateSettingRequest = new CreateSettingRequest(this.auth.currentUserValue, this.route.snapshot.paramMap.get('id') ?? '', parsedInput, this.auth.currentPasswordValue);
 
     this.settingsService.updateSetting(request).subscribe(
       (settingGroup) => {

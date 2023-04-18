@@ -23,6 +23,7 @@ export class SettingsService {
   }
 
   createSettingGroup(request: CreateSettingRequest): Observable<SettingGroup> {
+    console.log(request);
     return this.http.post<SettingGroup>(this.apiUrl, request);
   }
 
