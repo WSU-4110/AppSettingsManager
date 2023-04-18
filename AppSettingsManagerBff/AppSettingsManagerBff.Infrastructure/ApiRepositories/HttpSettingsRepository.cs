@@ -43,6 +43,8 @@ public class HttpSettingsRepository : ISettingsRepository
     {
         var content = Constants.GetStringContent(request);
         var response = await _httpClient.PostAsync("", content);
+        
+        var test = await response.Content.ReadAsStringAsync();
 
         return await Constants.DeserializeResponse<SettingGroup>(response);
     }
