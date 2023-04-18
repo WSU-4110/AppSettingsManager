@@ -40,7 +40,7 @@ import { UpdateSettingDialogComponent } from './home/view-settings/update-settin
   ],
   providers: [
     BffService,
-    { provide: 'baseURL', useValue: 'https://localhost:7160'}
+    { provide: 'baseURL', useValue: 'https://appsettingsmanagerbff.azurewebsites.net/'} //changed from local
   ],
   bootstrap: [AppComponent]
 })

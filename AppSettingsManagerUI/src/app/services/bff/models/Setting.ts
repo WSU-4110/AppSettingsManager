@@ -1,6 +1,6 @@
 export interface Setting {
     settingGroupId: string;
-    input: string;
+    input: any;
     version: number;
     isCurrent: boolean;
     createdBy: string;

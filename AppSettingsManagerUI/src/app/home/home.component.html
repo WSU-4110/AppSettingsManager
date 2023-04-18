@@ -1,28 +1,23 @@
-<!-- <ng-container *ngIf="settingGroups.length > 0">
-    <table mat-table [dataSource]="settingGroups">
-        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-        <tr mat-row *matRowDef="let settingGroup; columns: columnsToDisplay"></tr>
-    </table>
-</ng-container> -->
+<div class="navbar">
+  <button mat-raised-button color="primary" class="navbar-button" (click)="openDialog()">Create Setting Group</button>
+  <button mat-raised-button color="primary" class="navbar-button">Request Access</button>
+</div>
 
-<button mat-raised-button color="primary" (click)="openDialog()">Create Setting Group</button>
+<table mat-table [dataSource]="settingGroups">
+  <ng-container matColumnDef="Id">
+    <th mat-header-cell *matHeaderCellDef> ID </th>
+    <td mat-cell *matCellDef="let settingGroup" class="mat-row-button" (click)="onRowClick(settingGroup)"> {{ settingGroup.id }} </td>
+  </ng-container>
+  <ng-container matColumnDef="CreatedBy">
+    <th mat-header-cell *matHeaderCellDef> Created By </th>
+    <td mat-cell *matCellDef="let settingGroup" class="mat-row-button" (click)="onRowClick(settingGroup)"> {{ settingGroup.createdBy }} </td>
+  </ng-container>
+  <ng-container matColumnDef="LastUpdatedAt">
+    <th mat-header-cell *matHeaderCellDef> Last Updated At </th>
+    <td mat-cell *matCellDef="let settingGroup" class="mat-row-button" (click)="onRowClick(settingGroup)"> {{ settingGroup.lastUpdatedAt }} </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay" class="header-row"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnsToDisplay;" [ngClass]="{'mat-row-grey': row.Id % 2 == 0, 'mat-row-white': row.Id % 2 != 0}"></tr>
+</table>
 
-<ng-container *ngIf="settingGroups.length > 0">
-    <table mat-table [dataSource]="settingGroups">
-      <ng-container matColumnDef="Id">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
-        <td mat-cell *matCellDef="let settingGroup" class="mat-row-button" (click)="onRowClick(settingGroup)"> {{ settingGroup.id }} </td>
-      </ng-container>
-      <ng-container matColumnDef="CreatedBy">
-        <th mat-header-cell *matHeaderCellDef> Created By </th>
-        <td mat-cell *matCellDef="let settingGroup" class="mat-row-button" (click)="onRowClick(settingGroup)"> {{ settingGroup.createdBy }} </td>
-      </ng-container>
-      <ng-container matColumnDef="LastUpdatedAt">
-        <th mat-header-cell *matHeaderCellDef> Created By </th>
-        <td mat-cell *matCellDef="let settingGroup" class="mat-row-button" (click)="onRowClick(settingGroup)"> {{ settingGroup.lastUpdatedAt }} </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-      <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
-    </table>
-</ng-container>
-  
+
