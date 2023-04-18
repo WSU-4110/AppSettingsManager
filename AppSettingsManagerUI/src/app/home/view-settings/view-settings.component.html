@@ -1,6 +1,25 @@
-<button mat-raised-button color="primary" (click)="onUpdateSetting()">Update Setting</button>
-
-<button mat-raised-button color="primary" (click)="onDeleteSettingGroup()">Delete Setting Group</button>
+<nav class="vertical-nav">
+  <div class="nav-title">App<br>Settings<br>Manager</div>
+  <ul>
+    <li class="nav-create">
+      <button mat-raised-button color="grey" class="createsg" (click)="onUpdateSetting()"><span style="color: white;">Update Setting Group</span></button>
+    </li>
+    <li class="nav-create">
+      <button mat-raised-button color="grey" class="createsg" (click)="onDeleteSettingGroup()"><span style="color: white;">Delete Setting Group</span></button>
+    </li>
+    <li class="nav-back">
+      <button mat-raised-button color="primary" (click)="onClickBack()">Back</button>
+    </li>
+    <li class="nav-new-version">
+      <label for="newTargetVersion">New Target Version:</label>
+      <input id="newTargetVersion" type="number" [(ngModel)]="newTargetVersion">
+      <button mat-raised-button color="primary" (click)="onUpdateTargetSetting()">Update Target Setting</button>
+    </li>
+    <li class="nav-logout">
+      <app-logout-button></app-logout-button>
+    </li>
+  </ul>
+</nav>
 
 <ng-container *ngIf="settings.length > 0">
     <table mat-table [dataSource]="settings">
@@ -28,11 +47,3 @@
       <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
     </table>
 </ng-container>
-
-<button mat-raised-button color="primary" (click)="onClickBack()">Back</button>
-
-<label for="newTargetVersion">New Target Version:</label>
-<input id="newTargetVersion" type="number" [(ngModel)]="newTargetVersion">
-
-
-<button mat-raised-button color="primary" (click)="onUpdateTargetSetting()">Update Target Setting</button>
