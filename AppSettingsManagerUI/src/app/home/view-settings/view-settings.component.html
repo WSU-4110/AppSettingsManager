@@ -8,24 +8,22 @@
     <li class="nav-create">
       <button mat-raised-button color="grey" class="createsg" (click)="onDeleteSettingGroup()"><span style="color: white;">Delete Setting Group</span></button>
     </li>
-    <li class="nav-back">
-      <button mat-raised-button color="primary" (click)="onClickBack()">Back</button>
+    <li>
+      <button mat-raised-button color="grey" class="createsg" (click)="onClickPermissions()"><span style="color: white;">Manage Permissions</span></button>
     </li>
     <li class="nav-new-version">
       <label for="newTargetVersion">New Target Version:</label>
       <input id="newTargetVersion" type="number" [(ngModel)]="newTargetVersion">
       <button mat-raised-button color="primary" (click)="onUpdateTargetSetting()">Update Target Setting</button>
+      <button mat-raised-button color="purple" (click)="onClickBack()"><span style="color: black;">Back</span></button>
     </li>
     <li class="nav-logout">
       <app-logout-button></app-logout-button>
     </li>
   </ul>
 </nav>
-<button mat-raised-button color="primary" (click)="onUpdateSetting()">Update Setting</button>
 
-<button mat-raised-button color="primary" (click)="onClickPermissions()">Manage Permissions</button>
 
-<button mat-raised-button color="primary" (click)="onDeleteSettingGroup()">Delete Setting Group</button>
 
 
 <ng-container *ngIf="settings.length > 0">
