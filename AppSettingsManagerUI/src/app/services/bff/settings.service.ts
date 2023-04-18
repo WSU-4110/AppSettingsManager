@@ -12,8 +12,8 @@ import { PermissionRequestResponse } from './models/PermissionRequestResponse';
   providedIn: 'root',
 })
 export class SettingsService {
-  private apiUrl = 'https://appsettingsmanagerbff.azurewebsites.net/settings';
-  // private apiUrl = 'https://localhost:7160/settings';
+  // private apiUrl = 'https://appsettingsmanagerbff.azurewebsites.net/settings';
+  private apiUrl = 'https://localhost:7160/settings';
 
   constructor(private http: HttpClient) {}
 

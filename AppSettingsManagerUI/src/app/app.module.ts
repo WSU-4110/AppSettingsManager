@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpHeadersInterceptor } from './services/bff/common/http-headers.interceptor';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -49,7 +50,12 @@ import { ViewPermissionsComponent } from './home/view-permissions/view-permissio
     // BffService,
     // { provide: 'baseURL', useValue: 'https://appsettingsmanagerbff.azurewebsites.net/'}
     SettingsService,
-    UserService
+    UserService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpHeadersInterceptor,
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent]
 })
