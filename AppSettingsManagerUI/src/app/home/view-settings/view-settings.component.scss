@@ -10,18 +10,18 @@
     flex-direction: column; /* Add this line to stack items vertically */
     justify-content: center; /* Add this line to center items vertically */
   }
-  
+
   .vertical-nav ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
   }
-  
+
   .vertical-nav li {
     margin-bottom: 10px;
     text-align: center;
   }
-  
+
   .nav-title {
     font-size: 25px;
     font-weight: bold;
@@ -36,37 +36,37 @@
     font-family: Plus Jakarta Sans;
     font-weight: 100;
   }
-  
+
   .nav-create {
     margin-bottom: auto;
     align-self: center; /* Add this line to center the button horizontally */
   }
-  
+
   .nav-logout {
     position: absolute;
     bottom: 50px;
     left: 32px;
   }
-  
+
   .mat-header-cell-centered {
     text-align: center;
   }
-  
+
   .mat-header-row-black {
     background-color: #151515;
     color: white;
     font-family: Plus Jakarta Sans;
     font-size: 20px;
   }
-  
+
   .mat-row-grey {
     background-color: #D9D9D9;
   }
-  
+
   .mat-row-white {
     background-color: #F5F5F5;
   }
-  
+
   .mat-row-button {
     text-align: center;
     padding-top: 30px;
@@ -74,11 +74,11 @@
     font-family: Plus Jakarta Sans;
     font-size: 20px;
   }
-  
+
   .mat-row-button:hover {
     cursor: pointer;
   }
-  
+
   .createsg {
     background-color: transparent;
     color: white;
@@ -87,30 +87,30 @@
     line-height: 25px;
     font-family: Plus Jakarta Sans;
   }
-  
+
   .createsg:hover {
     background-color: #5a5a5a;
   }
-  
+
   /* Add the following CSS for table styling */
-  
+
   .mat-table {
     width: calc(100% - 150px); /* Subtract the width of the nav menu from the table */
     margin-left: 150px; /* Add left margin equal to the width of the nav menu */
     border-collapse: collapse;
   }
-  
+
   .mat-header-row {
     background-color: #151515;
     color: white;
     font-family: Plus Jakarta Sans;
     font-size: 20px;
   }
-  
+
   .mat-row:nth-child(even) {
     background-color: #D9D9D9;
   }
-  
+
   .mat-row:nth-child(odd) {
     background-color: #F5F5F5;
   }
