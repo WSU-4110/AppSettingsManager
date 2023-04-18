@@ -18,7 +18,10 @@ import { UserService } from './services/bff/users.service';
 import { ViewSettingsComponent } from './home/view-settings/view-settings.component';
 import { CreateSettingGroupComponent } from './home/create-setting-group/create-setting-group.component';
 import { UpdateSettingComponent } from './home/view-settings/update-setting/update-setting.component';
+
 import { LogoutButtonComponent } from './logout-button/logout-button.component';
+import { ViewPermissionsComponent } from './home/view-permissions/view-permissions.component';
+
 
 @NgModule({
   declarations: [
@@ -28,7 +31,8 @@ import { LogoutButtonComponent } from './logout-button/logout-button.component';
     ViewSettingsComponent,
     CreateSettingGroupComponent,
     UpdateSettingComponent,
-    LogoutButtonComponent
+    LogoutButtonComponent,
+    ViewPermissionsComponent
   ],
   imports: [
     BrowserModule,

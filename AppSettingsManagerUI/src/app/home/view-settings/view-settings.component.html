@@ -1,3 +1,4 @@
+
 <nav class="vertical-nav">
   <div class="nav-title">App<br>Settings<br>Manager</div>
   <ul>
@@ -20,6 +21,12 @@
     </li>
   </ul>
 </nav>
+<button mat-raised-button color="primary" (click)="onUpdateSetting()">Update Setting</button>
+
+<button mat-raised-button color="primary" (click)="onClickPermissions()">Manage Permissions</button>
+
+<button mat-raised-button color="primary" (click)="onDeleteSettingGroup()">Delete Setting Group</button>
+
 
 <ng-container *ngIf="settings.length > 0">
     <table mat-table [dataSource]="settings">

@@ -77,4 +77,20 @@ public class HttpSettingsRepository : ISettingsRepository
 
         return await Constants.DeserializeResponse<SettingGroup>(response);
     }
+
+    public async Task<Permission> UpdatePermission(UpdatePermissionRequest request)
+    {
+        var content = Constants.GetStringContent(request);
+        var response = await _httpClient.PutAsync("permission", content);
+        
+        return await Constants.DeserializeResponse<Permission>(response);
+    }
+
+    public async Task<Permission> PermissionRequestResponse(PermissionRequestResponse request)
+    {
+        var content = Constants.GetStringContent(request);
+        var response = await _httpClient.PutAsync("permission/response", content);
+        
+        return await Constants.DeserializeResponse<Permission>(response);
+    }
 }

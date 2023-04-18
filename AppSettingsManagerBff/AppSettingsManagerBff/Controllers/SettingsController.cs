@@ -19,9 +19,9 @@ public class SettingsController : Controller
 
     [HttpGet("userId/{userId}/password/{password}/settingGroupId/{settingGroupId}")]
     public async Task<SettingGroup> GetSettingGroup(
-        [FromRoute][Required] string userId,
-        [FromRoute][Required] string password,
-        [FromRoute][Required] string settingGroupId
+        [FromRoute] [Required] string userId,
+        [FromRoute] [Required] string password,
+        [FromRoute] [Required] string settingGroupId
     )
     {
         var settingGroup = await _settingsRepository.GetSettingGroup(
@@ -34,8 +34,8 @@ public class SettingsController : Controller
 
     [HttpGet("userId/{userId}/password/{password}")]
     public async Task<IEnumerable<SettingGroup>> GetAllSettingGroupsForUser(
-        [FromRoute][Required] string userId,
-        [FromRoute][Required] string password
+        [FromRoute] [Required] string userId,
+        [FromRoute] [Required] string password
     )
     {
         var settingGroup = await _settingsRepository.GetSettingGroupsForUser(userId, password);
@@ -44,7 +44,7 @@ public class SettingsController : Controller
 
     [HttpPost]
     public async Task<SettingGroup> CreateSettingGroup(
-        [FromBody][Required] CreateSettingRequest request
+        [FromBody] [Required] CreateSettingRequest request
     )
     {
         var settingGroup = await _settingsRepository.CreateSettingGroup(request);
@@ -67,9 +67,9 @@ public class SettingsController : Controller
 
     [HttpDelete("userId/{userId}/password/{password}/settingGroupId/{settingGroupId}")]
     public async Task<SettingGroup> DeleteSettingGroup(
-        [FromRoute][Required] string userId,
-        [FromRoute][Required] string password,
-        [FromRoute][Required] string settingGroupId
+        [FromRoute] [Required] string userId,
+        [FromRoute] [Required] string password,
+        [FromRoute] [Required] string settingGroupId
     )
     {
         var settingGroup = await _settingsRepository.DeleteSettingGroup(
@@ -78,5 +78,21 @@ public class SettingsController : Controller
             settingGroupId
         );
         return settingGroup;
+    }
+
+    [HttpPut("permission")]
+    public async Task<Permission> UpdatePermission(
+        [FromBody] [Required] UpdatePermissionRequest request
+    )
+    {
+        return await _settingsRepository.UpdatePermission(request);
+    }
+
+    [HttpPut("permission/response")]
+    public async Task<Permission> PermissionUpdateResponse(
+        [FromBody] [Required] PermissionRequestResponse request
+    )
+    {
+        return await _settingsRepository.PermissionRequestResponse(request);
     }
 }

@@ -34,6 +34,10 @@ export class ViewSettingsComponent implements OnInit {
     this.router.navigate(['/home', this.route.snapshot.paramMap.get('id'), 'settings', 'update']);
   }
 
+  onClickPermissions() {
+    this.router.navigate(['/home', this.route.snapshot.paramMap.get('id'), 'permissions']);
+  }
+
   async onUpdateTargetSetting() {
     const request = new UpdateTargetSettingRequest(this.auth.currentUserValue, this.auth.currentPasswordValue, this.route.snapshot.paramMap.get('id') ?? '', this.newTargetVersion);
 

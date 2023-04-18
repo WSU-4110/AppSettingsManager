@@ -26,3 +26,20 @@
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay;" [ngClass]="{'mat-row-grey': row % 2 == 0, 'mat-row-white': row % 2 == 1}"></tr>
   </table>
 </ng-container>
+
+<div>
+  <h2>Request Access to New Setting Group</h2>
+
+  <label for="settingGroupId">Setting Group Id</label>
+  <input id="settingGroupId" type="text" [(ngModel)]="settingGroupId">
+
+  <label for="requestedPermissionLevel">Requested Permission Level</label>
+  <select [(ngModel)]="requestedPermissionLevel">
+    <option value=0>None</option>
+    <option value=1>Read</option>
+    <option value=2>Write</option>
+    <option value=3>Admin</option>
+  </select>
+
+  <button mat-raised-button color="primary" (click)="onRequestNewAccess()">Request New Access</button>
+</div>
