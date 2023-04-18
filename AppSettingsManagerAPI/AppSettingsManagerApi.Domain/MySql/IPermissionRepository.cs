@@ -12,11 +12,6 @@ public interface IPermissionRepository
     Task<Permission> PermissionRequestResponse(PermissionRequestResponse response);
     Task<Permission> DeletePermission(string userId, string settingGroupId);
 
-<<<<<<< HEAD
-    Task CheckPermission(string userId, string password, string settingGroupId,
-        PermissionLevel requiredPermissionLevel);
-}
-=======
     Task CheckPermission(
         string userId,
         string password,
@@ -24,4 +19,3 @@ public interface IPermissionRepository
         PermissionLevel requiredPermissionLevel
     );
 }
->>>>>>> bfec0ed8c20ad88586f6586f1bde3aaf946741e5

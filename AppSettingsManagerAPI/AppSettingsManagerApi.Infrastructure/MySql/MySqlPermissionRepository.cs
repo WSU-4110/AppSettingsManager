@@ -61,14 +61,6 @@ public class MySqlPermissionRepository : IPermissionRepository
         return _permissionConverter.Convert(permission);
     }
 
-<<<<<<< HEAD
-    public async Task<Model.Permission> PermissionRequestResponse(PermissionRequestResponse response)
-    {
-        var permission = await GetPermissionFromContext(response.UserId, response.SettingGroupId);
-
-        permission.CurrentPermissionLevel =
-            response.Approved ? permission.RequestedPermissionLevel : permission.CurrentPermissionLevel;
-=======
     public async Task<Model.Permission> PermissionRequestResponse(
         PermissionRequestResponse response
     )
@@ -78,7 +70,6 @@ public class MySqlPermissionRepository : IPermissionRepository
         permission.CurrentPermissionLevel = response.Approved
             ? permission.RequestedPermissionLevel
             : permission.CurrentPermissionLevel;
->>>>>>> bfec0ed8c20ad88586f6586f1bde3aaf946741e5
         permission.ApprovedBy = response.Approved ? response.ApproverId : string.Empty;
         permission.RequestedPermissionLevel = PermissionLevel.None;
         permission.WaitingForApproval = false;
@@ -97,25 +88,16 @@ public class MySqlPermissionRepository : IPermissionRepository
         return _permissionConverter.Convert(permission);
     }
 
-<<<<<<< HEAD
-    public async Task CheckPermission(string userId, string password, string settingGroupId, PermissionLevel requiredPermissionLevel)
-=======
     public async Task CheckPermission(
         string userId,
         string password,
         string settingGroupId,
         PermissionLevel requiredPermissionLevel
     )
->>>>>>> bfec0ed8c20ad88586f6586f1bde3aaf946741e5
     {
         if (string.IsNullOrEmpty(settingGroupId))
         {
             var user = await _settingsContext.Users.SingleAsync(u => u.Id == userId);
-<<<<<<< HEAD
-            
-=======
-
->>>>>>> bfec0ed8c20ad88586f6586f1bde3aaf946741e5
             if (user.Password != password)
             {
                 throw new IncorrectPasswordException(userId);
@@ -124,11 +106,6 @@ public class MySqlPermissionRepository : IPermissionRepository
         else
         {
             var permission = await GetPermissionFromContext(userId, settingGroupId);
-<<<<<<< HEAD
-            
-=======
-
->>>>>>> bfec0ed8c20ad88586f6586f1bde3aaf946741e5
             if (permission.User.Password != password)
             {
                 throw new IncorrectPasswordException(userId);
@@ -142,14 +119,7 @@ public class MySqlPermissionRepository : IPermissionRepository
     }
 
     private async Task<Permission> GetPermissionFromContext(string userId, string settingGroupId) =>
-<<<<<<< HEAD
-        await _settingsContext.Permissions.Include(p => p.User).SingleAsync(
-            p => p.UserId == userId && p.SettingGroupId == settingGroupId
-        );
-}
-=======
         await _settingsContext.Permissions
             .Include(p => p.User)
             .SingleAsync(p => p.UserId == userId && p.SettingGroupId == settingGroupId);
 }
->>>>>>> bfec0ed8c20ad88586f6586f1bde3aaf946741e5
