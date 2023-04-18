@@ -27,19 +27,18 @@
   </table>
 </ng-container>
 
-<div>
+<div class = "reqacc">
   <h2>Request Access to New Setting Group</h2>
 
-  <label for="settingGroupId">Setting Group Id</label>
-  <input id="settingGroupId" type="text" [(ngModel)]="settingGroupId">
+  <label for="settingGroupId">Setting Group Id: <input id="settingGroupId" type="text" [(ngModel)]="settingGroupId"></label>
 
-  <label for="requestedPermissionLevel">Requested Permission Level</label>
+  <label for="requestedPermissionLevel"><br>Requested Permission Level:
   <select [(ngModel)]="requestedPermissionLevel">
     <option value=0>None</option>
     <option value=1>Read</option>
     <option value=2>Write</option>
     <option value=3>Admin</option>
   </select>
-
-  <button mat-raised-button color="primary" (click)="onRequestNewAccess()">Request New Access</button>
+</label>
+  <button mat-raised-button color="primary" (click)="onRequestNewAccess()" id="reqaccbutton">Request New Access</button>
 </div>
