@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AppSettingsManagerBff.Infrastructure.ApiRepositories;
@@ -10,7 +11,8 @@ public static class Constants
 
     private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
     {
-        PropertyNameCaseInsensitive = true
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
     };
 
     public static StringContent GetStringContent(object request) =>
@@ -22,7 +24,11 @@ public static class Constants
             JsonSerializerOptions
         ) ?? throw new HttpRequestException("Method returned null object");
 
-    public static string GetRequestUri(string userId, string password, string? settingGroupId = null) =>
+    public static string GetRequestUri(
+        string userId,
+        string password,
+        string? settingGroupId = null
+    ) =>
         string.IsNullOrEmpty(settingGroupId)
             ? $"userId/{userId}/password/{password}"
             : $"userId/{userId}/password/{password}/settingGroupId/{settingGroupId}";

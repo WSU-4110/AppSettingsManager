@@ -1,11 +1,9 @@
-import { PermissionLevel } from '../models/PermissionLevel';
-
 export class UpdatePermissionRequest {
     UserId: string;
     SettingGroupId: string;
-    NewPermissionLevel: PermissionLevel;
+    NewPermissionLevel: number;
 
-    constructor(userId: string, settingGroupId: string, newPermissionLevel: PermissionLevel){
+    constructor(userId: string, settingGroupId: string, newPermissionLevel: number){
         this.UserId = userId;
         this.SettingGroupId = settingGroupId;
         this.NewPermissionLevel = newPermissionLevel;

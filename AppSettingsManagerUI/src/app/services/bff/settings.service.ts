@@ -2,8 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SettingGroup } from './models/SettingGroup';
+import { Permission } from './models/Permission';
 import { CreateSettingRequest } from './models/CreateSettingRequest';
 import { UpdateTargetSettingRequest } from './models/UpdateTargetSettingRequest';
+import { UpdatePermissionRequest } from './models/UpdatePermissionRequest';
+import { PermissionRequestResponse } from './models/PermissionRequestResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -37,5 +40,13 @@ export class SettingsService {
 
   deleteSettingGroup(userId: string, password: string, settingGroupId: string): Observable<SettingGroup> {
     return this.http.delete<SettingGroup>(`${this.apiUrl}/userId/${userId}/password/${password}/settingGroupId/${settingGroupId}`);
+  }
+
+  updatePermission(request: UpdatePermissionRequest): Observable<Permission> {
+    return this.http.put<Permission>(`${this.apiUrl}/permission`, request);
+  }
+
+  permissionRequestResponse(request: PermissionRequestResponse): Observable<Permission> {
+    return this.http.put<Permission>(`${this.apiUrl}/permission/response`, request);
   }
 }

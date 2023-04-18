@@ -19,6 +19,7 @@ import { ViewSettingsComponent } from './home/view-settings/view-settings.compon
 import { CreateSettingGroupComponent } from './home/create-setting-group/create-setting-group.component';
 import { UpdateSettingComponent } from './home/view-settings/update-setting/update-setting.component';
 import { HeaderComponent } from './header/header.component';
+import { ViewPermissionsComponent } from './home/view-permissions/view-permissions.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { HeaderComponent } from './header/header.component';
     ViewSettingsComponent,
     CreateSettingGroupComponent,
     UpdateSettingComponent,
-    HeaderComponent
+    HeaderComponent,
+    ViewPermissionsComponent
   ],
   imports: [
     BrowserModule,
