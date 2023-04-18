@@ -1,0 +1,16 @@
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
