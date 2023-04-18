@@ -94,8 +94,56 @@
 }
 
 .reqacc{
-  position: absolute;
-  left: 800px;
-  bottom: 300px;
+  display: block;
+  margin-top: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 25%;
+  border: 3px solid #5a58be;
+  border-radius: 25px;
+  padding:20px;
   font-family: Plus Jakarta Sans;
+}
+label
+{
+  font-size: 20px;
+  color: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+  line-height: 26px;
+}
+input
+{
+  height: 20px;
+  width: 300px;
+  margin-left: 40px;
+  color: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+}
+select
+{
+  height: 32px;
+  margin-top: auto;
+  margin-left: 40px;
+  color: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+}
+#reqaccbutton
+{
+  display: block;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 40px;
+  width: auto;
+  background-color: #5a58be;
+  color: white;
+  font-family: Plus Jakarta Sans;
+  font-size: 20px;
+  border-radius: 25px;
 }
