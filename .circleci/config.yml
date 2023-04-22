@@ -47,7 +47,7 @@ jobs:
           command: |
             cd AppSettingsManagerUI
             npm install
-            ng test --watch=false --browsers=ChromeHeadless
+            ng test --watch=false --browsers=ChromeHeadlessNoSandBox
 
   build-and-deploy:
     executor: docker-executor
