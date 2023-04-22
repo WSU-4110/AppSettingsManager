@@ -16,7 +16,7 @@ jobs:
           name: Install Node.js
           command: |
             curl -sL https://deb.nodesource.com/setup_16.x | bash -
-            apt-get install -y nodejs'
+            apt-get install -y nodejs
       - run:
           name: Test AppSettingsManagerApi
           command: dotnet test --configuration Release AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj
@@ -31,7 +31,7 @@ jobs:
           command: |
             cd AppSettingsManagerUI
             npm install
-            ng test --watch=false --browsers=ChromeHeadless'
+            ng test --watch=false --browsers=ChromeHeadless
 
   build-and-deploy:
     executor: docker-executor
@@ -48,7 +48,7 @@ jobs:
           name: Authenticate to Azure
           command: |
             echo $AZURE_SERVICE_PRINCIPAL | base64 --decode > sp.json
-            az login --service-principal --username "$(jq -r '.clientId' sp.json)" --password "$(jq -r '.clientSecret' sp.json)" --tenant "$(jq -r '.tenantId' sp.json)"'
+            az login --service-principal --username "$(jq -r '.clientId' sp.json)" --password "$(jq -r '.clientSecret' sp.json)" --tenant "$(jq -r '.tenantId' sp.json)"
       - run:
           name: Build and deploy AppSettingsManagerApi
           command: |
@@ -57,7 +57,7 @@ jobs:
             dotnet publish -c Release
             cd bin/Release/net6.0/publish
             zip -r ../publish.zip .
-            az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src publish.zip'
+            az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src publish.zip
       - run:
           name: Build and deploy AppSettingsManagerBff
           command: |
@@ -66,7 +66,7 @@ jobs:
             dotnet publish -c Release
             cd bin/Release/net6.0/publish
             zip -r ../publish.zip .
-            az webapp deployment source config-zip --name appsettingsmanagerbff --resource-group appsettingsmanager --src publish.zip'
+            az webapp deployment source config-zip --name appsettingsmanagerbff --resource-group appsettingsmanager --src publish.zip
       - run:
           name: Build and deploy SampleApp
           command: |
@@ -75,13 +75,13 @@ jobs:
             dotnet publish -c Release
             cd bin/Release/net6.0/publish
             zip -r ../publish.zip .
-            az webapp deployment source config-zip --name appsettingsmanager-sampleapp --resource-group appsettingsmanager --src publish.zip'
+            az webapp deployment source config-zip --name appsettingsmanager-sampleapp --resource-group appsettingsmanager --src publish.zip
       - run:
           name: Build and deploy AppSettingsManagerUi
           command: |
             cd ../../../../AppSettingsManagerUI
             ng build
-            az storage blob upload-batch --destination \$web --source dist/app-settings-manager-ui --account-name appsettingsmanager --overwrite'
+            az storage blob upload-batch --destination \$web --source dist/app-settings-manager-ui --account-name appsettingsmanager --overwrite
       - run:
           name: Logout from Azure
           command: az logout
