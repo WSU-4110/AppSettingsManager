@@ -23,6 +23,8 @@ az webapp log tail --name appsettingsmanagerapi --resource-group appsettingsmana
 
 "Server=localhost;Database=db;Uid=user;Pwd=password;"
 
+az ad sp create-for-rbac --name "appsettingsmanaager-sp" --role Contributor --scopes /subscriptions/f218abfa-9f42-4fbd-8230-21cc6421aac4
+
 cd
 cd code/appsettingsmanager/appsettingsmanagerapi/appsettingsmanagerapi
 dotnet clean
