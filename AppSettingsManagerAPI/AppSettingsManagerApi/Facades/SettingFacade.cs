@@ -87,7 +87,7 @@ public class SettingFacade
             request.UserId
         );
 
-        var setting = _settingRepository.CreateSetting(request);
+        var setting = await _settingRepository.CreateSetting(request);
 
         var permissionRequest = new CreatePermissionRequest
         {
@@ -98,9 +98,7 @@ public class SettingFacade
 
         permissionRequest.SetNeedsApproval(false);
 
-        var permission = _permissionRepository.CreatePermission(permissionRequest);
-
-        await Task.WhenAll(setting, permission);
+        var permission = await _permissionRepository.CreatePermission(permissionRequest);
 
         return await _settingRepository.GetSettingGroup(request.SettingGroupId);
     }
