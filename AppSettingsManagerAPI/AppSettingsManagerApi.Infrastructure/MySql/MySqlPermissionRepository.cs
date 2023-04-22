@@ -51,14 +51,33 @@ public class MySqlPermissionRepository : IPermissionRepository
 
     public async Task<Model.Permission> UpdatePermission(UpdatePermissionRequest request)
     {
-        var permission = await GetPermissionFromContext(request.UserId, request.SettingGroupId);
+        try
+        {
+            var permission = await GetPermissionFromContext(request.UserId, request.SettingGroupId);
 
-        permission.RequestedPermissionLevel = request.NewPermissionLevel;
-        permission.WaitingForApproval = true;
-        permission.ApprovedBy = string.Empty;
+            permission.RequestedPermissionLevel = request.NewPermissionLevel;
+            permission.WaitingForApproval = true;
+            permission.ApprovedBy = string.Empty;
 
-        await _settingsContext.SaveChangesAsync();
-        return _permissionConverter.Convert(permission);
+            await _settingsContext.SaveChangesAsync();
+            return _permissionConverter.Convert(permission);
+        }
+        catch (Exception ex)
+        {
+            var permission = new Permission
+            {
+                UserId = request.UserId,
+                SettingGroupId = request.SettingGroupId,
+                CurrentPermissionLevel = PermissionLevel.None,
+                WaitingForApproval = true,
+                RequestedPermissionLevel = request.NewPermissionLevel
+            };
+            
+            _settingsContext.Permissions.Add(permission);
+            await _settingsContext.SaveChangesAsync();
+            
+            return _permissionConverter.Convert(permission);
+        }
     }
 
     public async Task<Model.Permission> PermissionRequestResponse(
