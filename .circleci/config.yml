@@ -8,7 +8,8 @@ executors:
 jobs:
   test:
     executor: docker-executor
-    environment: DOTNET_CLI_TELEMETRY_OPTOUT: true
+    # environment: 
+    #   DOTNET_CLI_TELEMETRY_OPTOUT: true
     steps:
       - checkout
       - run:
