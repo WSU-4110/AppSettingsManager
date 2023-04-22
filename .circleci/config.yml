@@ -18,6 +18,9 @@ jobs:
             curl -sL https://deb.nodesource.com/setup_16.x | bash -
             apt-get install -y nodejs
       - run:
+          name: Install Angular CLI
+          command: npm install -g @angular/cli
+      - run:
           name: Test AppSettingsManagerApi
           command: dotnet test --configuration Release AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj
       - run:
