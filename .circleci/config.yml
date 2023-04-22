@@ -8,7 +8,7 @@ executors:
 jobs:
   test:
     executor: docker-executor
-    environment: 
+    environment:
       DOTNET_CLI_TELEMETRY_OPTOUT: true
     steps:
       - checkout
@@ -67,7 +67,7 @@ jobs:
             cd bin/Release/net6.0/publish
             zip -r ../publish.zip .
             az webapp deployment source config-zip --name appsettingsmanagerbff --resource-group appsettingsmanager --src publish.zip'
-        - run:
+      - run:
           name: Build and deploy SampleApp
           command: |
             cd ../../../../SampleApp
@@ -76,16 +76,15 @@ jobs:
             cd bin/Release/net6.0/publish
             zip -r ../publish.zip .
             az webapp deployment source config-zip --name appsettingsmanager-sampleapp --resource-group appsettingsmanager --src publish.zip'
-        - run:
+      - run:
           name: Build and deploy AppSettingsManagerUi
           command: |
             cd ../../../../AppSettingsManagerUI
             ng build
             az storage blob upload-batch --destination \$web --source dist/app-settings-manager-ui --account-name appsettingsmanager --overwrite'
-        - run:
+      - run:
           name: Logout from Azure
           command: az logout
-
 
 workflows:
   version: 2
@@ -99,4 +98,3 @@ workflows:
       - build-and-deploy:
           requires:
             - deploy_approval
-          
