@@ -7,7 +7,7 @@ executors:
 
 jobs:
   test:
-    executor: docker-executor
+  executor: docker-executor
     environment:
       DOTNET_CLI_TELEMETRY_OPTOUT: true
     steps:
@@ -15,8 +15,8 @@ jobs:
       - run:
           name: Install Node.js
           command: |
-            curl -sL https://deb.nodesource.com/setup_16.x | sudo bash
-            sudo apt-get install -y nodejs
+            curl -sL https://deb.nodesource.com/setup_16.x | bash -
+            apt-get install -y nodejs
       - run:
           name: Test AppSettingsManagerApi
           command: dotnet test --configuration Release AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj
@@ -34,38 +34,31 @@ jobs:
             ng test --watch=false --browsers=ChromeHeadless
 
   build-and-deploy:
-    executor: docker-executor
-    environment:
-      DOTNET_CLI_TELEMETRY_OPTOUT: true
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.17
-          docker_layer_caching: true
-      - run:
-          name: Install dependencies
-          command: |
-            curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-            sudo apt-get install -y zip
-            curl -sL https://deb.nodesource.com/setup_16.x | sudo bash
-            sudo apt-get install -y nodejs
-            sudo npm install -g @angular/cli
-      - run:
-          name: Login to Azure
-          command: |
-            echo "$AZURE_SERVICE_PRINCIPAL" | base64 --decode > sp.json
-            az login --service-principal -u $(jq -r '.clientId' sp.json) -p $(jq -r '.clientSecret' sp.json) --tenant $(jq -r '.tenantId' sp.json)
-            rm sp.json
-      - run:
-          name: Build and deploy AppSettingsManagerApi
-          command: |
+  executor: docker-executor
+  steps:
+    - checkout
+    - setup_remote_docker
+    - run:
+        name: Install dependencies
+        command: |
+          curl -sL https://deb.nodesource.com/setup_16.x | bash -
+          apt-get install -y nodejs
+          npm install -g azure-cli
+    - run:
+        name: Authenticate to Azure
+        command: |
+          echo $AZURE_SERVICE_PRINCIPAL | base64 --decode > sp.json
+          az login --service-principal --username "$(jq -r '.clientId' sp.json)" --password "$(jq -r '.clientSecret' sp.json)" --tenant "$(jq -r '.tenantId' sp.json)"
+    - run:
+        name: Build and deploy AppSettingsManagerApi
+        command: |
             cd AppSettingsManagerAPI/AppSettingsManagerApi
             dotnet clean
             dotnet publish -c Release
             cd bin/Release/net6.0/publish
             zip -r ../publish.zip .
             az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src publish.zip
-      - run:
+    - run:
           name: Build and deploy AppSettingsManagerBff
           command: |
             cd ../../../../AppSettingsManagerBff/AppSettingsManagerBff
@@ -89,15 +82,21 @@ jobs:
             cd ../../../../AppSettingsManagerUI
             ng build
             az storage blob upload-batch --destination \$web --source dist/app-settings-manager-ui --account-name appsettingsmanager --overwrite
+      - run:
+          name: Logout from Azure
+          command: az logout
+
 
 workflows:
   version: 2
   test-build-deploy:
     jobs:
       - test
-      - build-and-deploy:
+      - deploy_approval:
+          type: approval
           requires:
             - test
-          filters:
-            branches:
-              only: main
+      - build-and-deploy:
+          requires:
+            - deploy_approval
+          
