@@ -84,6 +84,13 @@ jobs:
             zip -r ../publish.zip .
             cd ../../../../
             pwd
+            ls -la
+            cd bin
+            ls -la
+            cd Release
+            ls -la
+            cd net6.0
+            ls -la
             az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src AppSettingsManagerAPI/AppSettingsManagerApi/bin/Release/net6.0/publish.zip
       - run:
           name: Build and deploy AppSettingsManagerBff
