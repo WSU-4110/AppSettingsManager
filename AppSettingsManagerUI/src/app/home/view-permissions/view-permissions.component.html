@@ -27,8 +27,11 @@
 
 <button mat-raised-button color="primary" (click)="onClickBack()">Back</button>
 
+<div class="approvedenyreqacc">
 <label for="responseUserId">Respond To Access Request:</label>
-<input id="responseUserId" type="text" [(ngModel)]="responseUserId">
-
-<button mat-raised-button color="primary" (click)="onClickApprove()">Approve</button>
-<button mat-raised-button color="primary" (click)="onClickDeny()">Deny</button>
+<input id="responseUserId" type="text" placeholder="Requester User ID" [(ngModel)]="responseUserId">
+  <div class="aordbuttons">
+<button mat-raised-button id="approvebutton" color="primary" (click)="onClickApprove()">Approve</button>
+<button mat-raised-button id="denybutton" color="primary" (click)="onClickDeny()">Deny</button>
+  </div>
+</div>

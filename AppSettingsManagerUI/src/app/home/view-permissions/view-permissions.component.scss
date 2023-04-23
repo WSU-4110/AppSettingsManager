@@ -1,0 +1,56 @@
+.approvedenyreqacc {
+  display: block;
+  margin-top: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 25%;
+  border: 3px solid #5a58be;
+  border-radius: 25px;
+  padding: 20px;
+  font-family: Plus Jakarta Sans;
+}
+
+label {
+  font-size: 20px;
+  color: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+  line-height: 26px;
+}
+
+input {
+  height: 20px;
+  width: 300px;
+  margin-top: 20px;
+  margin-right:auto;
+  margin-left: auto;
+  color: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+}
+.aordbuttons {
+  text-align: end;
+  margin-top: 20px;
+}
+#approvebutton {
+  margin-right:10px;
+  height: 40px;
+  width: auto;
+  background-color: #5a58be;
+  color: white;
+  font-family: Plus Jakarta Sans;
+  font-size: 20px;
+  border-radius: 25px;
+}
+#denybutton {
+  margin-left: 10px;
+  height: 40px;
+  width: auto;
+  background-color: #5a58be;
+  color: white;
+  font-family: Plus Jakarta Sans;
+  font-size: 20px;
+  border-radius: 25px;
+}
