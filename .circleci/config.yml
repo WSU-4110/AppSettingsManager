@@ -59,7 +59,7 @@ jobs:
           command: |
             curl -sL https://deb.nodesource.com/setup_16.x | bash -
             apt-get install -y nodejs
-            npm install -g azure-cli'
+            npm install -g azure-cli
       - run:
           name: Authenticate to Azure
           command: |
