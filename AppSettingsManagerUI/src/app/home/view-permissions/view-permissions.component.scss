@@ -1,3 +1,13 @@
+#backbutton {
+  height: 40px;
+  width: auto;
+  margin-top: 10px;
+  margin-left: auto;
+  font-family: Plus Jakarta Sans;
+  font-size: 20px;
+  border-radius: 25px;
+}
+
 .approvedenyreqacc {
   display: block;
   margin-top: 100px;
@@ -20,6 +30,7 @@ label {
 }
 
 input {
+  font-size: 12px;
   height: 20px;
   width: 300px;
   margin-top: 20px;
