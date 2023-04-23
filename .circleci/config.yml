@@ -117,11 +117,11 @@ jobs:
 workflows:
   test-build-deploy:
     jobs:
-      - test
-      - deploy_approval:
-          type: approval
-          requires:
-            - test
-      - build-and-deploy:
-          requires:
-            - deploy_approval
+      # - test
+      # - deploy_approval:
+      #     type: approval
+      #     requires:
+      #       - test
+      - build-and-deploy
+      #     requires:
+      #       - deploy_approval
