@@ -107,7 +107,7 @@ jobs:
       - run:
           name: Build and deploy AppSettingsManagerUi
           command: |
-            cd ../../../../AppSettingsManagerUI
+            cd AppSettingsManagerUI
             ng build
             az storage blob upload-batch --destination \$web --source dist/app-settings-manager-ui --account-name appsettingsmanager --overwrite
       - run:
