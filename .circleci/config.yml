@@ -108,7 +108,7 @@ jobs:
           name: Build and deploy AppSettingsManagerUi
           command: |
             cd AppSettingsManagerUI
-            ng build
+            npx ng build
             az storage blob upload-batch --destination \$web --source dist/app-settings-manager-ui --account-name appsettingsmanager --overwrite
       - run:
           name: Logout from Azure
