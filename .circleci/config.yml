@@ -83,6 +83,7 @@ jobs:
             cd bin/Release/net6.0/publish
             zip -r ../publish.zip .
             cd ../../../../
+            pwd
             az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src AppSettingsManagerAPI/AppSettingsManagerApi/bin/Release/net6.0/publish.zip
       - run:
           name: Build and deploy AppSettingsManagerBff
