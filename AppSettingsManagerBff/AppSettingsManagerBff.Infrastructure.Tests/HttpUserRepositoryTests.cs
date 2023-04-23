@@ -16,21 +16,59 @@ public class HttpUserRepositoryTests
         BaseAddress = "http://localhost:5000/"
     };
 
-    private HttpUserRepository GetHttpUserRepository()
+    private readonly HttpClient _httpClient;
+
+    public HttpUserRepositoryTests()
     {
-        var httpClient = new HttpClient(_mockHttpMessageHandler.Object)
-        {
-            BaseAddress = new Uri(_config.BaseAddress + "users/")
-        };
+        _httpClient = new HttpClient(_mockHttpMessageHandler.Object);
         
-        return new HttpUserRepository(httpClient, _config);
+        _httpClient.BaseAddress = new Uri(_config.BaseAddress + "users/");
     }
+    
+    [Theory]
+    [AutoTestData]
+    public async Task AuthenticateUser_ReturnsTrue_WhenUserIsAuthenticated(string userId, string password)
+    {
+        SetupHttpMessageHandler(HttpStatusCode.OK, true);
+        
+        var httpUserRepository = GetHttpUserRepository();
+        
+        var result = await httpUserRepository.AuthenticateUser(userId, password);
+        
+        Assert.True(result);
+    }
+    
+    [Theory]
+    [AutoTestData]
+    public async Task AuthenticateUser_ReturnsFalse_WhenUserIsNotAuthenticated(string userId, string password)
+    {
+        SetupHttpMessageHandler(HttpStatusCode.NotFound, false);
+        
+        var httpUserRepository = GetHttpUserRepository();
+        
+        var result = await httpUserRepository.AuthenticateUser(userId, password);
+        
+        Assert.False(result);
+    }
+
+    private HttpUserRepository GetHttpUserRepository() => new HttpUserRepository(_httpClient, _config);
     
     private HttpResponseMessage GetHttpResponseMessage(HttpStatusCode statusCode, object content)
     {
-        return new HttpResponseMessage(HttpStatusCode.OK)
+        return new HttpResponseMessage(statusCode)
         {
             Content = new StringContent(JsonSerializer.Serialize(content))
         };
+    }
+    
+    private void SetupHttpMessageHandler(HttpStatusCode statusCode, object content)
+    {
+        _mockHttpMessageHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .ReturnsAsync(GetHttpResponseMessage(statusCode, content));
     }
 }

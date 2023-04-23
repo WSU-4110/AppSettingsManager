@@ -104,6 +104,8 @@ public class MySqlPermissionRepository : IPermissionRepository
 
         _settingsContext.Permissions.Remove(permission);
 
+        await _settingsContext.SaveChangesAsync();
+
         return _permissionConverter.Convert(permission);
     }
 
