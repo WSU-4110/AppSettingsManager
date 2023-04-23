@@ -46,6 +46,7 @@ jobs:
           name: Test AppSettingsManagerUi
           command: |
             cd AppSettingsManagerUI
+            npm ci
             npm install
             ng test --watch=false --browsers=ChromeHeadlessNoSandbox
 
@@ -111,6 +112,7 @@ jobs:
           name: Build and deploy AppSettingsManagerUi
           command: |
             cd AppSettingsManagerUI
+            npm ci
             ng build
             az storage blob upload-batch --destination \$web --source dist/app-settings-manager-ui --account-name appsettingsmanager --overwrite
       - run:
@@ -118,13 +120,17 @@ jobs:
           command: az logout
 
 workflows:
+  # test-build-deploy:
+  #   jobs:
+  #     - test
+  #     - deploy_approval:
+  #         type: approval
+  #         requires:
+  #           - test
+  #     - build-and-deploy:
+  #         requires:
+  #           - deploy_approval
+
   test-build-deploy:
     jobs:
-      # - test
-      # - deploy_approval:
-      #     type: approval
-      #     requires:
-      #       - test
       - build-and-deploy
-      #     requires:
-      #       - deploy_approval
