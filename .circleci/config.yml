@@ -83,35 +83,27 @@ jobs:
             cd bin/Release/net6.0/publish
             zip -r ../publish.zip .
             cd ../../../../
-            pwd
-            ls -la
-            cd bin
-            ls -la
-            cd Release
-            ls -la
-            cd net6.0
-            ls -la
             az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src publish.zip
       - run:
           name: Build and deploy AppSettingsManagerBff
           command: |
-            cd ../../../../AppSettingsManagerBff/AppSettingsManagerBff
+            cd ../../../../../AppSettingsManagerBff/AppSettingsManagerBff
             dotnet clean
             dotnet publish -c Release
             cd bin/Release/net6.0/publish
             zip -r ../publish.zip .
             cd ../../../../
-            az webapp deployment source config-zip --name appsettingsmanagerbff --resource-group appsettingsmanager --src AppSettingsManagerBff/AppSettingsManagerBff/bin/Release/net6.0/publish.zip
+            az webapp deployment source config-zip --name appsettingsmanagerbff --resource-group appsettingsmanager --src publish.zip
       - run:
           name: Build and deploy SampleApp
           command: |
-            cd ../../../../SampleApp
+            cd ../../../../../SampleApp
             dotnet clean
             dotnet publish -c Release
             cd bin/Release/net6.0/publish
             zip -r ../publish.zip .
             cd ../../../../
-            az webapp deployment source config-zip --name appsettingsmanager-sampleapp --resource-group appsettingsmanager --src SampleApp/bin/Release/net6.0/publish.zip
+            az webapp deployment source config-zip --name appsettingsmanager-sampleapp --resource-group appsettingsmanager --src publish.zip
       - run:
           name: Build and deploy AppSettingsManagerUi
           command: |
