@@ -87,6 +87,7 @@ jobs:
       - run:
           name: Build and deploy AppSettingsManagerBff
           command: |
+            pwd
             cd ../../../../../AppSettingsManagerBff/AppSettingsManagerBff
             dotnet clean
             dotnet publish -c Release
@@ -97,6 +98,7 @@ jobs:
       - run:
           name: Build and deploy SampleApp
           command: |
+            pwd
             cd ../../../../../SampleApp
             dotnet clean
             dotnet publish -c Release
