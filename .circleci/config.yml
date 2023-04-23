@@ -61,6 +61,12 @@ jobs:
             apt-get install -y nodejs
             npm install -g azure-cli
       - run:
+          name: Install jq and Azure CLI
+          command: |
+            apt-get update
+            apt-get install -y jq
+            curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+      - run:
           name: Authenticate to Azure
           command: |
             echo $AZURE_SERVICE_PRINCIPAL | base64 --decode > sp.json
