@@ -91,7 +91,7 @@ jobs:
             ls -la
             cd net6.0
             ls -la
-            az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src AppSettingsManagerAPI/AppSettingsManagerApi/bin/Release/net6.0/publish.zip
+            az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src publish.zip
       - run:
           name: Build and deploy AppSettingsManagerBff
           command: |
