@@ -11,5 +11,5 @@ public interface ISettingRepository
     Task<SettingGroup> CreateSetting(CreateSettingRequest request);
     Task<SettingGroup> CreateSettingGroup(string settingGroupId, string createdBy);
     Task<SettingGroup> ChangeTargetSettingVersion(UpdateTargetSettingRequest request);
-    Task<SettingGroup> DeleteSetting(string settingGroupId);
+    Task<SettingGroup> DeleteSettingGroup(string settingGroupId);
 }

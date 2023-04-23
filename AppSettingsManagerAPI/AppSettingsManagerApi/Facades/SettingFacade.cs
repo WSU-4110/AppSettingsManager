@@ -138,7 +138,7 @@ public class SettingFacade
             request.SettingGroupId,
             PermissionLevel.Admin
         );
-        var settingGroup = await _settingRepository.DeleteSetting(request.SettingGroupId);
+        var settingGroup = await _settingRepository.DeleteSettingGroup(request.SettingGroupId);
 
         return settingGroup;
     }

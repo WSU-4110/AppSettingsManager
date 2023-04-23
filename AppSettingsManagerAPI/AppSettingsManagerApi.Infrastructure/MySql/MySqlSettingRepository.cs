@@ -120,7 +120,7 @@ public class MySqlSettingRepository : ISettingRepository
         return _settingGroupConverter.Convert(settingGroup);
     }
 
-    public async Task<Model.SettingGroup> DeleteSetting(string settingGroupId)
+    public async Task<Model.SettingGroup> DeleteSettingGroup(string settingGroupId)
     {
         var settingGroup = await GetSettingGroupFromContext(settingGroupId);
 
