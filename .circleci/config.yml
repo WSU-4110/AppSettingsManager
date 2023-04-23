@@ -78,36 +78,36 @@ jobs:
           command: |
             echo $AZURE_SERVICE_PRINCIPAL | base64 --decode > sp.json
             az login --service-principal --username "$(jq -r '.clientId' sp.json)" --password "$(jq -r '.clientSecret' sp.json)" --tenant "$(jq -r '.tenantId' sp.json)"
-      # - run:
-      #     name: Build and deploy AppSettingsManagerApi
-      #     command: |
-      #       cd AppSettingsManagerAPI/AppSettingsManagerApi
-      #       dotnet clean
-      #       dotnet publish -c Release
-      #       cd bin/Release/net6.0/publish
-      #       zip -r ../publish.zip .
-      #       cd ../../../../
-      #       az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src bin/Release/net6.0/publish.zip
-      # - run:
-      #     name: Build and deploy AppSettingsManagerBff
-      #     command: |
-      #       cd AppSettingsManagerBff/AppSettingsManagerBff
-      #       dotnet clean
-      #       dotnet publish -c Release
-      #       cd bin/Release/net6.0/publish
-      #       zip -r ../publish.zip .
-      #       cd ../../../../
-      #       az webapp deployment source config-zip --name appsettingsmanagerbff --resource-group appsettingsmanager --src bin/Release/net6.0/publish.zip
-      # - run:
-      #     name: Build and deploy SampleApp
-      #     command: |
-      #       cd SampleApp
-      #       dotnet clean
-      #       dotnet publish -c Release
-      #       cd bin/Release/net6.0/publish
-      #       zip -r ../publish.zip .
-      #       cd ../../../../
-      #       az webapp deployment source config-zip --name appsettingsmanager-sampleapp --resource-group appsettingsmanager --src bin/Release/net6.0/publish.zip
+      - run:
+          name: Build and deploy AppSettingsManagerApi
+          command: |
+            cd AppSettingsManagerAPI/AppSettingsManagerApi
+            dotnet clean
+            dotnet publish -c Release
+            cd bin/Release/net6.0/publish
+            zip -r ../publish.zip .
+            cd ../../../../
+            az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src bin/Release/net6.0/publish.zip
+      - run:
+          name: Build and deploy AppSettingsManagerBff
+          command: |
+            cd AppSettingsManagerBff/AppSettingsManagerBff
+            dotnet clean
+            dotnet publish -c Release
+            cd bin/Release/net6.0/publish
+            zip -r ../publish.zip .
+            cd ../../../../
+            az webapp deployment source config-zip --name appsettingsmanagerbff --resource-group appsettingsmanager --src bin/Release/net6.0/publish.zip
+      - run:
+          name: Build and deploy SampleApp
+          command: |
+            cd SampleApp
+            dotnet clean
+            dotnet publish -c Release
+            cd bin/Release/net6.0/publish
+            zip -r ../publish.zip .
+            cd ../../../../
+            az webapp deployment source config-zip --name appsettingsmanager-sampleapp --resource-group appsettingsmanager --src bin/Release/net6.0/publish.zip
       - run:
           name: Build and deploy AppSettingsManagerUi
           command: |
@@ -120,17 +120,13 @@ jobs:
           command: az logout
 
 workflows:
-  # test-build-deploy:
-  #   jobs:
-  #     - test
-  #     - deploy_approval:
-  #         type: approval
-  #         requires:
-  #           - test
-  #     - build-and-deploy:
-  #         requires:
-  #           - deploy_approval
-
   test-build-deploy:
     jobs:
-      - build-and-deploy
+      - test
+      - deploy_approval:
+          type: approval
+          requires:
+            - test
+      - build-and-deploy:
+          requires:
+            - deploy_approval
