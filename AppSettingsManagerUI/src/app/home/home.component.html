@@ -5,7 +5,7 @@
       <button mat-raised-button color="grey" class="createsg" (click)="onCreateSettingGroup()">
         <span style="color: white;">Create Setting Group</span>
       </button>
-      </li>
+    </li>
     <li class="nav-logout">
       <app-logout-button></app-logout-button>
     </li>
@@ -27,18 +27,19 @@
   </table>
 </ng-container>
 
-<div class = "reqacc">
+<div class="reqacc">
   <h2>Request Access to New Setting Group</h2>
 
   <label for="settingGroupId">Setting Group Id: <input id="settingGroupId" type="text" [(ngModel)]="settingGroupId"></label>
 
-  <label for="requestedPermissionLevel"><br>Requested Permission Level:
-  <select [(ngModel)]="requestedPermissionLevel">
-    <option value=0>None</option>
-    <option value=1>Read</option>
-    <option value=2>Write</option>
-    <option value=3>Admin</option>
-  </select>
-</label>
+  <label for="requestedPermissionLevel">
+    <br>Requested Permission Level:
+    <select [(ngModel)]="requestedPermissionLevel">
+      <option value=0>None</option>
+      <option value=1>Read</option>
+      <option value=2>Write</option>
+      <option value=3>Admin</option>
+    </select>
+  </label>
   <button mat-raised-button color="primary" (click)="onRequestNewAccess()" id="reqaccbutton">Request New Access</button>
 </div>

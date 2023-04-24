@@ -1,127 +1,181 @@
 .vertical-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 150px;
-    background-color: hsl(0, 0%, 27%);
-    padding: 10px 0;
-    display: flex; /* Add this line to use flexbox */
-    flex-direction: column; /* Add this line to stack items vertically */
-    justify-content: center; /* Add this line to center items vertically */
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 150px;
+  background-color: hsl(0, 0%, 27%);
+  padding: 10px 0;
+  display: flex; /* Add this line to use flexbox */
+  flex-direction: column; /* Add this line to stack items vertically */
+  justify-content: center; /* Add this line to center items vertically */
+}
 
-  .vertical-nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-  }
+.vertical-nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
 
-  .vertical-nav li {
-    margin-bottom: 10px;
-    text-align: center;
-  }
+.vertical-nav li {
+  margin-bottom: 10px;
+  text-align: center;
+}
 
-  .nav-title {
-    font-size: 25px;
-    font-weight: bold;
-    color: rgb(191, 139, 215);
-    text-align: center;
-    border: 1px solid white;
-    padding: 10px;
-    margin-bottom: 20px;
-    position: absolute;
-    top: 10px;
-    left: 13px;
-    font-family: Plus Jakarta Sans;
-    font-weight: 100;
-  }
+.nav-title {
+  font-size: 25px;
+  font-weight: bold;
+  color: rgb(191, 139, 215);
+  text-align: center;
+  border: 1px solid white;
+  padding: 10px;
+  margin-bottom: 20px;
+  position: absolute;
+  top: 10px;
+  left: 13px;
+  font-family: Plus Jakarta Sans;
+  font-weight: 100;
+}
 
-  .nav-create {
-    margin-bottom: auto;
-    align-self: center; /* Add this line to center the button horizontally */
-  }
+.nav-create {
+  margin-bottom: auto;
+  align-self: center; /* Add this line to center the button horizontally */
+}
 
-  .nav-logout {
-    position: absolute;
-    bottom: 50px;
-    left: 32px;
-  }
+.nav-logout {
+  position: absolute;
+  bottom: 50px;
+  left: 32px;
+}
 
-  .mat-header-cell-centered {
-    text-align: center;
-  }
+.mat-header-cell-centered {
+  text-align: center;
+}
 
-  .mat-header-row-black {
-    background-color: #151515;
-    color: white;
-    font-family: Plus Jakarta Sans;
-    font-size: 20px;
-  }
+.mat-header-row-black {
+  background-color: #151515;
+  color: white;
+  font-family: Plus Jakarta Sans;
+  font-size: 20px;
+}
 
-  .mat-row-grey {
-    background-color: #D9D9D9;
-  }
+.mat-row-grey {
+  background-color: #D9D9D9;
+}
 
-  .mat-row-white {
-    background-color: #F5F5F5;
-  }
+.mat-row-white {
+  background-color: #F5F5F5;
+}
 
-  .mat-row-button {
-    text-align: center;
-    padding-top: 30px;
-    padding-bottom: 30px;
-    font-family: Plus Jakarta Sans;
-    font-size: 20px;
-  }
+.mat-row-button {
+  text-align: center;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  font-family: Plus Jakarta Sans;
+  font-size: 20px;
+}
 
-  .mat-row-button:hover {
-    cursor: pointer;
-  }
+.mat-row-button:hover {
+  cursor: pointer;
+}
 
-  .createsg {
-    background-color: transparent;
-    color: white;
-    font-size: 20px;
-    height: 100px;
-    line-height: 25px;
-    font-family: Plus Jakarta Sans;
-  }
+.createsg {
+  background-color: transparent;
+  color: white;
+  font-size: 20px;
+  height: 100px;
+  line-height: 25px;
+  font-family: Plus Jakarta Sans;
+}
 
-  .createsg:hover {
-    background-color: #5a5a5a;
-  }
+.createsg:hover {
+  background-color: #5a5a5a;
+}
 
-  /* Add the following CSS for table styling */
+/* Add the following CSS for table styling */
 
-  .mat-table {
-    width: calc(100% - 150px); /* Subtract the width of the nav menu from the table */
-    margin-left: 150px; /* Add left margin equal to the width of the nav menu */
-    border-collapse: collapse;
-  }
+.mat-table {
+  width: calc(100% - 150px); /* Subtract the width of the nav menu from the table */
+  margin-left: 150px; /* Add left margin equal to the width of the nav menu */
+  border-collapse: collapse;
+}
 
-  .mat-header-row {
-    background-color: #151515;
-    color: white;
-    font-family: Plus Jakarta Sans;
-    font-size: 20px;
-  }
+.mat-header-row {
+  background-color: #151515;
+  color: white;
+  font-family: Plus Jakarta Sans;
+  font-size: 20px;
+}
 
-  .mat-row:nth-child(even) {
-    background-color: #D9D9D9;
-  }
+.mat-row:nth-child(even) {
+  background-color: #D9D9D9;
+}
 
-  .mat-row:nth-child(odd) {
-    background-color: #F5F5F5;
-  }
-  .nav-back {
-    position: absolute;
-    bottom: 200px;
-    left: 1000px;
-  }
-  .nav-new-version{
-    position: absolute;
-    bottom: 300px;
-    left: 1000px;
+.mat-row:nth-child(odd) {
+  background-color: #F5F5F5;
+}
 
-  }
+.nav-back {
+  position: absolute;
+  bottom: 200px;
+  left: 1000px;
+}
+
+#backbutton {
+  height: 40px;
+  width: auto;
+  margin-top: 10px;
+  margin-left: 150px;
+  font-family: Plus Jakarta Sans;
+  font-size: 20px;
+  border-radius: 25px;
+}
+
+.nav-new-version {
+  display: block;
+  margin-top: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 25%;
+  border: 3px solid #5a58be;
+  border-radius: 25px;
+  padding: 20px;
+  font-family: Plus Jakarta Sans;
+}
+
+label {
+  font-size: 20px;
+  color: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+  line-height: 26px;
+}
+
+input {
+  font-size: 26px;
+  height: 40px;
+  width: 300px;
+  margin-top: 20px;
+  margin-right: auto;
+  margin-left: auto;
+  color: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+}
+
+.thebuttons {
+  text-align: end;
+  margin-top: 20px;
+}
+
+#updatebutton {
+  height: 40px;
+  width: auto;
+  background-color: #5a58be;
+  color: white;
+  font-family: Plus Jakarta Sans;
+  font-size: 20px;
+  border-radius: 25px;
+}

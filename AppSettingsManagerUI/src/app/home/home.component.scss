@@ -11,7 +11,6 @@
   justify-content: center; /* Add this line to center items vertically */
 }
 
-
 .vertical-nav ul {
   list-style-type: none;
   margin: 0;
@@ -22,9 +21,9 @@
   margin-bottom: 10px;
   text-align: center;
 }
+
 .nav-title {
   font-size: 25px;
-
   font-weight: bold;
   color: rgb(191, 139, 215);
   text-align: center;
@@ -36,8 +35,6 @@
   left: 13px;
   font-family: Plus Jakarta Sans;
   font-weight: 100;
-
-
 }
 
 .nav-create {
@@ -70,6 +67,7 @@
 .mat-row-white {
   background-color: #F5F5F5;
 }
+
 .mat-row-button {
   text-align: center;
   padding-top: 30px;
@@ -77,9 +75,11 @@
   font-family: Plus Jakarta Sans;
   font-size: 20px;
 }
+
 .mat-row-button:hover {
   cursor: pointer;
 }
+
 .createsg {
   background-color: transparent;
   color: white;
@@ -88,24 +88,25 @@
   line-height: 25px;
   font-family: Plus Jakarta Sans;
 }
+
 .createsg:hover {
   background-color: #5a58be;
   color: white;
 }
 
-.reqacc{
+.reqacc {
   display: block;
   margin-top: 100px;
   margin-left: auto;
   margin-right: auto;
-  width: 25%;
+  width: 28%;
   border: 3px solid #5a58be;
   border-radius: 25px;
-  padding:20px;
+  padding: 20px;
   font-family: Plus Jakarta Sans;
 }
-label
-{
+
+label {
   font-size: 20px;
   color: rgb(0, 0, 0);
   display: flex;
@@ -113,19 +114,22 @@ label
   text-align: left;
   line-height: 26px;
 }
-input
-{
+
+input {
   height: 20px;
   width: 300px;
+  font-size: 16px;
   margin-left: 40px;
   color: rgb(0, 0, 0);
   display: flex;
   flex-direction: row;
   text-align: left;
 }
-select
-{
+
+select {
   height: 32px;
+  width: 61px;
+  font-size: 16px;
   margin-top: auto;
   margin-left: 40px;
   color: rgb(0, 0, 0);
@@ -133,8 +137,8 @@ select
   flex-direction: row;
   text-align: left;
 }
-#reqaccbutton
-{
+
+#reqaccbutton {
   display: block;
   margin-top: 20px;
   margin-left: auto;
