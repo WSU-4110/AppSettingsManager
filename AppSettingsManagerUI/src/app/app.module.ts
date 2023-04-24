@@ -7,27 +7,36 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
-import { BffService } from './services/bff/bff.service';
-import { CreateSettingGroupDialogComponent } from './home/create-setting-group-dialog/create-setting-group-dialog.component';
+import { SettingsService } from './services/bff/settings.service';
+import { UserService } from './services/bff/users.service';
 import { ViewSettingsComponent } from './home/view-settings/view-settings.component';
-import { UpdateSettingDialogComponent } from './home/view-settings/update-setting-dialog/update-setting-dialog.component';
+import { CreateSettingGroupComponent } from './home/create-setting-group/create-setting-group.component';
+import { UpdateSettingComponent } from './home/view-settings/update-setting/update-setting.component';
+
+import { LogoutButtonComponent } from './logout-button/logout-button.component';
+import { ViewPermissionsComponent } from './home/view-permissions/view-permissions.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
-    CreateSettingGroupDialogComponent,
     ViewSettingsComponent,
-    UpdateSettingDialogComponent
+    CreateSettingGroupComponent,
+    UpdateSettingComponent,
+    LogoutButtonComponent,
+    ViewPermissionsComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
@@ -39,8 +48,10 @@ import { UpdateSettingDialogComponent } from './home/view-settings/update-settin
     MatDialogModule
   ],
   providers: [
-    BffService,
-    { provide: 'baseURL', useValue: 'https://localhost:7160'}
+    // BffService,
+    // { provide: 'baseURL', useValue: 'https://appsettingsmanagerbff.azurewebsites.net/'}
+    SettingsService,
+    UserService
   ],
   bootstrap: [AppComponent]
 })

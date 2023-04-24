@@ -1,40 +1,59 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
-import { BffService } from '../../services/bff/bff.service';
+import { SettingsService } from '../../services/bff/settings.service';
 import * as models from '../../services/bff/models';
 import { MatDialog } from '@angular/material/dialog';
-import { UpdateSettingDialogComponent } from './update-setting-dialog/update-setting-dialog.component';
+import { UpdateTargetSettingRequest } from 'src/app/services/bff/models/UpdateTargetSettingRequest';
 
 @Component({
   selector: 'app-view-settings',
   templateUrl: './view-settings.component.html',
   styleUrls: ['./view-settings.component.scss']
 })
-export class ViewSettingsComponent {
+export class ViewSettingsComponent implements OnInit {
   settings: models.Setting[] = [];
-  columnsToDisplay: string[] = ['Id', 'Version', 'Input'];
+  columnsToDisplay: string[] = ['Id', 'Version', 'Input', 'IsCurrent', 'CreatedBy'];
+  newTargetVersion = 0;
 
-  constructor(private router: Router, private bffService: BffService, public dialog: MatDialog, private auth: AuthService) {   }
+  constructor(private route: ActivatedRoute, private router: Router, private settingsService: SettingsService, public dialog: MatDialog, private auth: AuthService) {   }
 
   ngOnInit() {
     if (!this.auth.isAuthenticated()){
       this.router.navigate(['']);
     }
 
-    this.settings = this.bffService.getSettingsFromService();
-  };
-
-  openDialog() {
-    const dialogRef = this.dialog.open(UpdateSettingDialogComponent, {
-      width: '500px',
-      data: {}
+    const settingGroupId = this.route.snapshot.paramMap.get('id') ?? '';
+    this.settingsService.getSettingGroup(this.auth.currentUserValue, this.auth.currentPasswordValue, settingGroupId).subscribe(settingGroup => {
+      this.settings = settingGroup.settings;
     });
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      this.router.navigate(['home']);
+  onUpdateSetting() {
+    this.router.navigate(['/home', this.route.snapshot.paramMap.get('id'), 'settings', 'update']);
+  }
+
+  onClickPermissions() {
+    this.router.navigate(['/home', this.route.snapshot.paramMap.get('id'), 'permissions']);
+  }
+
+  async onUpdateTargetSetting() {
+    const request = new UpdateTargetSettingRequest(this.auth.currentUserValue, this.auth.currentPasswordValue, this.route.snapshot.paramMap.get('id') ?? '', this.newTargetVersion);
+
+    this.settingsService.changeTargetSettingVersion(request).subscribe(() => {
+      this.ngOnInit();
+    });
+  }
+
+  onClickBack() {
+    this.router.navigate(['/home']);
+  }
+
+  async onDeleteSettingGroup() {
+    const settingGroupId = this.route.snapshot.paramMap.get('id') ?? '';
+    this.settingsService.deleteSettingGroup(this.auth.currentUserValue, this.auth.currentPasswordValue, settingGroupId).subscribe(() => {
+      this.router.navigate(['/home']);
     });
   }
 }

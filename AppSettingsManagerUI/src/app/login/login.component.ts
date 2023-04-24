@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth/auth.service';
-import { BffService } from '../services/bff/bff.service';
+import { UserService } from '../services/bff/users.service';
+import { CreateUserRequest } from '../services/bff/models/CreateUserRequest';
 
 @Component({
   selector: 'app-login',
@@ -10,16 +11,17 @@ import { BffService } from '../services/bff/bff.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  showSignUp = false;
   loginForm: FormGroup;
   signUpForm: FormGroup;
-  constructor(private authService: AuthService, private router: Router, private bffService: BffService) {
+  constructor(private authService: AuthService, private router: Router, private userService: UserService) {
     this.loginForm = new FormGroup({
-      usernameLogin: new FormControl('', [Validators.required, Validators.minLength(4)]),
-      passwordLogin: new FormControl('', [Validators.required, Validators.minLength(4)])
+      usernameLogin: new FormControl('', [Validators.required]),
+      passwordLogin: new FormControl('', [Validators.required])
     });
     this.signUpForm = new FormGroup({
-      username: new FormControl('', [Validators.required, Validators.minLength(4)]),
-      password: new FormControl('', [Validators.required, Validators.minLength(4)]),
+      username: new FormControl('', [Validators.required]),
+      password: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required])
     });
   }
@@ -33,8 +35,12 @@ export class LoginComponent implements OnInit {
   async onSubmit(): Promise<void> {
     const username = this.loginForm.get('usernameLogin')?.value ?? '';
     const password = this.loginForm.get('passwordLogin')?.value ?? '';
-    const loggedIn = await this.authService.login(username, password);
-    if (!loggedIn) {
+
+    await this.authService.login(username, password);
+
+    const isAuthenticated = this.authService.isAuthenticated();
+
+    if (!isAuthenticated) {
       alert('Invalid username or password');
     }
     else {
@@ -43,11 +49,28 @@ export class LoginComponent implements OnInit {
   }
 
   async onSignUp() {
-    const username = this.signUpForm.get('username')?.value ?? '';
+    const userId = this.signUpForm.get('username')?.value ?? '';
     const password = this.signUpForm.get('password')?.value ?? '';
     const email = this.signUpForm.get('email')?.value ?? '';
-    const user = await this.bffService.createUser(username, password, email);
+    const request: CreateUserRequest = {
+      UserId: userId,
+      Password: password,
+      Email: email
+    };
 
-    alert(`Account with username ${username} added!`);
+    this.userService.createUser(request).subscribe(() => {
+      alert(`Account with username ${userId} added!`);
+    });
+
+    await this.authService.login(userId, password);
+
+    const isAuthenticated = this.authService.isAuthenticated();
+
+    if (!isAuthenticated) {
+      alert('Please try signing in with your new credentials');
+    }
+    else {
+      this.router.navigate(['/home'])
+    }
   }
 }

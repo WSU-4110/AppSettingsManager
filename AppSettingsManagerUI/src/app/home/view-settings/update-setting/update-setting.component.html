@@ -1,0 +1,21 @@
+<div class="container">
+  <h2>Update Setting</h2>
+  <form>
+    <div class="form-group">
+      <label for="input">Input</label>
+      <textarea
+        [(ngModel)]="input"
+        class="form-control"
+        id="input"
+        rows="20"
+        placeholder="Enter input"
+        name="input"
+        required
+      ></textarea>
+    </div>
+    <div class="button-container">
+      <button type="button" class="btn btn-secondary" (click)="onBackClick()">Back</button>
+      <button type="button" class="btn btn-primary" (click)="onSaveClick()">Save</button>
+    </div>
+  </form>
+</div>

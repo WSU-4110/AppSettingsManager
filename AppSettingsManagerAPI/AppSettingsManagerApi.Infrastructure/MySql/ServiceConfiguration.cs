@@ -33,14 +33,20 @@ public static class ServiceConfiguration
     )
     {
         // This actually configures the MySql db connection
-        services.AddDbContextPool<SettingsContext>(
-            options =>
-                options.UseMySql(
-                    connectionString,
-                    ServerVersion.AutoDetect(connectionString),
-                    o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
-                )
-        );
+        services.AddDbContextPool<SettingsContext>(options =>
+        {
+            options.UseMySql(
+                connectionString,
+                new MySqlServerVersion(new Version(8, 0)),
+                o =>
+                {
+                    o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+                    o.EnableRetryOnFailure(3);
+                }
+            );
+
+            options.LogTo(Console.WriteLine);
+        });
 
         services.AddScoped<IPermissionRepository, MySqlPermissionRepository>();
         services.AddScoped<IUserRepository, MySqlUserRepository>();

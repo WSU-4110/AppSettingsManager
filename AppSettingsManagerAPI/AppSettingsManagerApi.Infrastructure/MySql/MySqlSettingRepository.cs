@@ -36,20 +36,21 @@ public class MySqlSettingRepository : ISettingRepository
 
     public async Task<IEnumerable<Model.SettingGroup>> GetSettingGroupsByUser(string userId)
     {
-        var settingGroups = await _settingsContext.Permissions
-            .Include(p => p.SettingGroup)
-            .ThenInclude(sg => sg.Settings)
-            .Where(p => p.UserId == userId)
-            .Select(p => p.SettingGroup)
+        var settingGroups = await _settingsContext.SettingGroups
+            .Include(sg => sg.Settings)
+            .Include(sg => sg.Permissions)
+            .Where(
+                sg => sg.Permissions.Any(p => p.UserId == userId && p.CurrentPermissionLevel > 0)
+            )
             .ToListAsync();
 
         return settingGroups.Select(_settingGroupConverter.Convert);
     }
 
-    public async Task<Dictionary<string, string>> GetSettings(string settingGroupId, int version)
+    public async Task<Dictionary<string, string>> GetSettings(GetSettingGroupRequest request)
     {
         var settings = await _settingsContext.Settings
-            .Where(s => s.SettingGroupId == settingGroupId && s.Version == version)
+            .Where(s => s.SettingGroupId == request.SettingGroupId && s.IsCurrent)
             .Select(s => s.Input)
             .SingleAsync();
 
@@ -119,7 +120,7 @@ public class MySqlSettingRepository : ISettingRepository
         return _settingGroupConverter.Convert(settingGroup);
     }
 
-    public async Task<Model.SettingGroup> DeleteSetting(string settingGroupId)
+    public async Task<Model.SettingGroup> DeleteSettingGroup(string settingGroupId)
     {
         var settingGroup = await GetSettingGroupFromContext(settingGroupId);
 

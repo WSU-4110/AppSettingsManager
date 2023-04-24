@@ -11,4 +11,6 @@ public interface ISettingsRepository
     Task<SettingGroup> UpdateSetting(CreateSettingRequest request);
     Task<SettingGroup> ChangeTargetSettingVersion(UpdateTargetSettingRequest request);
     Task<SettingGroup> DeleteSettingGroup(string userId, string password, string settingGroupId);
+    Task<Permission> UpdatePermission(UpdatePermissionRequest request);
+    Task<Permission> PermissionRequestResponse(PermissionRequestResponse request);
 }

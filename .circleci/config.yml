@@ -1,91 +1,129 @@
 version: 2.1
 
-orbs:
-  aws-ecr: circleci/aws-ecr@8.2.1
-  aws-ecs: circleci/aws-ecs@3.2.0
+executors:
+  docker-executor:
+    docker:
+      - image: mcr.microsoft.com/dotnet/sdk:6.0
 
 jobs:
-  build-api:
-    docker:
-      - image: mcr.microsoft.com/dotnet/sdk:6.0
+  test:
+    executor: docker-executor
+    environment:
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.17
-          docker_layer_caching: true
       - run:
-          name: Restore NuGet packages
-          command: dotnet restore AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj
+          name: Install Node.js
+          command: |
+            curl -sL https://deb.nodesource.com/setup_16.x | bash -
+            apt-get install -y nodejs
       - run:
-          name: Build
-          command: dotnet build --configuration Release AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj
+          name: Install Angular CLI
+          command: npm install -g @angular/cli
       - run:
-          name: Test
-          command: dotnet test --configuration Release AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj
+          name: Install Chrome dependencies
+          command: |
+            apt-get update
+            apt-get install -y gnupg
+            curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+            echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list
+            apt-get update
+            apt-get install -y google-chrome-stable
       - run:
-          name: Publish
-          command: dotnet publish --configuration Release --output ./publish AppSettingsManagerAPI/AppSettingsManagerApi/AppSettingsManagerApi.csproj 
-      - persist_to_workspace:
-          root: .
-          paths:
-            - publish
-  
-  build-bff:
-    docker:
-      - image: mcr.microsoft.com/dotnet/sdk:6.0
+          name: Install ChromeHeadless dependencies
+          command: |
+            apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
+      - run:
+          name: Test AppSettingsManagerApi
+          command: dotnet test --configuration Release AppSettingsManagerAPI/AppSettingsManagerApi.sln
+      - run:
+          name: Test AppSettingsManagerBff
+          command: dotnet test --configuration Release AppSettingsManagerBff/AppSettingsManagerBff.sln
+      - run:
+          name: Test AppSettingsManagerUi
+          command: |
+            cd AppSettingsManagerUI
+            npm ci
+            npm install
+            ng test --watch=false --browsers=ChromeHeadlessNoSandbox
+
+  build-and-deploy:
+    executor: docker-executor
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.17
-          docker_layer_caching: true
+      - setup_remote_docker
       - run:
-          name: Restore NuGet packages
-          command: dotnet restore AppSettingsManagerBff/AppSettingsManagerBff/AppSettingsManagerBff.csproj
+          name: Install zip
+          command: apt-get update && apt-get install -y zip
       - run:
-          name: Build
-          command: dotnet build --configuration Release AppSettingsManagerBff/AppSettingsManagerBff/AppSettingsManagerBff.csproj
+          name: Install dependencies
+          command: |
+            curl -sL https://deb.nodesource.com/setup_16.x | bash -
+            apt-get install -y nodejs
+            npm install -g azure-cli
       - run:
-          name: Test
-          command: dotnet test --configuration Release AppSettingsManagerBff/AppSettingsManagerBff/AppSettingsManagerBff.csproj
+          name: Install Angular CLI
+          command: npm install -g @angular/cli
       - run:
-          name: Publish
-          command: dotnet publish --configuration Release --output ./publish AppSettingsManagerBff/AppSettingsManagerBff/AppSettingsManagerBff.csproj
-      - persist_to_workspace:
-          root: .
-          paths:
-            - publish
-              
-  
+          name: Install jq and Azure CLI
+          command: |
+            apt-get update
+            apt-get install -y jq
+            curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+      - run:
+          name: Authenticate to Azure
+          command: |
+            echo $AZURE_SERVICE_PRINCIPAL | base64 --decode > sp.json
+            az login --service-principal --username "$(jq -r '.clientId' sp.json)" --password "$(jq -r '.clientSecret' sp.json)" --tenant "$(jq -r '.tenantId' sp.json)"
+      - run:
+          name: Build and deploy AppSettingsManagerApi
+          command: |
+            cd AppSettingsManagerAPI/AppSettingsManagerApi
+            dotnet clean
+            dotnet publish -c Release
+            cd bin/Release/net6.0/publish
+            zip -r ../publish.zip .
+            cd ../../../../
+            az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src bin/Release/net6.0/publish.zip
+      - run:
+          name: Build and deploy AppSettingsManagerBff
+          command: |
+            cd AppSettingsManagerBff/AppSettingsManagerBff
+            dotnet clean
+            dotnet publish -c Release
+            cd bin/Release/net6.0/publish
+            zip -r ../publish.zip .
+            cd ../../../../
+            az webapp deployment source config-zip --name appsettingsmanagerbff --resource-group appsettingsmanager --src bin/Release/net6.0/publish.zip
+      - run:
+          name: Build and deploy SampleApp
+          command: |
+            cd SampleApp
+            dotnet clean
+            dotnet publish -c Release
+            cd bin/Release/net6.0/publish
+            zip -r ../publish.zip .
+            cd ../../../../
+            az webapp deployment source config-zip --name appsettingsmanager-sampleapp --resource-group appsettingsmanager --src bin/Release/net6.0/publish.zip
+      - run:
+          name: Build and deploy AppSettingsManagerUi
+          command: |
+            cd AppSettingsManagerUI
+            npm ci
+            ng build
+            az storage blob upload-batch --destination \$web --source dist/app-settings-manager-ui --account-name appsettingsmanager --overwrite
+      - run:
+          name: Logout from Azure
+          command: az logout
+
 workflows:
-  version: 2
-  build-deploy-api:
+  test-build-deploy:
     jobs:
-      - build-api
-      - approval-for-test-api:
-          requires: [ build-api ]
+      - test
+      - deploy_approval:
           type: approval
-      - aws-ecr/build-and-push-image:
-          requires: [ approval-for-test-api ]
-          context: appsettingsmanager-api-test
-          region: us-east-2
-          registry-id: AWS_ECR_REGISTRY_ID
-          repo: appsettingsmanager-test-api
-          tag: latest
-          path: ./AppSettingsManagerAPI/AppSettingsManagerApi
-      - aws-ecs/deploy-service-update:
-          requires: [ aws-ecr/build-and-push-image ]
-          context: appsettingsmanager-api-test
-          family: appsettingsmanager-test-api_task_family
-          cluster: appsettingsmanager-test-ecs_cluster
-          service-name: appsettingsmanager-test-api
-          container-image-name-updates: "container=appsettingsmanager-test-api-container,tag=latest"
-      - approval-for-prod-api:
-          requires: [ aws-ecs/deploy-service-update ]
-          type: approval
-          filters:
-            branches:
-              only: main
-#      
-#  - build-and-push-api-prod:
-#          requires: [ approval-for-prod-api ]
-          
+          requires:
+            - test
+      - build-and-deploy:
+          requires:
+            - deploy_approval

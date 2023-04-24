@@ -1,33 +1,47 @@
-<div class="login-container">
+<div class="card" *ngIf="!showSignUp">
   <h2>Login</h2>
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <mat-form-field>
-      <mat-label>Username</mat-label>
-      <input matInput formControlName="usernameLogin" placeholder="Enter username">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Password</mat-label>
-      <input matInput formControlName="passwordLogin" type="password" placeholder="Password">
-    </mat-form-field>
-    <button mat-raised-button color="primary" type="submit">Submit</button>
+    <div class="form-field">
+      <input type="text" formControlName="usernameLogin" placeholder="Username">
+    </div>
+    <div class="form-field">
+      <input type="password" formControlName="passwordLogin" placeholder="Password">
+    </div>
+    <button type="submit" class="submit-button">Login</button>
   </form>
+  <div class="sign-up-link">
+    Don't have an account? <a href="#" (click)="showSignUp = true">Sign up</a>
+  </div>
 </div>
 
-<div class="signUp-container">
+<div class="card" *ngIf="showSignUp">
   <h2>Sign Up</h2>
   <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()">
-    <mat-form-field>
-      <mat-label>Username</mat-label>
-      <input matInput formControlName="username" placeholder="Enter username">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Password</mat-label>
-      <input matInput formControlName="password" type="password" placeholder="Password">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="email" placeholder="Email">
-    </mat-form-field>
-    <button mat-raised-button color="primary" type="submit">Sign Up</button>
+    <div class="form-field">
+      <input type="text" formControlName="username" placeholder="Username">
+    </div>
+    <div class="form-field">
+      <input type="password" formControlName="password" placeholder="Password">
+    </div>
+    <div class="form-field">
+      <input type="text" formControlName="email" placeholder="Email">
+    </div>
+    <button type="submit" class="submit-button">Sign Up</button>
   </form>
+  <div class="sign-up-link">
+    Already an user? <a href="#" (click)="showSignUp = false">Login</a>
+  </div>
+</div>
+
+<div class="banner">
+  <div class="triangle"></div>
+  <h1 class="banner-title">App <br> Settings <br> Manager</h1>
+  <h2 class="banner-subtitle">Welcome to the world’s best known Application <br>Settings Manager. Save time so that you can spend <br>it doing more important things. 
+    <br><br><br><br>Having technical difficulties? <button class="contact-button">Contact us</button>
+  </h2>
+  <div class="banner-links">
+    <a href="https://github.com/WSU-4110/AppSettingsManager/wiki" class="banner-link">Documentation</a>
+    <span class="banner-link-separator">|</span>
+    <span class="banner-link">Version 1.1.2023</span>
+  </div>
 </div>

@@ -59,24 +59,42 @@ public class SettingsController : Controller
         return settingGroups;
     }
 
-    [HttpGet("settingGroupId/{settingGroupId}/version/{version}")]
+    [HttpGet("setting/userId/{userId}/password/{password}/settingGroupId/{settingGroupId}")]
     public async Task<Dictionary<string, string>> GetSettings(
-        [FromRoute] [Required] string settingGroupId,
-        [FromRoute] [Required] int version
+        [FromRoute] [Required] string userId,
+        [FromRoute] [Required] string password,
+        [FromRoute] [Required] string settingGroupId
     )
     {
-        var setting = await _settingFacade.GetSettings(settingGroupId, version);
-        return setting;
+        var request = new GetSettingGroupRequest
+        {
+            UserId = userId,
+            Password = password,
+            SettingGroupId = settingGroupId
+        };
+
+        var settings = await _settingFacade.GetSettings(request);
+        return settings;
     }
-    
-    [HttpGet("settingGroupId/{settingGroupId}/version/{version}/variableName/{variableName}")]
+
+    [HttpGet(
+        "setting/userId/{userId}/password/{password}/settingGroupId/{settingGroupId}/{variableName}"
+    )]
     public async Task<string> GetSetting(
         [FromRoute] [Required] string settingGroupId,
-        [FromRoute] [Required] int version,
-        [FromRoute] [Required] string variableName
+        [FromRoute] [Required] string variableName,
+        [FromRoute] [Required] string userId,
+        [FromRoute] [Required] string password
     )
     {
-        var setting = await _settingFacade.GetSetting(settingGroupId, version, variableName);
+        var request = new GetSettingGroupRequest
+        {
+            UserId = userId,
+            Password = password,
+            SettingGroupId = settingGroupId
+        };
+
+        var setting = await _settingFacade.GetSetting(request, variableName);
         return setting;
     }
 

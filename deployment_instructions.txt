@@ -1,0 +1,58 @@
+appsettingsmanager
+Pa55word
+
+cd code/appsettingsmanager/appsettingsmanagerapi/appsettingsmanagerapi
+cd code/appsettingsmanager/appsettingsmanagerbff/appsettingsmanagerbff
+
+dotnet publish -c Release -p:ASPNETCORE_ENVIRONMENT=prod
+dotnet publish -c Release
+
+cd code/appsettingsmanager/appsettingsmanagerapi/appsettingsmanagerapi/bin/Release/net6.0/publish
+cd code/appsettingsmanager/appsettingsmanagerbff/appsettingsmanagerbff/bin/Release/net6.0/publish
+
+zip -r ../publish.zip .
+
+az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src /Users/jackflenna/code/AppSettingsManager/AppSettingsManagerAPI/AppSettingsManagerApi/bin/Release/net6.0/publish.zip
+
+az webapp deployment source config-zip --name appsettingsmanagerbff --resource-group appsettingsmanager --src /Users/jackflenna/code/AppSettingsManager/AppSettingsManagerBff/AppSettingsManagerBff/bin/Release/net6.0/publish.zip
+
+Server="appsettingsmanagerdb.mysql.database.azure.com";UserID = "appsettingsmanager";Password="Pa55word";Database="mysql";
+
+
+az webapp log tail --name appsettingsmanagerapi --resource-group appsettingsmanager
+
+"Server=localhost;Database=db;Uid=user;Pwd=password;"
+
+az ad sp create-for-rbac --name "appsettingsmanaager-sp" --role Contributor --scopes /subscriptions/f218abfa-9f42-4fbd-8230-21cc6421aac4
+
+cd
+cd code/appsettingsmanager/appsettingsmanagerapi/appsettingsmanagerapi
+dotnet clean
+dotnet publish -c Release
+cd
+cd code/appsettingsmanager/appsettingsmanagerapi/appsettingsmanagerapi/bin/Release/net6.0/publish
+zip -r ../publish.zip .
+az webapp deployment source config-zip --name appsettingsmanagerapi --resource-group appsettingsmanager --src /Users/jackflenna/code/AppSettingsManager/AppSettingsManagerAPI/AppSettingsManagerApi/bin/Release/net6.0/publish.zip
+
+cd
+cd code/appsettingsmanager/appsettingsmanagerbff/appsettingsmanagerbff
+dotnet clean
+dotnet publish -c Release
+cd
+cd code/appsettingsmanager/appsettingsmanagerbff/appsettingsmanagerbff/bin/Release/net6.0/publish
+zip -r ../publish.zip .
+az webapp deployment source config-zip --name appsettingsmanagerbff --resource-group appsettingsmanager --src /Users/jackflenna/code/AppSettingsManager/AppSettingsManagerBff/AppSettingsManagerBff/bin/Release/net6.0/publish.zip
+
+cd
+cd code/appsettingsmanager/sampleapp
+dotnet clean
+dotnet publish -c Release
+cd
+cd code/appsettingsmanager/sampleapp/bin/Release/net6.0/publish
+zip -r ../publish.zip .
+az webapp deployment source config-zip --name appsettingsmanager-sampleapp --resource-group appsettingsmanager --src /Users/jackflenna/code/AppSettingsManager/SampleApp/bin/Release/net6.0/publish.zip
+
+cd
+cd code/appsettingsmanager/appsettingsmanagerui
+ng build
+az storage blob upload-batch --destination \$web --source /Users/jackflenna/code/appsettingsmanager/appsettingsmanagerui/dist/app-settings-manager-ui --account-name appsettingsmanager --overwrite

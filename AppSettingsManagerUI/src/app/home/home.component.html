@@ -1,28 +1,45 @@
-<!-- <ng-container *ngIf="settingGroups.length > 0">
-    <table mat-table [dataSource]="settingGroups">
-        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-        <tr mat-row *matRowDef="let settingGroup; columns: columnsToDisplay"></tr>
-    </table>
-</ng-container> -->
-
-<button mat-raised-button color="primary" (click)="openDialog()">Create Setting Group</button>
+<nav class="vertical-nav">
+  <div class="nav-title">App<br>Settings<br>Manager</div>
+  <ul>
+    <li class="nav-create">
+      <button mat-raised-button color="grey" class="createsg" (click)="onCreateSettingGroup()">
+        <span style="color: white;">Create Setting Group</span>
+      </button>
+    </li>
+    <li class="nav-logout">
+      <app-logout-button></app-logout-button>
+    </li>
+  </ul>
+</nav>
 
 <ng-container *ngIf="settingGroups.length > 0">
-    <table mat-table [dataSource]="settingGroups">
-      <ng-container matColumnDef="Id">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
-        <td mat-cell *matCellDef="let settingGroup" class="mat-row-button" (click)="onRowClick(settingGroup)"> {{ settingGroup.id }} </td>
-      </ng-container>
-      <ng-container matColumnDef="CreatedBy">
-        <th mat-header-cell *matHeaderCellDef> Created By </th>
-        <td mat-cell *matCellDef="let settingGroup" class="mat-row-button" (click)="onRowClick(settingGroup)"> {{ settingGroup.createdBy }} </td>
-      </ng-container>
-      <ng-container matColumnDef="LastUpdatedAt">
-        <th mat-header-cell *matHeaderCellDef> Created By </th>
-        <td mat-cell *matCellDef="let settingGroup" class="mat-row-button" (click)="onRowClick(settingGroup)"> {{ settingGroup.lastUpdatedAt }} </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-      <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
-    </table>
+  <table mat-table [dataSource]="settingGroups">
+    <ng-container matColumnDef="Id">
+      <th mat-header-cell *matHeaderCellDef class="mat-header-cell-centered"> ID </th>
+      <td mat-cell *matCellDef="let settingGroup; let rowIndex=index" [ngClass]="{'mat-row-grey': rowIndex % 2 == 0, 'mat-row-white': rowIndex % 2 == 1}" class="mat-row-button" (click)="onRowClick(settingGroup)"> {{ settingGroup.id }} </td>
+    </ng-container>
+    <ng-container matColumnDef="CreatedBy">
+      <th mat-header-cell *matHeaderCellDef class="mat-header-cell-centered"> Created By </th>
+      <td mat-cell *matCellDef="let settingGroup; let rowIndex=index" [ngClass]="{'mat-row-grey': rowIndex % 2 == 0, 'mat-row-white': rowIndex % 2 == 1}" class="mat-row-button" (click)="onRowClick(settingGroup)"> {{ settingGroup.createdBy }} </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay" class="mat-header-row-black"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay;" [ngClass]="{'mat-row-grey': row % 2 == 0, 'mat-row-white': row % 2 == 1}"></tr>
+  </table>
 </ng-container>
-  
+
+<div class="reqacc">
+  <h2>Request Access to New Setting Group</h2>
+
+  <label for="settingGroupId">Setting Group Id: <input id="settingGroupId" type="text" [(ngModel)]="settingGroupId"></label>
+
+  <label for="requestedPermissionLevel">
+    <br>Requested Permission Level:
+    <select [(ngModel)]="requestedPermissionLevel">
+      <option value=0>None</option>
+      <option value=1>Read</option>
+      <option value=2>Write</option>
+      <option value=3>Admin</option>
+    </select>
+  </label>
+  <button mat-raised-button color="primary" (click)="onRequestNewAccess()" id="reqaccbutton">Request New Access</button>
+</div>
